@@ -1,20 +1,12 @@
 package net.zhengzhengyiyi.rules;
 
-import com.mojang.serialization.Codec;
-import java.util.Collection;
 import java.util.Optional;
 import net.minecraft.block.Blocks;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.text.Text;
-import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.floatprovider.ClampedNormalFloatProvider;
 import net.minecraft.util.math.intprovider.ClampedIntProvider;
@@ -138,23 +130,23 @@ public class VoteRules {
 	public static final StaticVoteRule OTHER_PORTAL = register("other_portal", 500, new StaticVoteRule(Text.translatable("rule.other_portal")));
 	public static final StaticVoteRule ANONYMIZE_SKINS = register("anonymize_skins", 500, new StaticVoteRule(Text.translatable("rule.anonymize_skins")));
 	public static final SpecialRecipeRule SPECIAL_RECIPE = register("special_recipe", 1000, new SpecialRecipeRule());
-	public static final FootprintsRule FOOTPRINTS = register("footprints", 500, new FootprintsRule());
+//	public static final FootprintsRule FOOTPRINTS = register("footprints", 500, new FootprintsRule());
 
 	public static final EnumVoteRule<TieStrategy> TIE_STRATEGY = register("tie_strategy", 500, new EnumVoteRule<>(TieStrategy.values(), TieStrategy.PICK_RANDOM, TieStrategy.CODEC) {
 		protected Text getOptionDescription(TieStrategy val) {
-			return val.getDisplayName();
+			return val.getDescription();
 		}
 	});
 
 	public static final StaticVoteRule SILENT_VOTE = register("silent_vote", 125, new StaticVoteRule(Text.translatable("rule.silent_vote")));
-	public static final ReplaceItemModelRule REPLACE_ITEM_MODEL = register("replace_item_model", 1000, new ReplaceItemModelRule());
-	public static final ReplaceBlockModelRule REPLACE_BLOCK_MODEL = register("replace_block_model", 1000, new ReplaceBlockModelRule());
+//	public static final ReplaceItemModelRule REPLACE_ITEM_MODEL = register("replace_item_model", 1000, new ReplaceItemModelRule());
+//	public static final ReplaceBlockModelRule REPLACE_BLOCK_MODEL = register("replace_block_model", 1000, new ReplaceBlockModelRule());
 
-	public static final EnumVoteRule<AutoJumpAlternative> AUTO_JUMP_ALTERNATIVES = register("auto_jump_alternatives", 500, new EnumVoteRule<>(AutoJumpAlternative.values(), AutoJumpAlternative.OFF, AutoJumpAlternative.CODEC) {
-		protected Text getOptionDescription(AutoJumpAlternative val) {
-			return val.getDisplayName();
-		}
-	});
+//	public static final EnumVoteRule<AutoJumpAlternative> AUTO_JUMP_ALTERNATIVES = register("auto_jump_alternatives", 500, new EnumVoteRule<>(AutoJumpAlternative.values(), AutoJumpAlternative.OFF, AutoJumpAlternative.CODEC) {
+//		protected Text getOptionDescription(AutoJumpAlternative val) {
+//			return val.getDisplayName();
+//		}
+//	});
 
 	public static final StaticVoteRule UNCONTROLLABLE_LAVA = register("uncontrolable_lave", 125, new StaticVoteRule(Text.translatable("rule.uncontrolable_lave")));
 	public static final StaticVoteRule MINECART_WHEELS = register("wheels_on_minecarts", 500, new StaticVoteRule(Text.translatable("rule.wheels_on_minecarts")));
@@ -192,7 +184,7 @@ public class VoteRules {
 		}
 	});
 
-	public static final PermaEffectRule PERMA_EFFECT = register("perma_effect", 1000, new PermaEffectRule());
+//	public static final PermaEffectRule PERMA_EFFECT = register("perma_effect", 1000, new PermaEffectRule());
 
 	public static final NumberVoteRule.FloatRule ITEM_USE_SPEED = register("item_use_speed", 1000, new NumberVoteRule.FloatRule(1.0F, ClampedNormalFloatProvider.create(1.0F, 0.4F, 0.1F, 8.0F)) {
 		protected Text getOptionDescription(Float val) {
@@ -284,9 +276,9 @@ public class VoteRules {
 //	});
 
 	public static final EntityVoteRule AI_ATTACK = register("ai_attack", 500, new EntityVoteRule() {
-		protected Text getOptionDescription(EntityReference entry) {
-			return Text.translatable("rule.ai_attack", entry.displayName());
-		}
+//		protected Text getOptionDescription(EntityReference entry) {
+//			return Text.translatable("rule.ai_attack", entry.displayName());
+//		}
 
 		@Override
 		protected Text getElementDescription(EntityReference element) {
