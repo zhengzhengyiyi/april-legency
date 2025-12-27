@@ -8,7 +8,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoterAction;
 
 public class TheJokeRule extends VoteEffect {
@@ -26,7 +26,7 @@ public class TheJokeRule extends VoteEffect {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			return null;
 		}
 

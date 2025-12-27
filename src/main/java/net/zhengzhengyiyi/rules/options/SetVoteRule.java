@@ -8,10 +8,10 @@ import java.util.Set;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 
 public abstract class SetVoteRule<T> implements Vote {
     private final Set<T> activeElements = new HashSet<>();
@@ -74,7 +74,7 @@ public abstract class SetVoteRule<T> implements Vote {
 //        }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			return this.getType();
 		}
 

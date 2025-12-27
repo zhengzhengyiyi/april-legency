@@ -8,7 +8,6 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoteRuleType;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 
@@ -114,7 +113,7 @@ public abstract class VoteRule<T> implements Vote {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			return null;
 		}
     }

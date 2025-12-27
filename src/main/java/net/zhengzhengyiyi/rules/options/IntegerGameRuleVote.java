@@ -6,18 +6,19 @@ import com.mojang.serialization.Codec;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoterAction;
+import net.zhengzhengyiyi.vote.VoteValue;
+import net.zhengzhengyiyi.world.Vote;
 
 public class IntegerGameRuleVote extends VoteEffect {
 
 	@Override
-	public Codec<VoterAction> getOptionCodec() {
+	public Codec<VoteValue> getOptionCodec() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Stream<VoterAction> generateOptions(MinecraftServer server, Random random, int limit) {
+	public Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit) {
 		// TODO Auto-generated method stub
 		return null;
 	}

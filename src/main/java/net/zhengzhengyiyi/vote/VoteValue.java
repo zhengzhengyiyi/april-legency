@@ -5,6 +5,7 @@ import java.util.List;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
+import net.zhengzhengyiyi.world.Vote;
 
 /**
  * Represents a specific value or effect of a vote.
@@ -25,13 +26,13 @@ public interface VoteValue {
 	public static final Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
 		.dispatch(
 	    VoteValue::getType,
-			type -> type.getCodec().fieldOf("value")
+			type -> type.getOptionCodec().fieldOf("value")
 		);
 
     /**
      * Gets the type/category of this vote value.
      */
-    VoteRuleType<?> getType();
+    Vote getType();
 
     /**
      * Applies this value to the server and broadcasts the change to all players.

@@ -4,12 +4,13 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
+import net.zhengzhengyiyi.world.Vote;
 
 public interface VoteRegistries {
-	public static final RegistryKey<Registry<VoteRuleType>> VOTE_RULE_TYPE_KEY = 
+	public static final RegistryKey<Registry<Vote>> VOTE_RULE_TYPE_KEY = 
 		    RegistryKey.ofRegistry(Identifier.of("minecraft", "vote_rule_type"));
 
-	public static final Registry<VoteRuleType> VOTE_RULE_TYPE = FabricRegistryBuilder
+	public static final Registry<Vote> VOTE_RULE_TYPE = FabricRegistryBuilder
 	    .createSimple(VOTE_RULE_TYPE_KEY)
 	    .buildAndRegister();
 	

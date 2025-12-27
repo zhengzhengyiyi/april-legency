@@ -11,6 +11,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.RegistryEntryVoteRule;
+import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
 
@@ -29,7 +30,7 @@ public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> implements Vo
     }
 
 	@Override
-	public Stream<VoterAction> generateOptions(MinecraftServer server, Random random, int limit) {
+	public Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit) {
 		return null;
 	}
 

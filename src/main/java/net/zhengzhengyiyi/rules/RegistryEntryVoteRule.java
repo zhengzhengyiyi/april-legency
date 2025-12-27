@@ -5,7 +5,7 @@ import java.util.stream.Stream;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
@@ -84,7 +84,7 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			return null;
 		}
     }

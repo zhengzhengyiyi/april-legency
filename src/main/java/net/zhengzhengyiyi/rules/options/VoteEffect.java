@@ -19,30 +19,10 @@ public abstract class VoteEffect implements Vote {
     }
 
     public abstract class Option implements VoteValue {
-//        @Override
-//        public Vote getRule() {
-//            return VoteEffect.this;
-//        }
-
         protected abstract Text getDescriptionText();
 
-//        @Override
-//        public Text getDisplayMessage(VoterAction action) {
-//            return switch (action) {
-//                case REPEAL -> VoteEffect.UNKNOWN_TEXT;
-//                case APPROVE -> this.getDescriptionText();
-//            };
-//        }
 
         public abstract void run(MinecraftServer server);
-
-//        @Override
-//        public void applyWithServer(VoterAction action, MinecraftServer server) {
-//            VoteValue.super.applyWithServer(action, server);
-//            if (action == VoterAction.APPROVE) {
-//                this.run(server);
-//            }
-//        }
 
         @Override
         public void apply(VoterAction action) {

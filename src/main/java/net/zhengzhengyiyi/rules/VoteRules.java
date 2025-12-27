@@ -1,6 +1,10 @@
 package net.zhengzhengyiyi.rules;
 
 import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.minecraft.block.Blocks;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registry;
@@ -15,12 +19,13 @@ import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.options.*;
 import net.zhengzhengyiyi.vote.VoteRegistries;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.world.WorldShape;
 import net.minecraft.util.collection.WeightedList;
 
 public class VoteRules {
+	private static final Logger LOGGER = LoggerFactory.getLogger(VoteRules.class);
 //	private static final Pool<RegistryEntry.Reference<Vote>> POOL_BUILDER = new DataPool.Builder<>();
 	private static final WeightedList<Reference<Vote>> POOL_BUILDER = new WeightedList<RegistryEntry.Reference<Vote>>();
 	public static final int WEIGHT_VERY_RARE = 5;
@@ -482,7 +487,7 @@ public class VoteRules {
 	}
 
 	private static <R extends Vote> R register(String name, int weight, R rule) {
-		Reference<VoteRuleType> ref = Registry.registerReference(VoteRegistries.VOTE_RULE_TYPE, Identifier.of(name), (VoteRuleType)rule);
+		Reference<Vote> ref = Registry.registerReference(VoteRegistries.VOTE_RULE_TYPE, Identifier.of(name), rule);
 		POOL_BUILDER.add((Reference<Vote>)(Object)ref, weight);
 		return rule;
 	}
@@ -505,5 +510,9 @@ public class VoteRules {
 		return FINAL_POOL.stream()
 		    .findFirst()
 		    .orElseThrow();
+	}
+	
+	public static final void init() {
+		LOGGER.info("Initializing vote rules");
 	}
 }

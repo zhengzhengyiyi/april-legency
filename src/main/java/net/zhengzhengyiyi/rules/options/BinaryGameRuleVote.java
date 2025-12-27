@@ -13,7 +13,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.rule.GameRule;
 import net.minecraft.world.rule.GameRules;
-//import net.zhengzhengyiyi.vote.VoteRuleType;
+//import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 //import net.zhengzhengyiyi.world.Vote;
@@ -91,7 +91,7 @@ public class BinaryGameRuleVote extends VoteEffect.Weighted {
 //        }
 //
 //		@Override
-//		public VoteRuleType<?> getType() {
+//		public Vote getType() {
 //			return null;
 //		}
 //
@@ -107,7 +107,7 @@ public class BinaryGameRuleVote extends VoteEffect.Weighted {
 //    }
 
 	@Override
-	public Codec<VoterAction> getOptionCodec() {
+	public Codec<VoteValue> getOptionCodec() {
 		// TODO Auto-generated method stub
 		return null;
 	}

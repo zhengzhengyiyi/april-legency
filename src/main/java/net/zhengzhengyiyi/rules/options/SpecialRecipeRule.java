@@ -7,7 +7,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoterAction;
+import net.zhengzhengyiyi.vote.VoteValue;
+import net.zhengzhengyiyi.world.Vote;
 
 public class SpecialRecipeRule extends SetVoteRule<Identifier> {
     private static final Set<Identifier> SPECIAL_RECIPES = Set.of(
@@ -17,8 +18,9 @@ public class SpecialRecipeRule extends SetVoteRule<Identifier> {
         Identifier.of("diamond_drows")
     );
 
-    @Override
-    public Stream generateOptions(MinecraftServer server, Random random, int limit) {
+    @SuppressWarnings("unchecked")
+	@Override
+    public Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit) {
         return SPECIAL_RECIPES.stream()
             .filter(id -> !this.contains(id))
             .limit(limit)
@@ -40,7 +42,7 @@ public class SpecialRecipeRule extends SetVoteRule<Identifier> {
     }
 
 	@Override
-	public Codec<VoterAction> getOptionCodec() {
+	public Codec<VoteValue> getOptionCodec() {
 		return null;
 	}
 }

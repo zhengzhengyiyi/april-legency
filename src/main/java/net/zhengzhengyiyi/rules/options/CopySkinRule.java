@@ -12,7 +12,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
 //import net.zhengzhengyiyi.rules.options.VoteEffect;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoterAction;
 
 public class CopySkinRule extends VoteEffect {
@@ -86,7 +86,7 @@ public class CopySkinRule extends VoteEffect {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			// TODO Auto-generated method stub
 			return null;
 		}

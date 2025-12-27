@@ -8,7 +8,7 @@ import net.minecraft.network.packet.PacketType;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.vote.VoteRegistries;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 
 import java.util.List;
@@ -46,9 +46,9 @@ public record VoteRuleSyncS2CPacket(
      */
     private static VoteValue readVoteValue(PacketByteBuf buf) {
         // ja.ao refers to Registries.VOTE_RULE_TYPE
-        VoteRuleType<?> type = (VoteRuleType<?>) buf.readRegistryKey(VoteRegistries.VOTE_RULE_TYPE_KEY);
+        Vote type = (Vote) buf.readRegistryKey(VoteRegistries.VOTE_RULE_TYPE_KEY);
         // rc.a refers to NbtOps.INSTANCE or a specific Packet Codec context
-        return buf.decodeAsJson(type.getCodec());
+        return buf.decodeAsJson(type.getOptionCodec());
     }
 
     /**
@@ -59,7 +59,7 @@ public record VoteRuleSyncS2CPacket(
 //    	buf.writeVarInt(VoteRegistries.VOTE_RULE_TYPE.getRawId(value.getType()));
     	buf.writeVarInt(VoteRegistries.VOTE_RULE_TYPE.getRawId(value.getType()));
 
-        buf.encodeAsJson(value.getType().getCodec(), value);
+        buf.encodeAsJson(value.getType().getOptionCodec(), value);
     }
 
     @Override

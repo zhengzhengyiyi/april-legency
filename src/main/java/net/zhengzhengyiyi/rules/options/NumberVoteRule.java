@@ -9,10 +9,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.floatprovider.FloatProvider;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 
 public abstract class NumberVoteRule<T extends Number> implements Vote {
     final T defaultValue;
@@ -26,10 +25,10 @@ public abstract class NumberVoteRule<T extends Number> implements Vote {
         this.defaultValue = defaultValue;
         this.currentValue = defaultValue;
 //        this.optionCodec = Codec.unit(defaultValue).xmap(v -> new NumberVoteRule.Option(defaultValue), VoteValue::getRule); 
-        this.optionCodec = (Codec<VoteValue>) Codec.EMPTY.xmap(
+        this.optionCodec = (Codec<VoteValue>)(Object)Codec.EMPTY.xmap(
        	    v -> new NumberVoteRule.Option(this.defaultValue), 
        	    option -> null
-        );
+        ).codec();
     }
 
     public T getValue() {
@@ -89,8 +88,8 @@ public abstract class NumberVoteRule<T extends Number> implements Vote {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
-			return (VoteRuleType<?>)NumberVoteRule.this;
+		public Vote getType() {
+			return (Vote)NumberVoteRule.this;
 		}
 
 		@Override

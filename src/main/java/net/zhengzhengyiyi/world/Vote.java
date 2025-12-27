@@ -5,20 +5,22 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 
 /**
- * The core interface for a voting rule in the 23w13a "The Vote Update".
- * It manages the lifecycle of a vote, from generating random options to applying results.
+ * Defines a type of rule that can be voted on.
+ * It manages the creation and retrieval of specific VoteValues.
  * <p>
- * Official Obfuscated Name: bec
+ * Official Name: bec
+ * Intermediary Name: net.minecraft.class_8367
  */
 public interface Vote {
     /**
      * Gets a stream of all currently relevant options for this vote.
      * * @return A stream of VoteOption.
      */
-    default Stream<VoterAction> getRelevantOptions() {
+    default Stream<?> getRelevantOptions() {
         return this.getActiveOptions();
     }
 
@@ -29,7 +31,7 @@ public interface Vote {
      * @return The number of options processed.
      */
     default int applyDefault(boolean useActiveOnly) {
-        List<VoterAction> options = (useActiveOnly ? this.getActiveOptions() : this.getRelevantOptions()).toList();
+        List<?> options = (useActiveOnly ? this.getActiveOptions() : this.getRelevantOptions()).toList();
         // bed.b maps to VoteResult.FAIL or DISCARD logic
 //        options.forEach(option -> option.apply(VoterAction.APPROVE));
         return options.size();
@@ -38,19 +40,19 @@ public interface Vote {
     /**
      * Helper to wrap a specific codec into a generic VoteOption codec.
      */
-    static <T extends VoterAction> Codec<VoterAction> createCodec(Codec<T> codec) {
-        return (Codec<VoterAction>) codec;
+    static Codec<?> createCodec(Codec<?> codec) {
+        return codec;
     }
 
     /**
      * Gets the codec used for serializing this vote's options.
      */
-    Codec<VoterAction> getOptionCodec();
+    Codec<VoteValue> getOptionCodec();
 
     /**
      * Gets the current active options for this vote (options currently winning or selected).
      */
-    Stream<VoterAction> getActiveOptions();
+    Stream<Vote> getActiveOptions();
 
     /**
      * Generates a new set of random options for this vote.
@@ -59,5 +61,5 @@ public interface Vote {
      * @param limit The maximum number of options to generate.
      * @return A stream of newly generated VoteOptions.
      */
-    Stream<VoterAction> generateOptions(MinecraftServer server, Random random, int limit);
+    Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit);
 }

@@ -10,7 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
@@ -82,7 +82,7 @@ public abstract class EnumVoteRule<T> implements Vote {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
+		public Vote getType() {
 			return null;
 		}
 

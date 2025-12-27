@@ -8,10 +8,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.vote.VoteRuleType;
+import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 
 public abstract class VoteOptionCountRule implements Vote {
     private final IntProvider minProvider;
@@ -25,7 +24,7 @@ public abstract class VoteOptionCountRule implements Vote {
         this.currentRange = defaultRange;
         this.minProvider = minProvider;
         this.rangeProvider = rangeProvider;
-        this.optionCodec = Vote.createCodec((Codec)UniformIntProvider.CODEC.xmap(range -> new VoteOptionCountRule.Option(range), opt -> opt.range)
+        this.optionCodec = (Codec<VoteValue>) Vote.createCodec(UniformIntProvider.CODEC.xmap(range -> new VoteOptionCountRule.Option(range), opt -> opt.range).codec()
         );
     }
 
@@ -82,8 +81,8 @@ public abstract class VoteOptionCountRule implements Vote {
         }
 
 		@Override
-		public VoteRuleType<?> getType() {
-			return (VoteRuleType<?>) VoteOptionCountRule.this;
+		public Vote getType() {
+			return (Vote) VoteOptionCountRule.this;
 		}
 
 		@Override
