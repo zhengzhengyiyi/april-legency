@@ -15,4 +15,7 @@ public interface VoteRegistries {
 	
 	public static final RegistryKey<Boolean> DEFAULT_BOOLEAN_VALUE_KEY = 
             RegistryKey.of(RegistryKey.ofRegistry(Identifier.of("minecraft", "boolean_state")), Identifier.of("minecraft", "true"));
+	
+	public static void init() {
+	}
 }

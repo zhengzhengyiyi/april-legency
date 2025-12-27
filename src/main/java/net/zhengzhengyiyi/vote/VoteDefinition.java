@@ -3,15 +3,11 @@ package net.zhengzhengyiyi.vote;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.rules.VoteRules;
-import net.zhengzhengyiyi.world.VoteRule;
 
 /**
  * Defines the content and structure of a vote.
@@ -85,7 +81,7 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * Corresponds to the 'a' method in bgp for generating new apply votes.
      */
     public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
-        Random random = context.random();
+//        Random random = context.random();
         int count = context.getOptionCount();
         
         List<List<VoteValue>> proposals = new ArrayList<>();

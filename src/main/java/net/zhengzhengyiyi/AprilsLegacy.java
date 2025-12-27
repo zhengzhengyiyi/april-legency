@@ -1,6 +1,13 @@
 package net.zhengzhengyiyi;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.Text;
+import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.vote.VoteManager;
+import net.zhengzhengyiyi.vote.VoteRegistries;
+import net.zhengzhengyiyi.vote.VoteServer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +26,32 @@ public class AprilsLegacy implements ModInitializer {
 		// However, some things (like resources) may still be uninitialized.
 		// Proceed with mild caution.
 
-		LOGGER.info("Hello Fabric world!");
+		LOGGER.info(MOD_ID + "init, please enjoy april fools");
+		
+		VoteRules.init();
+		VoteRegistries.init();
+		
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+		    dispatcher.register(CommandManager.literal("test")
+		        .executes(context -> {
+		            var source = context.getSource();
+		            var server = source.getServer();
+		            
+		            source.sendFeedback(() -> Text.literal("§e[Debug] testing mod"), false);
+		            
+		            VoteManager manager = ((VoteServer) server).getVoteManager();
+		            
+		            if (manager != null) {
+		                AprilsLegacy.LOGGER.info("test: registries has {} rules", 
+		                    net.zhengzhengyiyi.vote.VoteRegistries.VOTE_RULE_TYPE.size());
+		                
+		                source.sendFeedback(() -> Text.literal("§a test finished"), false);
+		            } else {
+		                source.sendError(Text.literal("error: vote manager is null"));
+		            }
+		            
+		            return 1;
+		        }));
+		});
 	}
 }
