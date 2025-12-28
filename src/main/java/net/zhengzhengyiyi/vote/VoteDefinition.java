@@ -100,7 +100,7 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         }
 
         List<Option> optionList = proposals.stream().map(values -> {
-            List<Effect> effects = values.stream().map(v -> new Effect(v, VoterAction.APPLY)).toList();
+            List<Effect> effects = values.stream().map(v -> new Effect(v, VoterAction.APPROVE)).toList();
             return new Option(createOptionText(effects), effects);
         }).toList();
 

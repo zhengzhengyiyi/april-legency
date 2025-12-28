@@ -4,6 +4,7 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
@@ -30,6 +31,9 @@ public class AprilsLegacy implements ModInitializer {
 		
 		VoteRules.init();
 		VoteRegistries.init();
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+		    VoteCommands.register(dispatcher, registryAccess);
+		});
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    dispatcher.register(CommandManager.literal("test")

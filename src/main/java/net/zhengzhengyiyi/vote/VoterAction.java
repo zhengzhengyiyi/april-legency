@@ -11,7 +11,8 @@ import net.minecraft.util.StringIdentifiable;
  */
 public enum VoterAction implements StringIdentifiable {
     APPROVE("approve"),
-    REPEAL("repeal"), REVOKE("revoke"), APPLY("apply");
+    REPEAL("repeal");
+//    , REVOKE("revoke"), APPLY("apply");
 
     /**
      * Codec for serializing and deserializing vote actions.

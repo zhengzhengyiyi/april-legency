@@ -1,12 +1,15 @@
 package net.zhengzhengyiyi.world;
 
-import com.mojang.serialization.Codec;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import com.mojang.serialization.Codec;
+
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
@@ -83,7 +86,16 @@ public abstract class VoteRule<T> implements Vote {
      * Abstract method implemented by child classes (like BlockVoteRule) to define
      * how the rule text is displayed.
      */
-    protected abstract Text getDisplayText(RegistryKey<T> value);
+    public abstract Text getDisplayText(RegistryKey<T> value);
+    
+    public static final Codec<VoteRule> CODEC = Identifier.CODEC.xmap(
+    	    id -> {
+    	        throw new UnsupportedOperationException("Abstract class cannot be instantiated directly");
+    	    },
+    	    rule -> {
+    	        return Identifier.of("your_mod", "dummy"); 
+    	    }
+    	);
 
     /**
      * Inner class representing a specific choice in the vote.
