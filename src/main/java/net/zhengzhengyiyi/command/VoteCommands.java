@@ -5,11 +5,13 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 //import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.command.CommandRegistryAccess;
+import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.NbtElementArgumentType;
 import net.minecraft.command.argument.RegistryEntryReferenceArgumentType;
 import net.minecraft.command.argument.UuidArgumentType;
@@ -24,6 +26,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.vote.*;
@@ -47,6 +50,30 @@ public class VoteCommands {
 //            getVoteManager(context.getSource()).getActiveVoteIds().map(UUID::toString), 
 //            builder
 //        );
+    
+    private static final SuggestionProvider<ServerCommandSource> SUGGEST_VOTE_ID = (context, builder) -> {
+        var registryManager = context.getSource().getRegistryManager();
+        var registry = registryManager.getOrThrow(VOTE_RULE_REGISTRY_KEY);
+        
+        return CommandSource.suggestMatching(
+            registry.getIds().stream().map(Identifier::toString), 
+            builder
+        );
+    };
+    
+    public static Text createVoteHoverText(UUID id, VoteDefinition definition, ServerCommandSource source) {
+        var ops = source.getRegistryManager().getOps(JsonOps.INSTANCE);
+        
+        String json = VoteDefinition.CODEC.encodeStart(ops, definition)
+        	.result()
+            .map(JsonElement::toString)
+            .orElseThrow();
+        
+        return Text.literal(id.toString())
+            .styled(style -> style.withUnderline(true)
+                .withHoverEvent(new HoverEvent.ShowText(Text.literal(json)))
+            );
+    }
 
     public static void register(CommandDispatcher<ServerCommandSource> dispatcher, CommandRegistryAccess registryAccess) {
         dispatcher.register(
@@ -65,23 +92,23 @@ public class VoteCommands {
                         .then(CommandManager.literal("*")
                             .executes(ctx -> finishAllVotes(ctx.getSource(), true))
                         )
-//                        .then(CommandManager.argument("id", UuidArgumentType.uuid())
-//                            .suggests(SUGGEST_VOTE_ID)
-//                            .executes(ctx -> finishVote(ctx.getSource(), UuidArgumentType.getUuid(ctx, "id"), true))
-//                        )
+                        .then(CommandManager.argument("id", UuidArgumentType.uuid())
+                            .suggests(SUGGEST_VOTE_ID)
+                            .executes(ctx -> finishVote(ctx.getSource(), UuidArgumentType.getUuid(ctx, "id"), true))
+                        )
                     )
                     .then(CommandManager.literal("discard")
                         .then(CommandManager.literal("*")
                             .executes(ctx -> finishAllVotes(ctx.getSource(), false))
                         )
-//                        .then(CommandManager.argument("id", UuidArgumentType.uuid())
-//                            .suggests(SUGGEST_VOTE_ID)
-//                            .executes(ctx -> finishVote(ctx.getSource(), UuidArgumentType.getUuid(ctx, "id"), false))
-//                        )
+                        .then(CommandManager.argument("id", UuidArgumentType.uuid())
+                            .suggests(SUGGEST_VOTE_ID)
+                            .executes(ctx -> finishVote(ctx.getSource(), UuidArgumentType.getUuid(ctx, "id"), false))
+                        )
                     )
                     .then(CommandManager.literal("vote")
                         .then(CommandManager.argument("id", UuidArgumentType.uuid())
-//                            .suggests(SUGGEST_VOTE_ID)
+                            .suggests(SUGGEST_VOTE_ID)
                             .then(CommandManager.argument("option", IntegerArgumentType.integer(0))
                                 .executes(ctx -> castVote(ctx, 1))
                                 .then(CommandManager.argument("count", IntegerArgumentType.integer())
@@ -145,17 +172,17 @@ public class VoteCommands {
         return ((VoteServer) source.getServer()).getVoteManager();
     }
 
-    private static Text createVoteHoverText(UUID id, VoteDefinition definition) {
-        String json = VoteDefinition.CODEC.encodeStart(JsonOps.INSTANCE, definition)
-            .result()
-            .map(JsonElement::toString)
-            .orElse("Error encoding VoteDefinition");
-        
-        return Text.literal(id.toString())
-            .styled(style -> style.withUnderline(true)
-                .withHoverEvent(new HoverEvent.ShowText(Text.literal(json)))
-			);
-    }
+//    private static Text createVoteHoverText(UUID id, VoteDefinition definition) {
+//        String json = VoteDefinition.CODEC.encodeStart(JsonOps.INSTANCE, definition)
+//            .result()
+//            .map(JsonElement::toString)
+//            .orElse("Error encoding VoteDefinition");
+//        
+//        return Text.literal(id.toString())
+//            .styled(style -> style.withUnderline(true)
+//                .withHoverEvent(new HoverEvent.ShowText(Text.literal(json)))
+//			);
+//    }
 
 //    private static int startPendingVote(ServerCommandSource source, Optional<RegistryEntry.Reference<Vote>> ruleEntry) {
 //        MinecraftServer server = source.getServer();
@@ -198,7 +225,7 @@ public class VoteCommands {
 
         return definition.map(def -> {
             manager.addVote(id, def);
-            source.sendFeedback(() -> Text.literal("Started vote for ").append(createVoteHoverText(id, def)), true);
+            source.sendFeedback(() -> Text.literal("Started vote for ").append(createVoteHoverText(id, def, source)), true);
             return 1;
         }).orElseGet(() -> {
             source.sendError(Text.literal("Failed to start vote"));
@@ -225,7 +252,7 @@ public class VoteCommands {
 
         return definition.map(def -> {
             manager.addVote(id, def);
-            source.sendFeedback(() -> Text.literal("starting repeal vote").append(createVoteHoverText(id, def)), true);
+            source.sendFeedback(() -> Text.literal("starting repeal vote").append(createVoteHoverText(id, def, source)), true);
             return 1;
         }).orElseGet(() -> {
             source.sendError(Text.literal("Failed to start repeal vote"));
@@ -246,7 +273,7 @@ public class VoteCommands {
         VoteResults state = getVoteManager(source).forceFinish(id);
         if (state != null) {
             String action = approve ? "Finished" : "Rejected";
-            source.sendFeedback(() -> Text.literal(action + " vote for ").append(createVoteHoverText(id, state.vote())), true);
+            source.sendFeedback(() -> Text.literal(action + " vote for ").append(createVoteHoverText(id, state.vote(), source)), true);
             return 1;
         } else {
             source.sendError(Text.literal("Failed to finish vote " + id));

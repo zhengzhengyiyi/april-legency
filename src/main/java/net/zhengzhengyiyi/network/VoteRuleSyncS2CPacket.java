@@ -1,10 +1,9 @@
 package net.zhengzhengyiyi.network;
 
-import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.PacketType;
+import net.minecraft.network.RegistryByteBuf;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.vote.VoteRegistries;
@@ -23,13 +22,19 @@ public record VoteRuleSyncS2CPacket(
     boolean clearExisting, 
     VoterAction action, 
     List<VoteValue> values
-) implements Packet<ClientPlayPacketListener> {
-	public static final PacketType<VoteRuleSyncS2CPacket> TYPE = new PacketType(NetworkSide.CLIENTBOUND, Identifier.of("minecraft", "vote_rule_sync"));
+) implements CustomPayload {
+	public static final Identifier identifier = Identifier.of("minecraft", "vote_rule_sync");
+	
+	public static final CustomPayload.Id<VoteRuleSyncS2CPacket> ID = new CustomPayload.Id<VoteRuleSyncS2CPacket>(identifier);
 
     /**
      */
     public VoteRuleSyncS2CPacket {
     }
+    
+    public static final PacketCodec<RegistryByteBuf, VoteRuleSyncS2CPacket> CODEC = PacketCodec.unit(
+        new VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, List.of())
+    );
 
     /**
      * Write method to PacketByteBuf (sf).
@@ -44,7 +49,7 @@ public record VoteRuleSyncS2CPacket(
     /**
      * Internal helper to read a dispatched VoteValue.
      */
-    private static VoteValue readVoteValue(PacketByteBuf buf) {
+    public static VoteValue readVoteValue(PacketByteBuf buf) {
         // ja.ao refers to Registries.VOTE_RULE_TYPE
         Vote type = (Vote) buf.readRegistryKey(VoteRegistries.VOTE_RULE_TYPE_KEY);
         // rc.a refers to NbtOps.INSTANCE or a specific Packet Codec context
@@ -62,14 +67,8 @@ public record VoteRuleSyncS2CPacket(
         buf.encodeAsJson(value.getType().getOptionCodec(), value);
     }
 
-    @Override
-    public void apply(ClientPlayPacketListener listener) {
-        // In your mixin or client-side handler, you should implement this:
-        // ((VotePacketHandler)listener).onVoteRuleSync(this);
-    }
-
 	@Override
-	public PacketType<? extends Packet<ClientPlayPacketListener>> getPacketType() {
-		return TYPE;
+	public Id<? extends CustomPayload> getId() {
+		return ID;
 	}
 }

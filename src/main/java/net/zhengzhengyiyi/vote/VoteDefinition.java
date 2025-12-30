@@ -3,11 +3,16 @@ package net.zhengzhengyiyi.vote;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.*;
+
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.world.Vote;
+import net.zhengzhengyiyi.world.VoteRule;
 
 /**
  * Defines the content and structure of a vote.
@@ -87,9 +92,28 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         List<List<VoteValue>> proposals = new ArrayList<>();
         
         for (int i = 0; i < count; i++) {
-//           TODO: VoteRule rule = VoteRules.getRandomRule(random);
+//          VoteRule rule = VoteRules.getRandomRule(random);
+        	Vote rule = VoteRules.getRandomRule(context.random()).value();
             List<VoteValue> values = new ArrayList<>();
-//           TODO: values.add(new VoteValue(rule, rule.getRandomValue(random))); 
+//          values.add(new VoteValue(rule, rule.getRandomValue(random)));
+            values.add(new VoteValue() {
+
+				@Override
+				public Vote getType() {
+					return null;
+				}
+
+				@Override
+				public void apply(VoterAction action) {
+					
+				}
+
+				@Override
+				public Text getDescription(VoterAction action) {
+					return null;
+				}
+            	
+            });
             proposals.add(values);
         }
 

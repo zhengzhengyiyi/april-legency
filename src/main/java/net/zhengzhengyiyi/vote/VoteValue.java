@@ -2,6 +2,8 @@ package net.zhengzhengyiyi.vote;
 
 import com.mojang.serialization.Codec;
 import java.util.List;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
@@ -22,12 +24,18 @@ public interface VoteValue {
 //    Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
 //        .dispatch(VoteValue::getType, VoteRuleType::getCodec);
 	
-	@SuppressWarnings("unchecked")
 	public static final Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
 		.dispatch(
 	    VoteValue::getType,
 			type -> type.getOptionCodec().fieldOf("value")
 		);
+	
+	static java.util.Optional<VoteValue> getRandomValue(net.minecraft.server.MinecraftServer server, net.minecraft.util.math.random.Random random) {
+        return server.getRegistryManager()
+            .getOrThrow(VoteRegistries.VOTE_RULE_TYPE_KEY)
+            .getRandom(random)
+            .flatMap(entry -> entry.value().generateOptions(server, random, 1).findFirst());
+    }
 
     /**
      * Gets the type/category of this vote value.
@@ -42,7 +50,12 @@ public interface VoteValue {
     default void applyAndBroadcast(VoterAction action, MinecraftServer server) {
         this.apply(action);
         // xi refers to VoteRuleSyncS2CPacket (class_8361)
-        server.getPlayerManager().sendToAll(new VoteRuleSyncS2CPacket(false, action, List.of(this)));
+//        server.getPlayerManager().sendToAll(new VoteRuleSyncS2CPacket(false, action, List.of(this)));
+        VoteRuleSyncS2CPacket syncPacket = new VoteRuleSyncS2CPacket(false, action, List.of(this));
+
+	    server.getPlayerManager().getPlayerList().forEach(player -> {
+	        ServerPlayNetworking.send(player, syncPacket);
+	    });
     }
 
     /**

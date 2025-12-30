@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.vote.VoteValue;
-import net.zhengzhengyiyi.vote.VoterAction;
 
 /**
  * Defines a type of rule that can be voted on.
@@ -22,6 +22,13 @@ public interface Vote {
      */
     default Stream<?> getRelevantOptions() {
         return this.getActiveOptions();
+    }
+    
+    static java.util.Optional<VoteValue> getRandomValue(net.minecraft.server.MinecraftServer server, net.minecraft.util.math.random.Random random) {
+        return server.getRegistryManager()
+            .getOrThrow(VoteRegistries.VOTE_RULE_TYPE_KEY)
+            .getRandom(random)
+            .flatMap(entry -> entry.value().generateOptions(server, random, 1).findFirst());
     }
 
     /**

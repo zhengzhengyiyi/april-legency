@@ -1,9 +1,11 @@
 package net.zhengzhengyiyi.mixin;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.vote.VoteDefinition;
 import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoterAction;
@@ -13,9 +15,11 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import net.zhengzhengyiyi.vote.VoteValue;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 import java.util.function.BooleanSupplier;
 
@@ -98,22 +102,42 @@ public abstract class MinecraftServerMixin implements VoteServer {
                 overworld.getRandom(),
                 true
             );
-
+            
             this.voteManager.tick(
-                currentTime, 
-                server, 
-                context,
-                results -> {
-                	net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket stopPacket = 
-                            new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, Collections.emptyList());
-                        server.getPlayerManager().sendToAll(stopPacket);
-                }, 
-                (id, definition) -> {
+            	    currentTime, 
+            	    server, 
+            	    context,
+            	    results -> {
+            	        VoteRuleSyncS2CPacket stopPacket = new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, Collections.emptyList());
+            	        
+            	        server.getPlayerManager().getPlayerList().forEach(player -> {
+            	            ServerPlayNetworking.send(player, stopPacket);
+            	        });
+            	    }, 
+            	    (id, definition) -> {
+            	        List<VoteValue> values = (List<VoteValue>)(Object)definition.options().values().stream().sorted().toList();
+            	        VoteRuleSyncS2CPacket syncPacket = new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(false, VoterAction.APPROVE, values);
+            	        
+            	        server.getPlayerManager().getPlayerList().forEach(player -> {
+            	            ServerPlayNetworking.send(player, syncPacket);
+            	        });
+            	    }
+            	);
+
+//            this.voteManager.tick(
+//                currentTime, 
+//                server, 
+//                context,
+//                results -> {
+//                	VoteRuleSyncS2CPacket stopPacket = 
+//                            new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, Collections.emptyList());
+//                }, 
+//                (id, definition) -> {
 //                	net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket syncPacket = 
 //                            new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(false, VoterAction.APPROVE, definition.options().values().stream().sorted().toList());
 //                        server.getPlayerManager().sendToAll(syncPacket);
-                }
-            );
+//                }
+//            );
         }
     }
 }
