@@ -14,6 +14,7 @@ import net.minecraft.text.Text;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
 public class ReportEvidenceScreen extends Screen {
@@ -105,5 +106,13 @@ public class ReportEvidenceScreen extends Screen {
         }
     }
 
-    public record ReportEntryData(long index, Text contents, Text original) {}
+    public record ReportEntryData(long index, Text contents, Text original) {
+    	public static List<ReportEntryData> createFromStream(Stream<String> stream) {
+            MutableText prefix = Text.literal("- ");
+            return stream.map(line -> {
+                Text textLine = Text.literal(line);
+                return new ReportEntryData(0, prefix.copy().append(textLine), textLine);
+            }).collect(Collectors.toList());
+        }
+    }
 }

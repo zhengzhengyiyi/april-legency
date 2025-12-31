@@ -93,7 +93,7 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         
         for (int i = 0; i < count; i++) {
 //          VoteRule rule = VoteRules.getRandomRule(random);
-        	Vote rule = VoteRules.getRandomRule(context.random()).value();
+//        	Vote rule = VoteRules.getRandomRule(context.random()).value();
             List<VoteValue> values = new ArrayList<>();
 //          values.add(new VoteValue(rule, rule.getRandomValue(random)));
             values.add(new VoteValue() {

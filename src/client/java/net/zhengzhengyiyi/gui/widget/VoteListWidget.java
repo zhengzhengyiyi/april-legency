@@ -9,12 +9,10 @@ import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
 import net.minecraft.text.Text;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
-import net.zhengzhengyiyi.vote.VoteManager;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
 public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
@@ -26,11 +24,12 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
 //        this.setRenderSelection(false);
 //        this.setRenderBackground(false);
 
-        UUID playerUuid = client.player.getUuid();
+//        UUID playerUuid = client.player.getUuid();
         List<VoteEntry> entryList = new ArrayList<>();
 
-        manager.activeVotes.forEach((voteId, definition) -> {
-            boolean hasVoted = definition.hasVoted(playerUuid);
+        manager.activeVotes.forEach((voteId, entry) -> {
+//            boolean hasVoted = entry.definition();
+        	boolean hasVoted = false;
             entryList.add(new VoteEntry(
                 client, 
                 manager, 
@@ -38,7 +37,7 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
                 this.getRowWidth(), 
                 voteId, 
                 screen, 
-                definition, 
+                entry.definition(), 
                 hasVoted ? null : ALREADY_VOTED_TOOLTIP
             ));
         });

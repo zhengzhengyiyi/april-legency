@@ -1,30 +1,24 @@
 package net.zhengzhengyiyi.gui.widget;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.Alignment;
-import net.minecraft.client.font.DrawnTextConsumer;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
-import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
+import net.zhengzhengyiyi.gui.VoteScreen;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 import net.zhengzhengyiyi.vote.VoteDefinition;
-import net.zhengzhengyiyi.vote.VoteManager;
-import net.zhengzhengyiyi.vote.VoteScreen;
 
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
-import java.util.Objects;
 import java.util.UUID;
 
 @Environment(EnvType.CLIENT)
@@ -37,7 +31,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     public static final Comparator<VoteEntry> COMPARATOR = BY_STATUS.thenComparing(BY_NAME).thenComparing(BY_ID);
 
     private final MinecraftClient client;
-    private final PendingVoteScreen parentScreen;
+    public final PendingVoteScreen parentScreen;
     private final UUID voteId;
     private final ClientVoteManager manager;
     @Nullable
@@ -45,7 +39,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     private final boolean hasVoted;
     @Nullable
     private final Tooltip tooltip;
-    private final MultilineText multilineText;
+    public final MultilineText multilineText;
     private final String ruleName;
 
     public VoteEntry(MinecraftClient client, ClientVoteManager manager, boolean hasVoted, int width, UUID voteId, PendingVoteScreen screen, VoteDefinition definition, @Nullable Tooltip tooltip) {
@@ -114,7 +108,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0) {
             if (this.definition != null) {
-                this.client.setScreen(new VoteScreen(this.voteId, this.manager, this.definition));
+                this.client.setScreen(new VoteScreen(MinecraftClient.getInstance().player.getInventory(), this.voteId, this.manager, null));
             }
             return true;
         }

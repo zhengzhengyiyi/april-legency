@@ -1,21 +1,19 @@
 package net.zhengzhengyiyi.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.input.KeyInput;
-import net.minecraft.registry.Registries;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.gui.widget.VoteListWidget;
+import net.zhengzhengyiyi.vote.ClientVoteManager;
+import net.zhengzhengyiyi.vote.VoteRegistries;
 
-import java.util.Comparator;
 import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
@@ -45,17 +43,17 @@ public class PendingVoteScreen extends Screen {
 
     @Override
     protected void init() {
-        this.voteList = new VoteListWidget(this.client, this.width, this.height, 68, getListBottom());
+        this.voteList = new VoteListWidget(new ClientVoteManager(), this, this.client, this.width, this.height, 68, 0, getListBottom());
         this.addSelectableChild(this.voteList);
 
         int x = getBackgroundX() + 3;
         int y = getListBottom() + 12;
 
         this.addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, button -> {
-            Stream<Text> rulesStream = Registries.field_44443.streamEntries()
-                    .sorted(Comparator.comparing(entry -> entry.registryKey().getValue()))
-                    .flatMap(entry -> entry.value().getAppliedRules())
-                    .map(rule -> rule.getDisplayText());
+            Stream<String> rulesStream = VoteRegistries.VOTE_RULE_TYPE.streamEntries()
+//                    .sorted(Comparator.comparing(entry -> entry.registryKey().getValue()))
+//                    .flatMap(entry -> entry.value().getAppliedRules())
+                    .map(rule -> rule.getIdAsString());
             
             this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, 
                 ReportEvidenceScreen.ReportEntryData.createFromStream(rulesStream)));
@@ -90,8 +88,8 @@ public class PendingVoteScreen extends Screen {
     }
 
     public void onVotesUpdated() {
-        if (this.voteList.isEmpty()) {
+//        if (this.voteList.isEmpty()) {
             this.close();
-        }
+//        }
     }
 }

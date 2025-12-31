@@ -21,7 +21,7 @@ public class ClientVoteManager {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final VoteSeparator SEPARATOR = new VoteSeparator(46, Style.EMPTY.withColor(Formatting.WHITE));
 
-    private final Map<UUID, VoteEntry> activeVotes = new HashMap<>();
+    public final Map<UUID, VoteEntry> activeVotes = new HashMap<>();
     private final Int2ObjectMap<ResponseHandler> pendingRequests = new Int2ObjectOpenHashMap<>();
     private int requestCounter;
 
