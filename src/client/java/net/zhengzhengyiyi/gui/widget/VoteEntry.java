@@ -108,7 +108,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0) {
             if (this.definition != null) {
-                this.client.setScreen(new VoteScreen(MinecraftClient.getInstance().player.getInventory(), this.voteId, this.manager, null));
+                this.client.setScreen(new VoteScreen(client.player.playerScreenHandler, client.player.getInventory(), this.voteId, this.manager, null));
             }
             return true;
         }

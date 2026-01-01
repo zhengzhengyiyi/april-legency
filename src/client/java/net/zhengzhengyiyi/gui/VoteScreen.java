@@ -11,17 +11,22 @@ import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.screen.narration.NarrationMessageBuilder;
 import net.minecraft.client.gui.widget.PressableWidget;
 import net.minecraft.client.input.AbstractInput;
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 
 import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.util.collection.DefaultedList;
 
 import java.util.*;
 import java.util.Map.Entry;
@@ -32,7 +37,7 @@ import net.zhengzhengyiyi.vote.VoteOptionId;
 
 @Environment(EnvType.CLIENT)
 public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
-    private static final Identifier BACKGROUND_TEXTURE = Identifier.of("minecraft", "textures/gui/voting.png");
+    private static final Identifier BACKGROUND_TEXTURE = Identifier.of("zhengzhengyiyi", "textures/gui/voting.png");
     private static final Text VOTED_TEXT = Text.translatable("vote.voted").formatted(Formatting.GREEN);
     private static final Text NO_MORE_VOTES_TEXT = Text.translatable("vote.no_more_votes");
 
@@ -55,8 +60,8 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
 //    public record OptionData(int id, Text display, VoteDefinition.Option data) {}
     public record OptionData(VoteOptionId id, Text display, VoteDefinition.Option data) {}
 
-    public VoteScreen(PlayerInventory inventory, UUID voteId, ClientVoteManager manager, ClientVoteManager.VoteEntry entry) {
-        super(new VoteScreenHandler(inventory.player.playerScreenHandler), inventory, Text.translatable("gui.voting.title"));
+    public VoteScreen(PlayerScreenHandler playerScreenHandler, PlayerInventory inventory, UUID voteId, ClientVoteManager manager, ClientVoteManager.VoteEntry entry) {
+        super(new VoteScreenHandler(playerScreenHandler), inventory, Text.translatable("gui.voting.title"));
 //        this.voteId = voteId;
         this.manager = manager;
         this.voteEntry = entry;
@@ -223,16 +228,36 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
 
     @Environment(EnvType.CLIENT)
     public static class VoteScreenHandler extends ScreenHandler {
-        private final ScreenHandler playerHandler;
+        private final ScreenHandler parentHandler;
+        public final DefaultedList<ItemStack> itemList = DefaultedList.of();
 
-        public VoteScreenHandler(PlayerScreenHandler playerHandler) {
+        public VoteScreenHandler(PlayerScreenHandler playerScreenHandler) {
             super(null, 0);
-            this.playerHandler = playerHandler;
-        }
+            this.parentHandler = playerScreenHandler;
 
-        @Override
-        public ItemStack quickMove(PlayerEntity player, int slot) {
-            return ItemStack.EMPTY;
+            for (int i = 0; i < playerScreenHandler.slots.size(); i++) {
+                int posX, posY;
+
+                if ((i >= 5 && i < 9) || (i >= 0 && i < 5) || i == 45) {
+                    posX = -2000;
+                    posY = -2000;
+                } else {
+                    int index = i - 9;
+                    int column = index % 9;
+                    int row = index / 9;
+
+                    posX = 36 + column * 18;
+
+                    if (i >= 36) {
+                        posY = 195;
+                    } else {
+                        posY = 137 + row * 18;
+                    }
+                }
+
+                Slot originalSlot = playerScreenHandler.slots.get(i);
+                this.slots.add(new CreativeSlot(originalSlot, i, posX, posY));
+            }
         }
 
         @Override
@@ -241,13 +266,116 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
         }
 
         @Override
+        public ItemStack quickMove(PlayerEntity player, int index) {
+            if (index >= this.slots.size() - 9 && index < this.slots.size()) {
+                Slot slot = this.slots.get(index);
+                if (slot != null && slot.hasStack()) {
+                    slot.setStack(ItemStack.EMPTY);
+                }
+            }
+            return ItemStack.EMPTY;
+        }
+
+        @Override
         public ItemStack getCursorStack() {
-            return this.playerHandler.getCursorStack();
+            return this.parentHandler.getCursorStack();
         }
 
         @Override
         public void setCursorStack(ItemStack stack) {
-            this.playerHandler.setCursorStack(stack);
+            this.parentHandler.setCursorStack(stack);
+        }
+    }
+    
+    @Environment(EnvType.CLIENT)
+    static class CreativeSlot extends Slot {
+        final Slot slot;
+
+        public CreativeSlot(Slot slot, int invSlot, int x, int y) {
+            super(slot.inventory, invSlot, x, y);
+            this.slot = slot;
+        }
+
+        @Override
+        public void onTakeItem(PlayerEntity player, ItemStack stack) {
+            this.slot.onTakeItem(player, stack);
+        }
+
+        @Override
+        public boolean canInsert(ItemStack stack) {
+            return this.slot.canInsert(stack);
+        }
+
+        @Override
+        public ItemStack getStack() {
+            return this.slot.getStack();
+        }
+
+        @Override
+        public boolean hasStack() {
+            return this.slot.hasStack();
+        }
+
+        @Override
+        public void setStack(ItemStack stack, ItemStack previousStack) {
+            this.slot.setStack(stack, previousStack);
+        }
+
+        @Override
+        public void setStackNoCallbacks(ItemStack stack) {
+            this.slot.setStackNoCallbacks(stack);
+        }
+
+        @Override
+        public void markDirty() {
+            this.slot.markDirty();
+        }
+
+        @Override
+        public int getMaxItemCount() {
+            return this.slot.getMaxItemCount();
+        }
+
+        @Override
+        public int getMaxItemCount(ItemStack stack) {
+            return this.slot.getMaxItemCount(stack);
+        }
+
+        @Override
+        @Nullable
+        public Identifier getBackgroundSprite() {
+            return this.slot.getBackgroundSprite();
+        }
+
+        @Override
+        public ItemStack takeStack(int amount) {
+            return this.slot.takeStack(amount);
+        }
+
+        @Override
+        public boolean isEnabled() {
+            return this.slot.isEnabled();
+        }
+
+        @Override
+        public boolean canTakeItems(PlayerEntity playerEntity) {
+            return this.slot.canTakeItems(playerEntity);
+        }
+    }
+
+    @Environment(EnvType.CLIENT)
+    static class LockableSlot extends Slot {
+        public LockableSlot(Inventory inventory, int i, int j, int k) {
+            super(inventory, i, j, k);
+        }
+
+        @Override
+        public boolean canTakeItems(PlayerEntity playerEntity) {
+            ItemStack itemStack = this.getStack();
+            return super.canTakeItems(playerEntity) && !itemStack.isEmpty()
+                    ? itemStack.isItemEnabled(playerEntity.getEntityWorld().getEnabledFeatures()) 
+                      && !itemStack.contains(DataComponentTypes.CREATIVE_SLOT_LOCK)
+                    : itemStack.isEmpty();
         }
     }
 }

@@ -36,13 +36,10 @@ public class ReportEvidenceScreen extends Screen {
 
     @Override
     protected void init() {
-        this.listWidget = new EvidenceListWidget(this.client, this.width, this.height, 40, this.height - 40);
-        this.addSelectableChild(this.listWidget);
-
         int buttonY = this.height - 28;
         int centerX = this.width / 2;
-
-        this.addDrawableChild(ButtonWidget.builder(COPY_TEXT, button -> {
+        
+    	this.addDrawableChild(ButtonWidget.builder(COPY_TEXT, button -> {
             String content = this.entries.stream()
                     .map(data -> data.contents().getString())
                     .collect(Collectors.joining("\n"));
@@ -51,23 +48,45 @@ public class ReportEvidenceScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close())
                 .dimensions(centerX + 5, buttonY, 150, 20).build());
+        
+        this.listWidget = new EvidenceListWidget(this.client, this.width, this.height - 50, 40, this.height - 50);
+        this.addSelectableChild(this.listWidget);
     }
-
+    
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
-        this.listWidget.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 0xFFFFFF);
         super.render(context, mouseX, mouseY, delta);
+
+        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 0xFFFFFF);
+        context.enableScissor(0, 40, this.width, this.height - 40);
+        this.listWidget.render(context, mouseX, mouseY, delta);
+        
+        context.disableScissor();
+    }
+    
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    	
     }
 
     @Environment(EnvType.CLIENT)
     public class EvidenceListWidget extends AlwaysSelectedEntryListWidget<EvidenceListWidget.Entry> {
         public EvidenceListWidget(MinecraftClient client, int width, int height, int top, int bottom) {
-            super(client, width, height, top, bottom);
+//            super(client, width, height, top, bottom);
+        	super(client, width, height, top, 20);
             for (ReportEntryData data : ReportEvidenceScreen.this.entries) {
                 this.addEntry(new Entry(data));
             }
+        }
+        
+        @Override
+        public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    		this.drawMenuListBackground(context);
+    		this.renderList(context, mouseX, mouseY, deltaTicks);
+    		this.drawHeaderAndFooterSeparators(context);
+    		this.drawScrollbar(context, mouseX, mouseY);
+    		
+//    		context.drawText(textRenderer, "HelloWorld", 20, 20, 0xFF000000, false);
         }
 
         @Override
@@ -82,12 +101,16 @@ public class ReportEvidenceScreen extends Screen {
             public Entry(ReportEntryData data) {
                 this.data = data;
             }
-
+            
             @Override
             public void render(DrawContext context, int x, int y, boolean hovered, float deltaTicks) {
-                int xOffset = x + 1 + (this.data.index() > 0 ? 16 : 0);
-                int yOffset = y + (getHeight() - 9) / 2;
-                context.drawTextWithShadow(ReportEvidenceScreen.this.textRenderer, this.data.contents(), xOffset, yOffset, 0xFFFFFF);
+                int xOffset = this.getX();
+                int yOffset = this.getY() + 10;
+                
+//                System.out.println(this.getX() + " " + this.getY());
+                
+//                context.drawTextWithShadow(ReportEvidenceScreen.this.textRenderer, this.data.contents().getString(), xOffset, yOffset, 0xFFFFFF);
+                context.drawTextWithShadow(ReportEvidenceScreen.this.textRenderer, this.data.contents(), xOffset, yOffset, 0xFF000000);
             }
 
             @Override

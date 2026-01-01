@@ -3,6 +3,7 @@ package net.zhengzhengyiyi.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.tooltip.Tooltip;
 import net.minecraft.client.gui.widget.AlwaysSelectedEntryListWidget;
@@ -60,5 +61,11 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
     @Override
     protected void enableScissor(DrawContext context) {
         context.enableScissor(this.getX(), this.getY() + PADDING, this.getRight(), this.getBottom());
+    }
+    
+    @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        if (!this.isMouseOver(click.x(), click.y())) return false;
+        return super.mouseClicked(click, doubled);
     }
 }

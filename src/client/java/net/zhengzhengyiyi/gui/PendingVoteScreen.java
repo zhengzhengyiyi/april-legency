@@ -10,15 +10,15 @@ import net.minecraft.client.input.KeyInput;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
+import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.widget.VoteListWidget;
-import net.zhengzhengyiyi.vote.ClientVoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 
 import java.util.stream.Stream;
 
 @Environment(EnvType.CLIENT)
 public class PendingVoteScreen extends Screen {
-    public static final Identifier BACKGROUND_TEXTURE = Identifier.of("zhengzhengyiyi", "gui/votes");
+    public static final Identifier BACKGROUND_TEXTURE = Identifier.of("zhengzhengyiyi", "textures/gui/votes.png");
     public static final Text SHOW_RULES_TEXT = Text.translatable("vote.show_current_rules");
     public static final Text CURRENT_RULES_TEXT = Text.translatable("vote.current_rules");
     public static final Text TITLE = Text.translatable("gui.pending_votes.title");
@@ -43,13 +43,10 @@ public class PendingVoteScreen extends Screen {
 
     @Override
     protected void init() {
-        this.voteList = new VoteListWidget(new ClientVoteManager(), this, this.client, this.width, this.height, 68, 0, getListBottom());
-        this.addSelectableChild(this.voteList);
-
         int x = getBackgroundX() + 3;
         int y = getListBottom() + 12;
-
-        this.addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, button -> {
+        
+    	this.addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, button -> {
             Stream<String> rulesStream = VoteRegistries.VOTE_RULE_TYPE.streamEntries()
 //                    .sorted(Comparator.comparing(entry -> entry.registryKey().getValue()))
 //                    .flatMap(entry -> entry.value().getAppliedRules())
@@ -61,6 +58,9 @@ public class PendingVoteScreen extends Screen {
 
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close())
                 .dimensions(x, y + 22, 236, 20).build());
+//        this.voteList = new VoteListWidget(new ClientVoteManager(), this, this.client, this.width, this.height, 68, 0, getListBottom());
+        this.voteList = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.player.networkHandler).getVoteManager(), this, this.client, this.width, this.height, 68, getListBottom(), 33);
+        this.addSelectableChild(this.voteList);
     }
 
     @Override
@@ -68,12 +68,25 @@ public class PendingVoteScreen extends Screen {
         super.renderBackground(context, mouseX, mouseY, delta);
         int x = getBackgroundX() + 3;
         
-        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, x, 64, 236, getBackgroundHeight() + 16);
+//        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, x, 64, 236, getBackgroundHeight() + 16);
+        context.drawTexture(
+                RenderPipelines.GUI_TEXTURED,
+                BACKGROUND_TEXTURE,
+                x,
+                64,
+                0.0F,
+                0.0F,
+                236,
+                getBackgroundHeight() + 16,
+                256,
+                256
+            );
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context, mouseX, mouseY, delta);
+//        this.renderBackground(context, mouseX, mouseY, delta);
+    	
         this.voteList.render(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
     }
