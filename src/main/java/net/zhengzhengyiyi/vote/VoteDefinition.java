@@ -4,15 +4,14 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.*;
 
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.rules.options.BigMoonRule;
 import net.zhengzhengyiyi.world.Vote;
-import net.zhengzhengyiyi.world.VoteRule;
 
 /**
  * Defines the content and structure of a vote.
@@ -21,7 +20,8 @@ import net.zhengzhengyiyi.world.VoteRule;
  */
 public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
 
-    public static final Codec<VoteDefinition> CODEC = RecordCodecBuilder.create(instance -> 
+    public static final Codec<VoteDefinition> CODEC = 
+    		RecordCodecBuilder.create(instance -> 
         instance.group(
             VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
             Codec.unboundedMap(VoteOptionId.CODEC, Option.CODEC).fieldOf("options").forGetter(VoteDefinition::options)
@@ -85,48 +85,61 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * <p>
      * Corresponds to the 'a' method in bgp for generating new apply votes.
      */
+//    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
+////        Random random = context.random();
+//        int count = context.getOptionCount();
+//        
+//        List<List<VoteValue>> proposals = new ArrayList<>();
+//        
+//        for (int i = 0; i < count; i++) {
+////          VoteRule rule = VoteRules.getRandomRule(random);
+////        	Vote rule = VoteRules.getRandomRule(context.random()).value();
+//            List<VoteValue> values = new ArrayList<>();
+//            values.add(new VoteValue() {
+//				@Override
+//				public Vote getType() {
+//					return new BigMoonRule();
+//				}
+//
+//				@Override
+//				public void apply(VoterAction action) {
+//					
+//				}
+//
+//				@Override
+//				public Text getDescription(VoterAction action) {
+//					return Text.of("aaa");
+//				}
+//            	
+//            });
+//            proposals.add(values);
+//        }
+//
+//        if (proposals.isEmpty()) return Optional.empty();
+//
+//        if (context.allowNothingOption() || proposals.size() == 1) {
+//            proposals.add(List.of());
+//        }
+//
+//        List<Option> optionList = proposals.stream().map(values -> {
+//            List<Effect> effects = values.stream().map(v -> new Effect(v, VoterAction.APPROVE)).toList();
+//            return new Option(createOptionText(effects), effects);
+//        }).toList();
+//
+//        return Optional.of(finalizeProposal(id, server, context, optionList));
+//    }
+    
     public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
-//        Random random = context.random();
-        int count = context.getOptionCount();
+        Vote rule = VoteRules.AIR_BLOCKS; 
         
-        List<List<VoteValue>> proposals = new ArrayList<>();
+        List<VoteValue> values = rule.generateOptions(server, context.random(), 1).toList();
         
-        for (int i = 0; i < count; i++) {
-//          VoteRule rule = VoteRules.getRandomRule(random);
-//        	Vote rule = VoteRules.getRandomRule(context.random()).value();
-            List<VoteValue> values = new ArrayList<>();
-//          values.add(new VoteValue(rule, rule.getRandomValue(random)));
-            values.add(new VoteValue() {
+        if (values.isEmpty()) return Optional.empty();
 
-				@Override
-				public Vote getType() {
-					return null;
-				}
-
-				@Override
-				public void apply(VoterAction action) {
-					
-				}
-
-				@Override
-				public Text getDescription(VoterAction action) {
-					return null;
-				}
-            	
-            });
-            proposals.add(values);
-        }
-
-        if (proposals.isEmpty()) return Optional.empty();
-
-        if (context.allowNothingOption() || proposals.size() == 1) {
-            proposals.add(List.of());
-        }
-
-        List<Option> optionList = proposals.stream().map(values -> {
-            List<Effect> effects = values.stream().map(v -> new Effect(v, VoterAction.APPROVE)).toList();
-            return new Option(createOptionText(effects), effects);
-        }).toList();
+        List<Option> optionList = List.of(
+            new Option(Text.literal("test"), 
+            List.of(new Effect(values.get(0), VoterAction.APPROVE)))
+        );
 
         return Optional.of(finalizeProposal(id, server, context, optionList));
     }
@@ -166,7 +179,6 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * Official Name: bgp$c
      */
     public record Context(BlockPos pos, float difficulty, List<VoteCost> costs, int durationTicks, int maxOptions, Random random, boolean isRevokeMode) {
-        
         public int getDuration() { return durationTicks * 1200; }
         public int getOptionCount() { return maxOptions; }
         public boolean allowNothingOption() { return true; }

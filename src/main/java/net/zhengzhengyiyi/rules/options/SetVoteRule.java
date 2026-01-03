@@ -8,7 +8,6 @@ import java.util.Set;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
@@ -20,7 +19,8 @@ public abstract class SetVoteRule<T> implements Vote {
 
     protected abstract Text getElementDescription(T element);
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public Stream getActiveOptions() {
         return this.activeElements.stream().map(element -> new SetVoteRule.Option(element));
     }
@@ -80,7 +80,7 @@ public abstract class SetVoteRule<T> implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return this.getDescription(action);
+			return Text.of("needs a short description");
 		}
     }
 }

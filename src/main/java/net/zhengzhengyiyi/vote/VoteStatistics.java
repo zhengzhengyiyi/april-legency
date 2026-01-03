@@ -92,7 +92,8 @@ public record VoteStatistics(Map<VoteOptionId, VoteOptionStatistics> options) {
          * It uses the score/count from the ChoiceSummary for comparison.
          * Corresponds to 'static final Comparator<a> a' in bytecode.
          */
-        public static final Comparator COMPARATOR = Comparator.comparing(
+        @SuppressWarnings("rawtypes")
+		public static final Comparator COMPARATOR = Comparator.comparing(
             OptionResult::summary,
             VoteResults.ChoiceSummary.COMPARATOR
         );

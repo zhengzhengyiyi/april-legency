@@ -20,7 +20,6 @@ import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.options.*;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.world.Vote;
-import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.world.WorldShape;
 import net.minecraft.util.collection.WeightedList;
 
@@ -287,7 +286,7 @@ public class VoteRules {
 
 		@Override
 		protected Text getElementDescription(EntityReference element) {
-			return null;
+			return Text.translatable("rule.ai_attack", element.displayName());
 		}
 	});
 
@@ -486,8 +485,9 @@ public class VoteRules {
 		return ClampedIntProvider.create(UniformIntProvider.create(-padding, 100 + padding), 0, 100);
 	}
 
+	@SuppressWarnings("unchecked")
 	private static <R extends Vote> R register(String name, int weight, R rule) {
-		Reference<Vote> ref = Registry.registerReference(VoteRegistries.VOTE_RULE_TYPE, Identifier.of(name), rule);
+		Reference<Vote> ref = Registry.registerReference(VoteRegistries.VOTE_RULE_TYPE, Identifier.of("minecraft", name), rule);
 		POOL_BUILDER.add((Reference<Vote>)(Object)ref, weight);
 		return rule;
 	}

@@ -128,10 +128,7 @@ public class VoteCostRule implements Vote {
             };
         }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
 
 		@Override
 		public Text getDescription(VoterAction action) {

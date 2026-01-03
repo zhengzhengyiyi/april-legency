@@ -124,9 +124,6 @@ public abstract class VoteRule<T> implements Vote {
             return VoteRule.this.getDisplayText(this.value);
         }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
     }
 }

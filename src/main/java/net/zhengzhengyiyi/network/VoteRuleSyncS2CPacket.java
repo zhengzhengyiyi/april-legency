@@ -16,7 +16,7 @@ import java.util.List;
  * S2C Packet used to sync active vote rules/effects to the client.
  * <p>
  * Official Name: xi
- * Intermediary Name: net.minecraft.class_8361
+ * Intermediary Name: net.minecraft.class_8479
  */
 public record VoteRuleSyncS2CPacket(
     boolean clearExisting, 

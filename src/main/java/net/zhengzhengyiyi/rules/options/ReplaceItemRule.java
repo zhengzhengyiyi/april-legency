@@ -1,9 +1,10 @@
 package net.zhengzhengyiyi.rules.options;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.List;
 import java.util.Optional;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
@@ -20,11 +21,8 @@ import net.minecraft.stat.Stats;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.rules.options.VoteEffect;
-import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 
 public class ReplaceItemRule extends VoteEffect.Weighted {
     private final Codec<ReplaceItemRule.Option> optionCodec = RecordCodecBuilder.create(
@@ -125,10 +123,7 @@ public class ReplaceItemRule extends VoteEffect.Weighted {
             }
         }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
 
 		@Override
 		public Text getDescription(VoterAction action) {

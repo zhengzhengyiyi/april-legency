@@ -50,10 +50,7 @@ public class BooleanVoteRule implements Vote {
 //            return BooleanVoteRule.this.description;
 //        }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
 
 		@Override
 		public Text getDescription(VoterAction action) {

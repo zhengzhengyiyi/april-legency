@@ -25,10 +25,7 @@ public class TheJokeRule extends VoteEffect {
             server.getPlayerManager().sendToAll(new WorldEventS2CPacket(1506, BlockPos.ORIGIN, 0, true));
         }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
 
 		@Override
 		public Text getDescription(VoterAction action) {

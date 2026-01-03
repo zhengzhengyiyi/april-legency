@@ -1,11 +1,12 @@
 package net.zhengzhengyiyi.rules;
 
-import com.mojang.serialization.Codec;
 import java.util.stream.Stream;
+
+import com.mojang.serialization.Codec;
+
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.text.Text;
-import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
@@ -83,9 +84,6 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
             return RegistryEntryVoteRule.this.getOptionDescription(this.key);
         }
 
-		@Override
-		public Vote getType() {
-			return null;
-		}
+		 
     }
 }

@@ -1,6 +1,8 @@
 package net.zhengzhengyiyi.world;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+
 import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.server.MinecraftServer;
@@ -54,7 +56,9 @@ public interface Vote {
     /**
      * Gets the codec used for serializing this vote's options.
      */
-    Codec<VoteValue> getOptionCodec();
+    default Codec<VoteValue> getOptionCodec() {
+    	return (Codec<VoteValue>)(Object)MapCodec.unitCodec(this);
+    }
 
     /**
      * Gets the current active options for this vote (options currently winning or selected).
