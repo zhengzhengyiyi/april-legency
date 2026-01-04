@@ -27,7 +27,7 @@ public enum TieBreaker implements StringIdentifiable {
 	NONE("none");
 
     public static final Codec<TieBreaker> CODEC = StringIdentifiable.createCodec(TieBreaker::values);
-    private final String id;
+    public final String id;
 
     TieBreaker(String id) {
         this.id = id;

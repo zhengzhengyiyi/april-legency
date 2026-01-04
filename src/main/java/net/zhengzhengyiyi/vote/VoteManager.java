@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.network.VoterData;
 import net.zhengzhengyiyi.world.Vote;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.registry.Registry;
@@ -58,6 +59,10 @@ public class VoteManager {
             this.tracker.export(),
             this.totalProposalsCount
         );
+    }
+    
+    public VoterData method_50566(VoteOptionId arg) {
+    	return this.tracker.method_50590(arg, false);
     }
 
     public void tick(long currentTime, MinecraftServer server, VoteDefinition.Context context, Consumer<VoteResults> onFinish, BiConsumer<UUID, VoteDefinition> onNewProposal) {

@@ -57,7 +57,7 @@ public class BigMoonRule extends NumberVoteRule.IntegerRule {
 
 			@Override
 			public Vote getType() {
-				return null;
+				return BigMoonRule.this;
 			}
 
 			@Override

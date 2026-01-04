@@ -22,9 +22,12 @@ import net.minecraft.screen.slot.Slot;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 
 import org.jetbrains.annotations.Nullable;
+
+import com.mojang.datafixers.DataFixUtils;
 
 import net.minecraft.util.collection.DefaultedList;
 
@@ -120,8 +123,14 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
     }
 
     private void handleVoteSubmit() {
-        if (this.selectedOption != null) {
-            this.manager.registerCallback((id, result) -> VoteScreen.this.statusText = result.orElse(VOTED_TEXT));
+//        if (this.selectedOption != null) {
+//            this.manager.registerCallback((id, result) -> VoteScreen.this.statusText = result.orElse(VOTED_TEXT));
+//        }
+    	if (this.selectedOption != null) {
+            @SuppressWarnings("unused")
+			int callbackId = ((VoteClientPlayNetworkHandler)client.getNetworkHandler()).method_51006(this.selectedOption.id(), (id, response) -> {
+                this.statusText = (Text) DataFixUtils.orElse(response, VOTED_TEXT);
+            });
         }
     }
 

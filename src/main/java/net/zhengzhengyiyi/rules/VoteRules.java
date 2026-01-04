@@ -18,6 +18,7 @@ import net.minecraft.util.math.intprovider.ClampedNormalIntProvider;
 import net.minecraft.util.math.intprovider.UniformIntProvider;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.options.*;
+import net.zhengzhengyiyi.vote.TieBreaker;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.world.WorldShape;
@@ -136,9 +137,15 @@ public class VoteRules {
 	public static final SpecialRecipeRule SPECIAL_RECIPE = register("special_recipe", 1000, new SpecialRecipeRule());
 //	public static final FootprintsRule FOOTPRINTS = register("footprints", 500, new FootprintsRule());
 
-	public static final EnumVoteRule<TieStrategy> TIE_STRATEGY = register("tie_strategy", 500, new EnumVoteRule<>(TieStrategy.values(), TieStrategy.PICK_RANDOM, TieStrategy.CODEC) {
-		protected Text getOptionDescription(TieStrategy val) {
-			return val.getDescription();
+//	public static final EnumVoteRule<TieStrategy> TIE_STRATEGY = register("tie_strategy", 500, new EnumVoteRule<>(TieStrategy.values(), TieStrategy.PICK_RANDOM, TieStrategy.CODEC) {
+//		protected Text getOptionDescription(TieStrategy val) {
+//			return val.getDescription();
+//		}
+//	});
+	
+	public static final EnumVoteRule<TieBreaker> TIE_STRATEGY = register("tie_strategy", 500, new EnumVoteRule<>(TieBreaker.values(), TieBreaker.RANDOM, TieBreaker.CODEC) {
+		protected Text getOptionDescription(TieBreaker val) {
+			return Text.translatable("rule.tie_strategy." + val.id);
 		}
 	});
 

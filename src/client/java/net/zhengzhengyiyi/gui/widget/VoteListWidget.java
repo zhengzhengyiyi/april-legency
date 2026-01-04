@@ -19,14 +19,19 @@ import java.util.List;
 public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
     private static final Tooltip ALREADY_VOTED_TOOLTIP = Tooltip.of(Text.translatable("vote.no_more_votes"));
     public static final int PADDING = 4;
+    
+    public List<VoteEntry> entryList;
 
     public VoteListWidget(ClientVoteManager manager, PendingVoteScreen screen, MinecraftClient client, int width, int height, int top, int bottom, int entryHeight) {
         super(client, width, height, top, bottom);
+
 //        this.setRenderSelection(false);
 //        this.setRenderBackground(false);
 
 //        UUID playerUuid = client.player.getUuid();
-        List<VoteEntry> entryList = new ArrayList<>();
+        entryList = new ArrayList<>();
+        
+//        System.out.println(manager.activeVotes);
 
         manager.activeVotes.forEach((voteId, entry) -> {
 //            boolean hasVoted = entry.definition();

@@ -1,5 +1,7 @@
 package net.zhengzhengyiyi.gui;
 
+import java.util.List;
+import java.util.stream.Collectors;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -12,21 +14,24 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 @Environment(EnvType.CLIENT)
 public class ReportEvidenceScreen extends Screen {
+    private static final int HEADER_HEIGHT = 40;
+    public static final int ROW_WIDTH = 320;
+//    private static final int MARGIN = 8;
+//    private static final int BUTTON_WIDTH = 150;
+//    private static final int BUTTON_HEIGHT = 20;
+    private static final int ITEM_HEIGHT = 20;
     private static final MutableText COPY_TEXT = Text.translatable("chat.copy");
+
     private final Screen parent;
-    private final List<ReportEntryData> entries;
+    private final List<VoteLine> voteLines;
     private EvidenceListWidget listWidget;
 
-    public ReportEvidenceScreen(Text title, Screen parent, List<ReportEntryData> entries) {
+    public ReportEvidenceScreen(Text title, Screen parent, List<VoteLine> voteLines) {
         super(title);
         this.parent = parent;
-        this.entries = entries;
+        this.voteLines = voteLines;
     }
 
     @Override
@@ -36,81 +41,85 @@ public class ReportEvidenceScreen extends Screen {
 
     @Override
     protected void init() {
-        int buttonY = this.height - 28;
-        int centerX = this.width / 2;
-        
-    	this.addDrawableChild(ButtonWidget.builder(COPY_TEXT, button -> {
-            String content = this.entries.stream()
-                    .map(data -> data.contents().getString())
-                    .collect(Collectors.joining("\n"));
-            this.client.keyboard.setClipboard(content);
-        }).dimensions(centerX - 155, buttonY, 150, 20).build());
+    	this.listWidget = new EvidenceListWidget(this.client, this.width, this.height, HEADER_HEIGHT, ITEM_HEIGHT, this.voteLines);
+//        this.listWidget.setRenderBackground(false);
+        addSelectableChild(this.listWidget);
 
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> this.close())
-                .dimensions(centerX + 5, buttonY, 150, 20).build());
-        
-        this.listWidget = new EvidenceListWidget(this.client, this.width, this.height - 50, 40, this.height - 50);
-        this.addSelectableChild(this.listWidget);
+        int leftButtonX = this.width / 2 - 150 - 5;
+        int rightButtonX = this.width / 2 + 5;
+        int buttonY = this.height - 20 - 8;
+
+        addDrawableChild(ButtonWidget.builder(ScreenTexts.DONE, button -> close())
+                .dimensions(rightButtonX, buttonY, 150, 20).build());
+
+        addDrawableChild(ButtonWidget.builder(COPY_TEXT, button -> {
+        	String fullText = this.voteLines.stream()
+        	        .<String>map(line -> ((VoteLine)line).contents().toString())
+        	        .collect(Collectors.joining("\n"));
+//            String fullText = this.voteLines.stream()
+//                    .map(line -> ((VoteLine)line).contents().getString())
+//                    .collect(Collectors.joining("\n"));
+            this.client.keyboard.setClipboard(fullText);
+        }).dimensions(leftButtonX, buttonY, 150, 20).build());
     }
-    
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 0xFFFFFF);
-        context.enableScissor(0, 40, this.width, this.height - 40);
         this.listWidget.render(context, mouseX, mouseY, delta);
-        
-        context.disableScissor();
-    }
-    
-    @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    	
+//        drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 16, 16777215);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Environment(EnvType.CLIENT)
-    public class EvidenceListWidget extends AlwaysSelectedEntryListWidget<EvidenceListWidget.Entry> {
-        public EvidenceListWidget(MinecraftClient client, int width, int height, int top, int bottom) {
-//            super(client, width, height, top, bottom);
-        	super(client, width, height, top, 20);
-            for (ReportEntryData data : ReportEvidenceScreen.this.entries) {
-                this.addEntry(new Entry(data));
+    public static class EvidenceListWidget extends AlwaysSelectedEntryListWidget<EvidenceListWidget.EvidenceEntry> {
+//        public EvidenceListWidget(MinecraftClient client, List<VoteLine> lines) {
+    	public EvidenceListWidget(MinecraftClient client, int width, int height, int top, int itemHeight, List<VoteLine> lines) {
+//            super(client, ReportEvidenceScreen.this.width, ReportEvidenceScreen.this.height, 40, ReportEvidenceScreen.this.height - 40, 18);
+        	super(client, width, height, top, itemHeight);
+            for (VoteLine line : lines) {
+                addEntry(new EvidenceEntry(line));
             }
-        }
-        
-        @Override
-        public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-    		this.drawMenuListBackground(context);
-    		this.renderList(context, mouseX, mouseY, deltaTicks);
-    		this.drawHeaderAndFooterSeparators(context);
-    		this.drawScrollbar(context, mouseX, mouseY);
-    		
-//    		context.drawText(textRenderer, "HelloWorld", 20, 20, 0xFF000000, false);
         }
 
         @Override
         public int getRowWidth() {
             return 320;
         }
+        
+        public static EvidenceListWidget createFromStream(java.util.stream.Stream<? extends VoteLine> stream) {
+            MinecraftClient client = MinecraftClient.getInstance();
+            int width = client.getWindow().getScaledWidth();
+            int height = client.getWindow().getScaledHeight();
+            int top = 40;
+            int itemHeight = 18;
+
+            List<VoteLine> lines = stream.map(line -> (VoteLine) line).collect(java.util.stream.Collectors.toList());
+            
+            return new EvidenceListWidget(client, width, height, top, itemHeight, lines);
+        }
+
+        protected int getScrollbarPositionX() {
+            return getRowRight() - 2;
+        }
 
         @Environment(EnvType.CLIENT)
-        public class Entry extends AlwaysSelectedEntryListWidget.Entry<Entry> {
-            private final ReportEntryData data;
+        public class EvidenceEntry extends AlwaysSelectedEntryListWidget.Entry<EvidenceEntry> {
+            private final VoteLine line;
 
-            public Entry(ReportEntryData data) {
-                this.data = data;
+            public EvidenceEntry(VoteLine line) {
+                this.line = line;
             }
-            
+
             @Override
-            public void render(DrawContext context, int x, int y, boolean hovered, float deltaTicks) {
-                int xOffset = this.getX();
-                int yOffset = this.getY() + 10;
-                
-//                System.out.println(this.getX() + " " + this.getY());
-                
-//                context.drawTextWithShadow(ReportEvidenceScreen.this.textRenderer, this.data.contents().getString(), xOffset, yOffset, 0xFFFFFF);
-                context.drawTextWithShadow(ReportEvidenceScreen.this.textRenderer, this.data.contents(), xOffset, yOffset, 0xFF000000);
+            public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
+                int renderX = getX() + 1 + (this.line.index() > 0L ? 16 : 0);
+                int renderY = getY() + (this.getHeight() - 9) / 2 + 1;
+                context.drawTextWithShadow(MinecraftClient.getInstance().textRenderer, this.line.contents(), renderX, renderY, -1);
+            }
+
+            @Override
+            public Text getNarration() {
+                return Text.translatable("narrator.select", this.line.original());
             }
 
             @Override
@@ -121,21 +130,6 @@ public class ReportEvidenceScreen extends Screen {
                 }
                 return false;
             }
-
-            @Override
-            public Text getNarration() {
-                return Text.translatable("narrator.select", this.data.original());
-            }
-        }
-    }
-
-    public record ReportEntryData(long index, Text contents, Text original) {
-    	public static List<ReportEntryData> createFromStream(Stream<String> stream) {
-            MutableText prefix = Text.literal("- ");
-            return stream.map(line -> {
-                Text textLine = Text.literal(line);
-                return new ReportEntryData(0, prefix.copy().append(textLine), textLine);
-            }).collect(Collectors.toList());
         }
     }
 }

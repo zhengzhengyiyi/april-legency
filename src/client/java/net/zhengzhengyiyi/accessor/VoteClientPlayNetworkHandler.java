@@ -2,6 +2,7 @@ package net.zhengzhengyiyi.accessor;
 
 import net.zhengzhengyiyi.network.*;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
+import net.zhengzhengyiyi.vote.VoteOptionId;
 
 public interface VoteClientPlayNetworkHandler {
 	public ClientVoteManager getVoteManager();
@@ -11,4 +12,5 @@ public interface VoteClientPlayNetworkHandler {
 	void onVoteStop(class_8482 packet);
 	void onVoteResponse(class_8480 packet);
 	void onVoteUpdate(VoteUpdateS2CPacket packet);
+	int method_51006(VoteOptionId arg, ClientVoteManager.ResponseHandler arg2);
 }

@@ -52,8 +52,15 @@ public class PendingVoteScreen extends Screen {
 //                    .flatMap(entry -> entry.value().getAppliedRules())
                     .map(rule -> rule.getIdAsString());
             
-            this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, 
-                ReportEvidenceScreen.ReportEntryData.createFromStream(rulesStream)));
+            java.util.List<VoteLine> ruleLines = rulesStream.map(str -> {
+                Text textContent = Text.literal(str);
+                net.minecraft.text.OrderedText ordered = textContent.asOrderedText();
+                
+                return new VoteLine(ordered, 0L, textContent);
+            }).collect(java.util.stream.Collectors.toList());
+            
+            this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, ruleLines));
+            			    
         }).dimensions(x, y, 236, 20).build());
 
         this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close())
@@ -101,8 +108,8 @@ public class PendingVoteScreen extends Screen {
     }
 
     public void onVotesUpdated() {
-//        if (this.voteList.isEmpty()) {
+        if (this.voteList.entryList.isEmpty()) {
             this.close();
-//        }
+        }
     }
 }

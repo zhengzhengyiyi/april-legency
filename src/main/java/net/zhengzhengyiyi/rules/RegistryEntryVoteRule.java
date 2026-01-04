@@ -12,12 +12,13 @@ import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
 
 public abstract class RegistryEntryVoteRule<T> implements Vote {
-    private final RegistryKey<? extends Registry<T>> registryKey;
+    public final RegistryKey<? extends Registry<T>> registryKey;
     final RegistryKey<T> defaultKey;
     RegistryKey<T> currentKey;
     private final Codec<VoteValue> optionCodec;
 
-    public RegistryEntryVoteRule(RegistryKey<? extends Registry<T>> registryKey, RegistryKey<T> defaultKey) {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	public RegistryEntryVoteRule(RegistryKey<? extends Registry<T>> registryKey, RegistryKey<T> defaultKey) {
         this.registryKey = registryKey;
         this.defaultKey = defaultKey;
         this.currentKey = defaultKey;
@@ -27,7 +28,8 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
         );
     }
 
-    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
     public Codec getOptionCodec() {
         return this.optionCodec;
     }
@@ -39,7 +41,8 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
     public RegistryKey<T> getDefaultKey() {
         return this.defaultKey;
     }
-
+    
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public Stream getActiveOptions() {
         return this.currentKey.equals(this.defaultKey) ? Stream.empty() : Stream.of(new RegistryEntryVoteRule.Option(this.currentKey));

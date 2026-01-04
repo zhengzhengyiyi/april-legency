@@ -6,7 +6,6 @@ import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * The results of a finished vote.
@@ -61,7 +60,8 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
     /**
      * Collects all possible options, including those with zero votes.
      */
-    private List<VoteStatistics.OptionResult> getAllOptions() {
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+	private List<VoteStatistics.OptionResult> getAllOptions() {
         Set<VoteOptionId> remaining = new HashSet<>(this.vote.options().keySet());
         List<VoteStatistics.OptionResult> list = new ArrayList(this.results.options().entrySet().stream()
                 .peek(entry -> remaining.remove(entry.getKey()))
@@ -122,7 +122,7 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
         boolean tieReported = false;
         int minVotes = this.getMinVotesRequired(feedback, config);
         
-        Comparator<Integer> scoreSort = config.reverseOrder() ? Comparator.reverseOrder() : Comparator.naturalOrder();
+//        Comparator<Integer> scoreSort = config.reverseOrder() ? Comparator.reverseOrder() : Comparator.naturalOrder();
 //        List<Map.Entry<Integer, List<VoteStatistics.OptionResult>>> sortedGroups = groupedByVotes.entrySet().stream()
 //                .filter(entry -> (int)entry.getKey() >= minVotes)
 //                .sorted(Map.Entry.comparingByKey(scoreSort))
@@ -226,7 +226,7 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
      * Official Name: bgl$b
      */
     public record ResultConfig(
-        BlockPos randomSource, boolean requiresAnyVote, int maxPossibleVoters,
+        net.minecraft.util.math.random.Random randomSource, boolean requiresAnyVote, int maxPossibleVoters,
         float quorumPercentage, float minVotePercentage, boolean showTotal,
         boolean showVoters, boolean allowRandomFallback, boolean reverseOrder,
         boolean skipEmpty, int maxWinners, TieBreaker tieBreaker

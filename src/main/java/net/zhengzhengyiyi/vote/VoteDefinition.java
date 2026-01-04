@@ -10,7 +10,6 @@ import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.VoteRules;
-import net.zhengzhengyiyi.rules.options.BigMoonRule;
 import net.zhengzhengyiyi.world.Vote;
 
 /**
@@ -19,7 +18,6 @@ import net.zhengzhengyiyi.world.Vote;
  * Official Name: bgp
  */
 public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
-
     public static final Codec<VoteDefinition> CODEC = 
     		RecordCodecBuilder.create(instance -> 
         instance.group(
@@ -153,7 +151,7 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         return Optional.empty(); 
     }
 
-    private static Text createOptionText(List<Effect> effects) {
+    public static Text createOptionText(List<Effect> effects) {
         return effects.stream()
             .map(Effect::getDescription)
             .reduce((first, second) -> Text.translatable("rule.connector", first, second))

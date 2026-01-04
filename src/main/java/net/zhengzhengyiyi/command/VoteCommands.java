@@ -164,6 +164,7 @@ public class VoteCommands {
         String json = VoteDefinition.CODEC.encodeStart(ops, definition)
             .result()
             .map(JsonElement::toString)
+//            .orElseThrow();
             .orElse("Error encoding");
         
         return Text.literal(id.toString())
@@ -198,8 +199,6 @@ public class VoteCommands {
 //        }
         
         try {
-        	// TODO
-        	
         	definition = VoteDefinition.proposeApply(id, server, context);
 	
 	        return definition.map(def -> {

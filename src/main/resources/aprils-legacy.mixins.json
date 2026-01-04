@@ -5,7 +5,9 @@
 	"mixins": [
 		"MinecraftServerMixin",
 		"RegistriesMixin",
-		"ClientPlayPacketListenerMixin"
+		"ClientPlayPacketListenerMixin",
+		"WorldSavePathMixin",
+		"LevelStorageSessionMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

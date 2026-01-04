@@ -93,11 +93,15 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
         long currentTime = (this.client.world != null) ? this.client.world.getTime() : 0L;
         return Math.max(0L, this.definition.metadata().getEndTime() - currentTime);
     }
-
-    @Override
+    
     public Text getNarration() {
-        return Text.literal("Vote entry for " + this.ruleName);
+    	return (Text)Text.literal("blah");
     }
+
+//    @Override
+//    public Text getNarration() {
+//        return Text.literal("Vote entry for " + this.ruleName);
+//    }
 
     public boolean isActive() {
         this.definition = this.manager.getVote(this.voteId).definition();
@@ -107,6 +111,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0) {
+        	System.out.println(this.definition);
             if (this.definition != null) {
                 this.client.setScreen(new VoteScreen(client.player.playerScreenHandler, client.player.getInventory(), this.voteId, this.manager, null));
             }

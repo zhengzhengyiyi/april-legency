@@ -56,7 +56,8 @@ public interface Vote {
     /**
      * Gets the codec used for serializing this vote's options.
      */
-    default Codec<VoteValue> getOptionCodec() {
+    @SuppressWarnings("unchecked")
+	default Codec<VoteValue> getOptionCodec() {
     	return (Codec<VoteValue>)(Object)MapCodec.unitCodec(this);
     }
 

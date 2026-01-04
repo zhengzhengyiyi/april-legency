@@ -5,6 +5,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
+import net.zhengzhengyiyi.network.VoterData;
 
 /**
  * official bgv
@@ -67,6 +68,15 @@ public class VoteTracker {
                 consumer.accept(id, choice);
             }
         });
+    }
+    
+    private static VoterData method_50594(Map<UUID, VoteChoice> map) {
+    	return new VoterData(Map.copyOf(map));
+    }
+    
+    public VoterData method_50590(VoteOptionId arg, boolean bl) {
+    	Map<UUID, VoteChoice> map = bl ? this.votesByOption.remove(arg) : this.votesByOption.get(arg);
+    	return (map != null) ? method_50594(map) : VoterData.EMPTY;
     }
 
     public interface VoteCost {

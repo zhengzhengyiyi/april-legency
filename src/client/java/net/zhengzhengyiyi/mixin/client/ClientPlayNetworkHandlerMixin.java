@@ -3,16 +3,21 @@ package net.zhengzhengyiyi.mixin.client;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemGroups;
+import net.minecraft.network.ClientConnection;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
+import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.gui.VoteScreen;
+import net.zhengzhengyiyi.gui.toast.VotingToast;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.network.VoteUpdateS2CPacket;
 import net.zhengzhengyiyi.network.*;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 import net.zhengzhengyiyi.vote.VoteMetadata;
+import net.zhengzhengyiyi.vote.VoteOptionId;
 
 import java.util.Map;
 import java.util.Objects;
@@ -20,7 +25,11 @@ import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientPlayNetworkHandler.class)
 public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandler {
@@ -28,10 +37,29 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     private ClientVoteManager voteManager = new ClientVoteManager();
     
     @Unique @Final private MinecraftClient client = MinecraftClient.getInstance();
+    
+    @Shadow
+    private Random random;
+    
+    @Shadow
+    private ClientConnection getConnection() {
+    	return null;
+    }
+    
+    @Unique
+    private ClientVoteManager field_44385 = new ClientVoteManager();
+    
+    @Unique
+    private int field_44386;
 
     @Unique
     public ClientVoteManager getVoteManager() {
         return this.voteManager;
+    }
+    
+    @Inject(method = "tick", at = @At("HEAD"))
+    private void tick(CallbackInfo ci) {
+    	this.method_51018();
     }
     
     @Override
@@ -44,8 +72,14 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
 //        if (packet.clearExisting()) {
 //            client.world.getRegistryManager().get(VoteRegistries.VOTE_RULE_TYPE).stream().forEach(rule -> rule.method_50203(true));
 //        }
-        packet.values().forEach(rule -> rule.apply(packet.action()));
+        packet.rules().forEach(rule -> rule.apply(packet.action()));
         ItemGroups.updateDisplayContext(this.client.world.getEnabledFeatures(), this.client.options.getOperatorItemsTab().getValue(), this.client.world.getRegistryManager());
+    }
+    
+    public int method_51006(VoteOptionId arg, ClientVoteManager.ResponseHandler arg2) {
+    	int i = this.field_44385.registerCallback(arg2);
+    	this.getConnection().send((Packet<?>)new class_8258(i, arg));
+    	return i;
     }
 
     @Override
@@ -167,4 +201,17 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
 	        }
         });
     }
+    
+    private void method_51018() {
+//    	if (this.client.options.field_44284) {
+//    		return;
+//    	}
+    	
+    	if (!this.field_44385.hasVotes()) {
+    	    return;
+    	}
+    	VotingToast.Priority.fromTime(this.field_44386++)
+	        .flatMap((VotingToast.Priority priority) -> VotingToast.create(this.client, this.random, priority))
+	        .ifPresent(toast -> this.client.getToastManager().add((net.minecraft.client.toast.Toast)toast));
+    	}
 }
