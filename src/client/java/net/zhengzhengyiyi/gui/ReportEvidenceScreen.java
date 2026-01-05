@@ -43,7 +43,6 @@ public class ReportEvidenceScreen extends Screen {
     protected void init() {
     	this.listWidget = new EvidenceListWidget(this.client, this.width, this.height, HEADER_HEIGHT, ITEM_HEIGHT, this.voteLines);
 //        this.listWidget.setRenderBackground(false);
-        addSelectableChild(this.listWidget);
 
         int leftButtonX = this.width / 2 - 150 - 5;
         int rightButtonX = this.width / 2 + 5;
@@ -61,6 +60,8 @@ public class ReportEvidenceScreen extends Screen {
 //                    .collect(Collectors.joining("\n"));
             this.client.keyboard.setClipboard(fullText);
         }).dimensions(leftButtonX, buttonY, 150, 20).build());
+        
+        addSelectableChild(this.listWidget);
     }
 
     @Override

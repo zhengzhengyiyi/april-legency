@@ -23,6 +23,7 @@ public class ClientVoteManager {
 
     public final Map<UUID, VoteEntry> activeVotes = new HashMap<>();
     private final Int2ObjectMap<ResponseHandler> pendingRequests = new Int2ObjectOpenHashMap<>();
+    
     private int requestCounter;
 
     @Environment(EnvType.CLIENT)

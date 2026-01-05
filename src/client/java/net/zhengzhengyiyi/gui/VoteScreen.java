@@ -44,8 +44,8 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
     private static final Text VOTED_TEXT = Text.translatable("vote.voted").formatted(Formatting.GREEN);
     private static final Text NO_MORE_VOTES_TEXT = Text.translatable("vote.no_more_votes");
 
-//    private final UUID voteId;
-    private final ClientVoteManager manager;
+    public final UUID voteId;
+    public final ClientVoteManager manager;
     private ClientVoteManager.VoteEntry voteEntry;
     private final List<OptionData> options;
     private final UUID playerUuid;
@@ -65,7 +65,7 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
 
     public VoteScreen(PlayerScreenHandler playerScreenHandler, PlayerInventory inventory, UUID voteId, ClientVoteManager manager, ClientVoteManager.VoteEntry entry) {
         super(new VoteScreenHandler(playerScreenHandler), inventory, Text.translatable("gui.voting.title"));
-//        this.voteId = voteId;
+        this.voteId = voteId;
         this.manager = manager;
         this.voteEntry = entry;
         this.playerUuid = inventory.player.getUuid();

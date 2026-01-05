@@ -68,7 +68,7 @@ public class PendingVoteEntry extends AlwaysSelectedEntryListWidget.Entry<Pendin
             vOffset = 0;
         }
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.BACKGROUND_TEXTURE, getX(), getY(), 0, 36 + vOffset, 220, 33, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.MENU_BACKGROUND_TEXTURE, getX(), getY(), 0, 36 + vOffset, 220, 33, 256, 256);
 
 //        int textX = getX() + 4;
         int textY = getY() + 4;

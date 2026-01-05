@@ -8,6 +8,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.world.Vote;
@@ -83,49 +84,6 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * <p>
      * Corresponds to the 'a' method in bgp for generating new apply votes.
      */
-//    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
-////        Random random = context.random();
-//        int count = context.getOptionCount();
-//        
-//        List<List<VoteValue>> proposals = new ArrayList<>();
-//        
-//        for (int i = 0; i < count; i++) {
-////          VoteRule rule = VoteRules.getRandomRule(random);
-////        	Vote rule = VoteRules.getRandomRule(context.random()).value();
-//            List<VoteValue> values = new ArrayList<>();
-//            values.add(new VoteValue() {
-//				@Override
-//				public Vote getType() {
-//					return new BigMoonRule();
-//				}
-//
-//				@Override
-//				public void apply(VoterAction action) {
-//					
-//				}
-//
-//				@Override
-//				public Text getDescription(VoterAction action) {
-//					return Text.of("aaa");
-//				}
-//            	
-//            });
-//            proposals.add(values);
-//        }
-//
-//        if (proposals.isEmpty()) return Optional.empty();
-//
-//        if (context.allowNothingOption() || proposals.size() == 1) {
-//            proposals.add(List.of());
-//        }
-//
-//        List<Option> optionList = proposals.stream().map(values -> {
-//            List<Effect> effects = values.stream().map(v -> new Effect(v, VoterAction.APPROVE)).toList();
-//            return new Option(createOptionText(effects), effects);
-//        }).toList();
-//
-//        return Optional.of(finalizeProposal(id, server, context, optionList));
-//    }
     
     public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
         Vote rule = VoteRules.AIR_BLOCKS; 
@@ -185,4 +143,60 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         public int maxApplyProposals() { return 3; }
         public int maxRevokeProposals() { return 1; }
     }
+    
+    
+    public record VoteSettings(
+    	    Random random,
+    	    float newVoteChancePerTick,
+    	    IntProvider optionsPerApproveVote,
+    	    IntProvider optionsPerRepealVote,
+    	    IntProvider durationMinutes,
+    	    float extraOptionChance,
+    	    int maxExtraOptions,
+    	    List<VoteCost> voteCost,
+    	    boolean alwaysAddOptOutVote,
+    	    int maxApproveVoteCount,
+    	    int maxRepealVoteCount,
+    	    float repealVoteChance
+    	) {
+    	public static VoteSettings create(Random random) {
+    		  return new VoteSettings(random, 1.0F / VoteRules.field_43690
+    		      
+    		      .method_50171().intValue(), VoteRules.field_43691
+    		      .method_50261(), VoteRules.field_43692
+    		      .method_50261(), VoteRules.field_43693
+    		      .method_50261(), VoteRules.field_43694
+    		      .method_50171().intValue() / 100.0F, VoteRules.field_43695
+    		      .method_50171().intValue(), VoteRules.field_43700
+    		      .method_50268(), 
+    		      !VoteRules.field_43697.method_50116(), VoteRules.field_43698
+    		      .method_50171().intValue(), VoteRules.field_43699
+    		      .method_50171().intValue(), VoteRules.field_43696
+    		      .method_50171().intValue() / 100.0F);
+    		}
+
+    	    public int getDurationTicks() {
+    	        return this.durationMinutes.get(this.random) * 1200;
+    	    }
+
+    	    public boolean shouldStartNewVote() {
+    	        return this.random.nextFloat() < this.newVoteChancePerTick;
+    	    }
+
+    	    public boolean shouldRepealVote() {
+    	        return this.random.nextFloat() < this.repealVoteChance;
+    	    }
+
+    	    public boolean shouldAddExtraOption() {
+    	        return this.random.nextFloat() < this.extraOptionChance;
+    	    }
+
+    	    public int getApproveOptionCount() {
+    	        return this.optionsPerApproveVote.get(this.random);
+    	    }
+
+    	    public int getRepealOptionCount() {
+    	        return this.optionsPerRepealVote.get(this.random);
+    	    }
+    	}
 }

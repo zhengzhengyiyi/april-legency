@@ -12,6 +12,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.SaveProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.network.VoterData;
@@ -57,9 +58,12 @@ import java.util.function.BooleanSupplier;
 public class MinecraftServerMixin implements VoteServer {
 	@Shadow
 	public void sendMessage(Text msg) {}
+	
+	@Shadow
+	protected SaveProperties saveProperties;
 
     @Unique
-    private VoteManager voteManager;
+    private final VoteManager voteManager = new VoteManager((MinecraftServer)(Object)this);
     
     @Shadow
     private int getCurrentPlayerCount() {
@@ -79,7 +83,7 @@ public class MinecraftServerMixin implements VoteServer {
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void onInit(CallbackInfo ci) {
-        this.voteManager = new VoteManager((MinecraftServer) (Object) this);
+//        this.voteManager = new VoteManager((MinecraftServer) (Object) this);
     }
 
     /**
@@ -174,21 +178,6 @@ public class MinecraftServerMixin implements VoteServer {
             	        });
             	    }
             	);
-
-//            this.voteManager.tick(
-//                currentTime, 
-//                server, 
-//                context,
-//                results -> {
-//                	VoteRuleSyncS2CPacket stopPacket = 
-//                            new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, Collections.emptyList());
-//                }, 
-//                (id, definition) -> {
-//                	net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket syncPacket = 
-//                            new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(false, VoterAction.APPROVE, definition.options().values().stream().sorted().toList());
-//                        server.getPlayerManager().sendToAll(syncPacket);
-//                }
-//            );
         }
     }
 
@@ -215,9 +204,16 @@ public class MinecraftServerMixin implements VoteServer {
     private VoteState method_51116() {
     	VoteState lv = ((VoteSession)(Object)session).loadVotes();
         this.voteManager.load(lv);
-        System.out.println("aaa");
 //    	this.voteManager.save();
         return lv;
+    }
+    
+    @Inject(method="tickWorlds", at = @At("HEAD"))
+    private void tickWorlds(BooleanSupplier shouldKeepTicking) {
+    	this.voteManager.method_50554(this.saveProperties
+    	        .getMainWorldProperties().getTime(), this, 
+    	        
+    	        VoteDefinition.class_8379.method_50547(this.random), arg -> method_51109(arg, true), this::method_51112);
     }
     
     public VoteResults method_51113(UUID uUID, boolean bl) {

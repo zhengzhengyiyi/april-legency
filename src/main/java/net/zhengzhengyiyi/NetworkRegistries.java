@@ -36,6 +36,9 @@ public class NetworkRegistries {
             return null;
         }
     };
+    
+    public static void init() {
+    }
 
     public static final NetworkRegistries PLAY = new NetworkRegistries(0, createPacketHandlerInitializer()
             .setup(NetworkSide.CLIENTBOUND, new PacketHandler<ClientPlayPacketListener>()

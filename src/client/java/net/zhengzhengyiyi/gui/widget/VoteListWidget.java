@@ -25,25 +25,19 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
     public VoteListWidget(ClientVoteManager manager, PendingVoteScreen screen, MinecraftClient client, int width, int height, int top, int bottom, int entryHeight) {
         super(client, width, height, top, bottom);
 
-//        this.setRenderSelection(false);
-//        this.setRenderBackground(false);
-
 //        UUID playerUuid = client.player.getUuid();
         entryList = new ArrayList<>();
-        
-//        System.out.println(manager.activeVotes);
 
         manager.activeVotes.forEach((voteId, entry) -> {
-//            boolean hasVoted = entry.definition();
         	boolean hasVoted = false;
             entryList.add(new VoteEntry(
-                client, 
-                manager, 
+                client,
+                manager,
                 hasVoted, 
                 this.getRowWidth(), 
                 voteId, 
                 screen, 
-                entry.definition(), 
+                entry.definition(),
                 hasVoted ? null : ALREADY_VOTED_TOOLTIP
             ));
         });

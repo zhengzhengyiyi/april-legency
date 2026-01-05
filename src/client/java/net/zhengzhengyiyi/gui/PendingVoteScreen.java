@@ -1,9 +1,9 @@
 package net.zhengzhengyiyi.gui;
 
+import java.util.Comparator;
+import java.util.stream.Stream;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.input.KeyInput;
@@ -13,28 +13,38 @@ import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.widget.VoteListWidget;
 import net.zhengzhengyiyi.vote.VoteRegistries;
-
-import java.util.stream.Stream;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.DrawContext;
 
 @Environment(EnvType.CLIENT)
 public class PendingVoteScreen extends Screen {
-    public static final Identifier BACKGROUND_TEXTURE = Identifier.of("zhengzhengyiyi", "textures/gui/votes.png");
-    public static final Text SHOW_RULES_TEXT = Text.translatable("vote.show_current_rules");
-    public static final Text CURRENT_RULES_TEXT = Text.translatable("vote.current_rules");
-    public static final Text TITLE = Text.translatable("gui.pending_votes.title");
+    protected static final Identifier VOTES_TEXTURE = Identifier.of("textures/gui/votes.png");
+    @SuppressWarnings("unused")
+	private static final int field_44337 = 8;
+    @SuppressWarnings("unused")
+	private static final int TEXTURE_WIDTH = 236;
+    @SuppressWarnings("unused")
+	private static final int field_44339 = 64;
+    public static final int field_44336 = 72;
+    @SuppressWarnings("unused")
+	private static final int WINDOW_WIDTH = 238;
+    @SuppressWarnings("unused")
+	private static final int field_44341 = 36;
+    private static final Text SHOW_RULES_TEXT = Text.translatable("vote.show_current_rules");
+    private static final Text CURRENT_RULES_TEXT = Text.translatable("vote.current_rules");
 
-    private VoteListWidget voteList;
+    private VoteListWidget voteListWidget;
 
     public PendingVoteScreen() {
-        super(TITLE);
+        super(Text.translatable("gui.pending_votes.title"));
     }
 
-    private int getBackgroundHeight() {
+    private int getListHeight() {
         return Math.max(36, this.height - 128 - 16);
     }
 
-    private int getListBottom() {
-        return 80 + getBackgroundHeight() - 8;
+    private int getButtonsY() {
+        return 80 + getListHeight() - 8;
     }
 
     private int getBackgroundX() {
@@ -42,74 +52,75 @@ public class PendingVoteScreen extends Screen {
     }
 
     @Override
-    protected void init() {
-        int x = getBackgroundX() + 3;
-        int y = getListBottom() + 12;
-        
-    	this.addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, button -> {
-            Stream<String> rulesStream = VoteRegistries.VOTE_RULE_TYPE.streamEntries()
-//                    .sorted(Comparator.comparing(entry -> entry.registryKey().getValue()))
-//                    .flatMap(entry -> entry.value().getAppliedRules())
-                    .map(rule -> rule.getIdAsString());
-            
-            java.util.List<VoteLine> ruleLines = rulesStream.map(str -> {
-                Text textContent = Text.literal(str);
-                net.minecraft.text.OrderedText ordered = textContent.asOrderedText();
-                
-                return new VoteLine(ordered, 0L, textContent);
-            }).collect(java.util.stream.Collectors.toList());
-            
-            this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, ruleLines));
-            			    
-        }).dimensions(x, y, 236, 20).build());
-
-        this.addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, button -> this.close())
-                .dimensions(x, y + 22, 236, 20).build());
-//        this.voteList = new VoteListWidget(new ClientVoteManager(), this, this.client, this.width, this.height, 68, 0, getListBottom());
-        this.voteList = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.player.networkHandler).getVoteManager(), this, this.client, this.width, this.height, 68, getListBottom(), 33);
-        this.addSelectableChild(this.voteList);
+    public void tick() {
+        super.tick();
     }
 
     @Override
-    public void renderBackground(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.renderBackground(context, mouseX, mouseY, delta);
-        int x = getBackgroundX() + 3;
+    protected void init() {
+        this.voteListWidget = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager(), this, this.client, this.width, this.height, 68, getButtonsY(), 33);
+
+        int i = getBackgroundX() + 3;
+        int j = getButtonsY() + 8 + 4;
+
+        addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, buttonWidget -> {
+            Stream<Text> stream = VoteRegistries.VOTE_RULE_TYPE.streamEntries()
+                .sorted(Comparator.comparing(entry -> entry.registryKey().getValue().getPath()))
+                .flatMap(entry -> {
+                    var regEntry = (net.minecraft.registry.entry.RegistryEntry<?>) entry;
+                    
+                    Text path = Text.literal(regEntry.getKey().get().getValue().getPath());
+//                    Text desc = ((Vote) regEntry.value()).getDescription(VoterAction.REPEAL);
+                    
+                    return Stream.<Text>of(path, Text.of("no description"));
+                })
+                .map(text -> (Text)text);
+            
+            this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, VoteLine.wrap(this.client.textRenderer, stream, 320).toList()));
+        }).dimensions(i, j, 236, 20).build());
+
+        addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, buttonWidget -> close()).dimensions(i, j + 20 + 2, 236, 20).build());
         
-//        context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, x, 64, 236, getBackgroundHeight() + 16);
-        context.drawTexture(
-                RenderPipelines.GUI_TEXTURED,
-                BACKGROUND_TEXTURE,
-                x,
-                64,
-                0.0F,
-                0.0F,
-                236,
-                getBackgroundHeight() + 16,
-                256,
-                256
-            );
+        addSelectableChild(this.voteListWidget);
+
+//        if (!this.client.options.skipVoteTutorial) {
+//            this.client.options.skipVoteTutorial = true;
+//            this.client.options.write();
+//        }
+    }
+
+    @Override
+    public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+//        int i = getBackgroundX() + 3;
+        super.renderBackground(context, mouseX, mouseY, deltaTicks);
+//        RenderSystem.setShaderTexture(0, VOTES_TEXTURE);
+//        context.drawNineSlicedTexture(context, i, 64, 236, getListHeight() + 16, 8, 236, 34, 1, 1);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-//        this.renderBackground(context, mouseX, mouseY, delta);
-    	
-        this.voteList.render(context, mouseX, mouseY, delta);
+//        renderBackground(matrices);
+        this.voteListWidget.render(context, mouseX, mouseY, delta);
         super.render(context, mouseX, mouseY, delta);
+    }
+
+    @Override
+    public boolean mouseClicked(Click click, boolean doubled) {
+        return super.mouseClicked(click, doubled);
     }
 
     @Override
     public boolean keyPressed(KeyInput input) {
         if (this.client.options.socialInteractionsKey.matchesKey(input)) {
-            this.close();
+            this.client.setScreen(null);
             return true;
         }
         return super.keyPressed(input);
     }
 
     public void onVotesUpdated() {
-        if (this.voteList.entryList.isEmpty()) {
-            this.close();
+        if (this.voteListWidget.entryList.isEmpty()) {
+            close();
         }
     }
 }

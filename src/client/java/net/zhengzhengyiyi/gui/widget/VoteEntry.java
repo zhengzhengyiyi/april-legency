@@ -70,7 +70,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
             vOffset = 0;
         }
 
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.BACKGROUND_TEXTURE, x, y, 0.0F, 36.0F + vOffset, 220, 33, 256, 256);
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.MENU_BACKGROUND_TEXTURE, x, y, 0.0F, 36.0F + vOffset, 220, 33, 256, 256);
         
         int textX = x + 4;
         int textY = y + 4;

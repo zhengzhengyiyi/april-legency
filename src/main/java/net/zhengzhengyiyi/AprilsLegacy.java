@@ -15,22 +15,17 @@ import org.slf4j.LoggerFactory;
 
 public class AprilsLegacy implements ModInitializer {
 	public static final String MOD_ID = "aprils-legacy";
-
-	// This logger is used to write text to the console and the log file.
-	// It is considered best practice to use your mod id as the logger's name.
-	// That way, it's clear which mod wrote info, warnings, and errors.
+	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize() {
-		// This code runs as soon as Minecraft is in a mod-load-ready state.
-		// However, some things (like resources) may still be uninitialized.
-		// Proceed with mild caution.
-
-		LOGGER.info(MOD_ID + "init, please enjoy april fools");
+		LOGGER.info(MOD_ID + " init, please enjoy april fools");
 		
 		VoteRules.init();
 		VoteRegistries.init();
+		NetworkRegistries.init();
+		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);
 		});

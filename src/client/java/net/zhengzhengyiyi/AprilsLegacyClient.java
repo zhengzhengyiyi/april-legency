@@ -12,7 +12,7 @@ public class AprilsLegacyClient implements ClientModInitializer {
 	private final KeyBinding pendingVoteKey = KeyBindingHelper.registerKeyBinding(new KeyBinding(
 		"key.aprils_legacy.pending_vote",
 		InputUtil.Type.KEYSYM,
-		InputUtil.UNKNOWN_KEY.getCode(),
+		InputUtil.GLFW_KEY_V,
 		KeyBinding.Category.GAMEPLAY
 	));
 	

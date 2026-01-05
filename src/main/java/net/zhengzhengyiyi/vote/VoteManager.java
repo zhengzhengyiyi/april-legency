@@ -22,8 +22,10 @@ public class VoteManager {
     public final Map<UUID, VoteDefinition> activeVotes = new HashMap<>();
     final VoteTracker tracker = new VoteTracker();
     private int totalProposalsCount;
+    public final MinecraftServer server;
 
     public VoteManager(MinecraftServer server) {
+    	this.server = server;
     }
 
     public void load(VoteState state) {
@@ -34,6 +36,31 @@ public class VoteManager {
         for (VoteValue value : state.activeValues()) {
             value.apply(VoterAction.APPROVE);
         }
+    }
+    
+    public void addExampleVote() {
+        VoteMetadata metadata = new VoteMetadata(
+            Text.literal("Experimental Gravity Change"),
+            System.currentTimeMillis(),
+            60000L,
+            java.util.List.of()
+        );
+
+        java.util.Map<VoteOptionId, VoteDefinition.Option> options = new java.util.HashMap<>();
+        
+        options.put(
+            new VoteOptionId(UUID.randomUUID(), 0), 
+            new VoteDefinition.Option(Text.literal("Apply Effects"), java.util.List.of())
+        );
+        
+        options.put(
+            new VoteOptionId(UUID.randomUUID(), 1), 
+            new VoteDefinition.Option(Text.literal("Maintain Status Quo"), java.util.List.of())
+        );
+
+        VoteDefinition definition = new VoteDefinition(metadata, options);
+
+        this.addVote(java.util.UUID.randomUUID(), definition);
     }
 
     public void initializeRules() {
