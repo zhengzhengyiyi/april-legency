@@ -13,7 +13,6 @@ import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoteDefinition;
 
 public final record class_8483(UUID id, VoteDefinition voteData) implements Packet<ClientPlayPacketListener>, CustomPayload {
-
     public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_start");
     public static final CustomPayload.Id<class_8483> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
     public static final PacketType<class_8483> TYPE = new PacketType<>(NetworkSide.CLIENTBOUND, PACKET_ID);
