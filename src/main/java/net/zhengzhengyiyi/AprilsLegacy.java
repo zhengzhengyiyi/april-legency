@@ -2,13 +2,17 @@ package net.zhengzhengyiyi;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
 import net.zhengzhengyiyi.command.VoteCommands;
+import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.vote.VoteServer;
+import net.zhengzhengyiyi.network.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,43 @@ public class AprilsLegacy implements ModInitializer {
 	public static final String MOD_ID = "aprils-legacy";
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	
+	private static void registryNetworkPacket() {
+		NetworkRegistries.init();
+		
+		PayloadTypeRegistry.playC2S().register(
+			class_8258.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), class_8258::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+		    class_8480.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), class_8480::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+			class_8481.PAYLOAD_ID, 
+		    PacketCodec.of((value, buf) -> value.write(buf), class_8481::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+			class_8482.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), class_8482::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+			class_8483.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), class_8483::new)
+		);
+		PayloadTypeRegistry.playC2S().register(
+			class_8484.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), class_8484::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+			VoteRuleSyncS2CPacket.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), VoteRuleSyncS2CPacket::new)
+		);
+		PayloadTypeRegistry.playS2C().register(
+			VoteUpdateS2CPacket.PAYLOAD_ID, 
+			PacketCodec.of((value, buf) -> value.write(buf), VoteUpdateS2CPacket::new)
+		);
+	}
 
 	@Override
 	public void onInitialize() {
@@ -24,7 +65,8 @@ public class AprilsLegacy implements ModInitializer {
 		
 		VoteRules.init();
 		VoteRegistries.init();
-		NetworkRegistries.init();
+		
+		registryNetworkPacket();
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);

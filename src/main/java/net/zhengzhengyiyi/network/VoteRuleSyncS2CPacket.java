@@ -1,9 +1,12 @@
 package net.zhengzhengyiyi.network;
 
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.PacketType;
+import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
@@ -15,7 +18,11 @@ public record VoteRuleSyncS2CPacket(
     boolean resetAll, 
     VoterAction action, 
     List<VoteValue> rules
-) implements Packet<ClientPlayPacketListener> {
+) implements Packet<ClientPlayPacketListener>, CustomPayload {
+
+    public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_rule_sync");
+    public static final CustomPayload.Id<VoteRuleSyncS2CPacket> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
+    public static final PacketType<VoteRuleSyncS2CPacket> TYPE = new PacketType<>(NetworkSide.CLIENTBOUND, PACKET_ID);
 
     public VoteRuleSyncS2CPacket(PacketByteBuf buf) {
         this(
@@ -32,19 +39,14 @@ public record VoteRuleSyncS2CPacket(
     }
     
     public static VoteValue readVoteValue(PacketByteBuf buf) {
-        // ja.ao refers to Registries.VOTE_RULE_TYPE
-        Vote type = (Vote) buf.readRegistryKey(VoteRegistries.VOTE_RULE_TYPE_KEY);
-        // rc.a refers to NbtOps.INSTANCE or a specific Packet Codec context
+        Vote type = VoteRegistries.VOTE_RULE_TYPE.get(buf.readVarInt());
         return buf.decodeAsJson(type.getOptionCodec());
     }
 
     private static void writeVoteValue(PacketByteBuf buf, VoteValue value) {
-	//      buf.writeRegistryValue(((VoteRegistries)Registries).VOTE_RULE_TYPE, value.getType());
-	//  	buf.writeVarInt(VoteRegistries.VOTE_RULE_TYPE.getRawId(value.getType()));
-	  	buf.writeVarInt(VoteRegistries.VOTE_RULE_TYPE.getRawId(value.getType()));
-	
-	      buf.encodeAsJson(value.getType().getOptionCodec(), value);
-	  }
+        buf.writeVarInt(VoteRegistries.VOTE_RULE_TYPE.getRawId(value.getType()));
+        buf.encodeAsJson(value.getType().getOptionCodec(), value);
+    }
 
     @Override
     public void apply(ClientPlayPacketListener listener) {
@@ -53,8 +55,13 @@ public record VoteRuleSyncS2CPacket(
         }
     }
 
-	@Override
-	public PacketType<? extends Packet<ClientPlayPacketListener>> getPacketType() {
-		return null;
-	}
+    @Override
+    public PacketType<VoteRuleSyncS2CPacket> getPacketType() {
+        return TYPE;
+    }
+
+    @Override
+    public Id<VoteRuleSyncS2CPacket> getId() {
+        return PAYLOAD_ID;
+    }
 }

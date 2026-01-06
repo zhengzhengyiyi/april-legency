@@ -1,18 +1,24 @@
 /*    */ package net.zhengzhengyiyi.network;
 import java.util.Optional;
 
+import net.minecraft.network.NetworkSide;
 /*    */ 
 /*    */ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.PacketType;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 /*    */ 
-/*    */ public record class_8480(int transactionId, Optional<Text> rejectReason) implements Packet<ClientPlayPacketListener> {
+/*    */ public record class_8480(int transactionId, Optional<Text> rejectReason) implements Packet<ClientPlayPacketListener>, CustomPayload {
 /*    */   
 /*  9 */   public class_8480 {}
 /*    */ 
-/*    */ 
+/*    */ 	
+public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_response");
+public static final CustomPayload.Id<class_8480> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
+public static final PacketType<class_8480> TYPE = new PacketType<>(NetworkSide.CLIENTBOUND, PACKET_ID);
 /*    */ 
 /*    */   
 /*    */   public static class_8480 method_51141(int i) {
@@ -44,5 +50,9 @@ import net.minecraft.text.Text;
 /*    */
 @Override
 public PacketType<? extends Packet<ClientPlayPacketListener>> getPacketType() {
-	return null;
+	return TYPE;
+}
+@Override
+public Id<? extends CustomPayload> getId() {
+	return PAYLOAD_ID;
 } }

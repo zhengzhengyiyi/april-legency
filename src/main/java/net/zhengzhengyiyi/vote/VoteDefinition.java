@@ -160,19 +160,24 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
     	    float repealVoteChance
     	) {
     	public static VoteSettings create(Random random) {
-    		  return new VoteSettings(random, 1.0F / VoteRules.field_43690
-    		      
-    		      .method_50171().intValue(), VoteRules.field_43691
-    		      .method_50261(), VoteRules.field_43692
-    		      .method_50261(), VoteRules.field_43693
-    		      .method_50261(), VoteRules.field_43694
-    		      .method_50171().intValue() / 100.0F, VoteRules.field_43695
-    		      .method_50171().intValue(), VoteRules.field_43700
-    		      .method_50268(), 
-    		      !VoteRules.field_43697.method_50116(), VoteRules.field_43698
-    		      .method_50171().intValue(), VoteRules.field_43699
-    		      .method_50171().intValue(), VoteRules.field_43696
-    		      .method_50171().intValue() / 100.0F);
+    		  return new VoteSettings(random,
+    				  1.0F / VoteRules.CHANCE_PER_TICK
+	    		      .getValue().intValue(),
+	    		      VoteRules.APPROVE_OPTION_COUNT
+	    		      .getCurrentRange(), VoteRules.REPEAL_OPTION_COUNT
+	    		      .getCurrentRange(), VoteRules.VOTE_DURATION
+	    		      .getCurrentRange(), VoteRules.EXTRA_EFFECT_CHANCE
+	    		      .getValue().intValue() / 100.0F,
+	    		      VoteRules.EXTRA_EFFECT_MAX_COUNT.getValue(),
+//	    		      .getValue().intValue(), VoteRules.VOTE_COST.getCurrentCosts(),
+	    		      VoteRules.VOTE_COST.getCurrentCosts().stream()
+	    	            .map(VoteCost.Instance::cost)
+	    	            .toList(),
+	    		      !VoteRules.DISABLE_OPT_OUT.isActive(), 
+	    		      VoteRules.MAX_APPROVE_COUNT
+	    		      .getValue().intValue(), VoteRules.MAX_REPEAL_COUNT
+	    		      .getValue().intValue(), VoteRules.REPEAL_VOTE_CHANCE
+	    		      .getValue().intValue() / 100.0F);
     		}
 
     	    public int getDurationTicks() {

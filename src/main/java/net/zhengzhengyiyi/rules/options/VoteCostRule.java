@@ -15,7 +15,6 @@ import net.zhengzhengyiyi.vote.VoteCost;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 import org.jetbrains.annotations.Nullable;
 
 public class VoteCostRule implements Vote {
@@ -109,7 +108,7 @@ public class VoteCostRule implements Vote {
     class Option implements VoteValue {
         private static final Text SEPARATOR = Text.literal(", ");
         final List<VoteCost.Instance> entries;
-        private final Text description;
+        public final Text description;
 
         Option(List<VoteCost.Instance> entries) {
             this.entries = entries;

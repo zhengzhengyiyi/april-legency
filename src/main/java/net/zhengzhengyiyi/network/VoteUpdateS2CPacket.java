@@ -4,10 +4,13 @@ import com.mojang.serialization.DynamicOps;
 import java.util.Map;
 import java.util.UUID;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.network.NetworkSide;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.PacketType;
+import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoteDefinition;
 import net.zhengzhengyiyi.vote.VoteOptionId;
 
@@ -15,7 +18,11 @@ public record VoteUpdateS2CPacket(
     boolean clear,
     Map<UUID, VoteDefinition> votes, 
     Map<VoteOptionId, VoterData> voters
-) implements Packet<ClientPlayPacketListener> {
+) implements Packet<ClientPlayPacketListener>, CustomPayload {
+	public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_update");
+    public static final CustomPayload.Id<VoteUpdateS2CPacket> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
+    public static final PacketType<VoteUpdateS2CPacket> TYPE = new PacketType<>(NetworkSide.CLIENTBOUND, PACKET_ID);
+    
     @SuppressWarnings({ "rawtypes", "unchecked", "deprecation" })
 	public VoteUpdateS2CPacket(PacketByteBuf buf) {
         this(
@@ -53,6 +60,11 @@ public record VoteUpdateS2CPacket(
 
 	@Override
 	public PacketType<? extends Packet<ClientPlayPacketListener>> getPacketType() {
-		return null;
+		return TYPE;
+	}
+
+	@Override
+	public Id<? extends CustomPayload> getId() {
+		return PAYLOAD_ID;
 	}
 }

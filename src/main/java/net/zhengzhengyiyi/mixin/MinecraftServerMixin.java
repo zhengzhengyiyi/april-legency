@@ -6,7 +6,6 @@ import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.HoverEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
@@ -42,10 +41,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.google.common.collect.Lists;
 
-import net.zhengzhengyiyi.vote.VoteValue;
-
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -97,16 +93,6 @@ public class MinecraftServerMixin implements VoteServer {
     }
 
     /**
-     * Named: method_51112
-     * Official: bgp.method_51112
-     * Starts a new vote with a unique ID and definition.
-     */
-    @Override
-    public void startVote(UUID id, VoteDefinition definition) {
-//        this.voteManager.startVote(id, definition);
-    }
-
-    /**
      * Named: method_51107
      * Official: bgp.method_51107
      * Casts a vote from a specific player.
@@ -128,57 +114,9 @@ public class MinecraftServerMixin implements VoteServer {
 //        return this.voteManager.canVote(action, entity, weight);
     	return true;
     }
-
-    /**
-     * Example of injecting into the vote starting logic.
-     */
-    @Inject(method = "startVote", at = @At("HEAD"))
-    private void onStartVote(UUID id, VoteDefinition definition, CallbackInfo ci) {
-    }
     
-    @SuppressWarnings("unchecked")
 	@Inject(method = "tick", at = @At("HEAD"))
     private void onServerTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
-        MinecraftServer server = (MinecraftServer) (Object) this;
-        ServerWorld overworld = server.getOverworld();
-        
-        if (overworld != null && this.voteManager != null) {
-            long currentTime = overworld.getTime();
-
-            VoteDefinition.Context context = new VoteDefinition.Context(
-                overworld.getSpawnPoint().getPos(), 
-                overworld.getDifficulty().getId(),
-                Collections.emptyList(),
-                60,
-                3,
-                overworld.getRandom(),
-                true
-            );
-            
-            this.voteManager.tick(
-            	    currentTime, 
-            	    server, 
-            	    context,
-            	    results -> {
-            	        VoteRuleSyncS2CPacket stopPacket = new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, Collections.emptyList());
-            	        
-            	        server.getPlayerManager().getPlayerList().forEach(player -> {
-//            	            ServerPlayNetworking.send(player, stopPacket);
-            	        	player.networkHandler.sendPacket(stopPacket);
-            	            
-            	        });
-            	    },
-            	    (id, definition) -> {
-            	        List<VoteValue> values = (List<VoteValue>)(Object)definition.options().values().stream().sorted().toList();
-            	        VoteRuleSyncS2CPacket syncPacket = new net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket(false, VoterAction.APPROVE, values);
-            	        
-            	        server.getPlayerManager().getPlayerList().forEach(player -> {
-//            	            ServerPlayNetworking.send(player, syncPacket);
-            	        	player.networkHandler.sendPacket(syncPacket);
-            	        });
-            	    }
-            	);
-        }
     }
 
     @Override
@@ -191,9 +129,14 @@ public class MinecraftServerMixin implements VoteServer {
         this.method_51121();
     }
     
-    public void method_51112(UUID uUID, VoteDefinition arg) {
+    /**
+     * Named: method_51112
+     * Official: bgp.method_51112
+     * Starts a new vote with a unique ID and definition.
+     */
+    public void startVote(UUID uUID, VoteDefinition arg) {
         this.voteManager.addVote(uUID, arg);
-        this.playerManager.sendToAll((Packet<?>)new class_8483(uUID, arg));
+        this.playerManager.sendToAll(new class_8483(uUID, arg));
     }
     
     public void method_51120() {
@@ -208,12 +151,27 @@ public class MinecraftServerMixin implements VoteServer {
         return lv;
     }
     
+    private VoteDefinition.Context convertToContext(VoteDefinition.VoteSettings settings) {
+        @SuppressWarnings("resource")
+		MinecraftServer server = (MinecraftServer) (Object) this;
+        
+        return new VoteDefinition.Context(
+            server.getOverworld().getSpawnPoint().getPos(), 
+            server.getOverworld().getLocalDifficulty(server.getOverworld().getSpawnPoint().getPos()).getLocalDifficulty(), 
+            settings.voteCost(), 
+            settings.durationMinutes().get(this.random), 
+            settings.maxExtraOptions(), 
+            this.random, 
+            false
+        );
+    }
+    
     @Inject(method="tickWorlds", at = @At("HEAD"))
-    private void tickWorlds(BooleanSupplier shouldKeepTicking) {
-    	this.voteManager.method_50554(this.saveProperties
-    	        .getMainWorldProperties().getTime(), this, 
+    private void tickWorlds(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+    	this.voteManager.tick(this.saveProperties
+    	        .getMainWorldProperties().getTime(), (MinecraftServer)(Object)this, 
     	        
-    	        VoteDefinition.class_8379.method_50547(this.random), arg -> method_51109(arg, true), this::method_51112);
+    	        convertToContext(VoteDefinition.VoteSettings.create(this.random)), arg -> method_51109(arg, true), this::startVote);
     }
     
     public VoteResults method_51113(UUID uUID, boolean bl) {
@@ -278,7 +236,7 @@ public class MinecraftServerMixin implements VoteServer {
           } 
           this.playerManager.broadcast((Text)mutableText, false);
         } 
-        this.playerManager.sendToAll((Packet<?>)new class_8481(arg.id()));
+        this.playerManager.sendToAll(new class_8481(arg.id()));
         if (bl)
           Lists.reverse(list).forEach($$1 -> $$1.apply((MinecraftServer)(Object)this)); 
      }
