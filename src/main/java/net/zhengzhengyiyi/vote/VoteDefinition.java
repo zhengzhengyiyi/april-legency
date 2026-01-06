@@ -15,17 +15,28 @@ import net.zhengzhengyiyi.world.Vote;
 
 /**
  * Defines the content and structure of a vote.
- * <p>
- * Official Name: bgp
  */
 public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
-    public static final Codec<VoteDefinition> CODEC = 
-    		RecordCodecBuilder.create(instance -> 
-        instance.group(
-            VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
-            Codec.unboundedMap(VoteOptionId.CODEC, Option.CODEC).fieldOf("options").forGetter(VoteDefinition::options)
-        ).apply(instance, VoteDefinition::new)
-    );
+//    public static final Codec<VoteDefinition> CODEC = 
+//    		RecordCodecBuilder.create(instance -> 
+//        instance.group(
+//            VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
+//            Codec.unboundedMap(VoteOptionId.CODEC, Option.CODEC).fieldOf("options").forGetter(VoteDefinition::options)
+//        ).apply(instance, VoteDefinition::new)
+//    );
+	
+	public static final Codec<VoteDefinition> CODEC = RecordCodecBuilder.create(instance -> 
+    instance.group(
+        VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
+        Codec.unboundedMap(
+            Codec.STRING.xmap(
+                s -> new VoteOptionId(UUID.fromString(s), 0),
+                id -> id.voteId().toString()
+            ), 
+            Option.CODEC
+        ).fieldOf("options").forGetter(VoteDefinition::options)
+    ).apply(instance, VoteDefinition::new)
+);
 
     public static final Text NOTHING_RULE_TEXT = Text.translatable("rule.nothing");
 

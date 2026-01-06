@@ -20,15 +20,21 @@ public interface VoteCost {
     /**
      * Codec that dispatches to the correct implementation based on the cost type.
      */
-@SuppressWarnings("unchecked")
-//    MapCodec<VoteCost> CODEC = Type.CODEC.dispatchMap(VoteCost::getType, type -> (Codec)type.codecSupplier.get());
-	MapCodec<VoteCost> CODEC = Type.CODEC.dispatchMap(
+	public static final MapCodec<VoteCost> CODEC = Type.CODEC.dispatchMap(
 		    VoteCost::getType, 
-		    type -> {
-		        Codec<? extends VoteCost> codec = type.codecSupplier.get();
-		        return (MapCodec<? extends VoteCost>) codec;
+		    arg -> {
+		        Codec<? extends VoteCost> subCodec = arg.codecSupplier.get();
+		        return MapCodec.assumeMapUnsafe(subCodec);
 		    }
 		);
+	
+//	Codec<VoteCost> CODEC = Type.CODEC.dispatch(
+//		    VoteCost::getType, 
+//		    type -> {
+//		        Codec<? extends VoteCost> codec = type.codecSupplier.get();
+//		        return (Codec<? extends VoteCost>) codec;
+//		    }
+//		);
 
     /**
      * Checks if the player can afford the cost and optionally deducts it.
@@ -110,7 +116,7 @@ public interface VoteCost {
 
         @Override
         public boolean canAfford(ServerPlayerEntity player, int amount, boolean simulate) {
-            int currentCount = 0;
+//            int currentCount = 0;
             // logic to count and remove items from inventory
             // ... (Simulated based on your decompiled logic)
             return true; 

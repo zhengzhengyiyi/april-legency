@@ -1,10 +1,10 @@
 package net.zhengzhengyiyi.mixin.client;
 
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.network.ClientConnection;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.text.Text;
 import net.minecraft.util.StringHelper;
 import net.minecraft.util.math.random.Random;
@@ -12,8 +12,6 @@ import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.gui.VoteScreen;
 import net.zhengzhengyiyi.gui.toast.VotingToast;
-import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
-import net.zhengzhengyiyi.network.VoteUpdateS2CPacket;
 import net.zhengzhengyiyi.network.*;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 import net.zhengzhengyiyi.vote.VoteMetadata;
@@ -78,7 +76,8 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     
     public int method_51006(VoteOptionId arg, ClientVoteManager.ResponseHandler arg2) {
     	int i = this.field_44385.registerCallback(arg2);
-    	this.getConnection().send((Packet<?>)new class_8258(i, arg));
+//    	this.getConnection().send(new class_8258(i, arg));
+    	ClientPlayNetworking.send(new class_8258(i, arg));
     	return i;
     }
 
@@ -214,4 +213,14 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
 	        .flatMap((VotingToast.Priority priority) -> VotingToast.create(this.client, this.random, priority))
 	        .ifPresent(toast -> this.client.getToastManager().add((net.minecraft.client.toast.Toast)toast));
     	}
+
+	@Override
+	public void method_50043(class_8258 paramclass_8258) {
+		
+	}
+
+	@Override
+	public void method_50045(class_8484 paramclass_8484) {
+		
+	}
 }

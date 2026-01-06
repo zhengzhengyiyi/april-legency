@@ -1,7 +1,5 @@
 package net.zhengzhengyiyi.vote;
 
-import com.mojang.datafixers.kinds.App;
-import com.mojang.datafixers.kinds.Applicative;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -23,7 +21,6 @@ public final class VoteMetadata {
     /**
      * MapCodec for serializing and deserializing vote metadata.
      */
-    @SuppressWarnings("unchecked")
 	public static final MapCodec<VoteMetadata> CODEC = RecordCodecBuilder.mapCodec(instance -> 
         instance.group(
 //            Text.Serializer.CODEC.fieldOf("display_name").forGetter(VoteMetadata::getDisplayName),
@@ -31,7 +28,7 @@ public final class VoteMetadata {
             Codec.LONG.fieldOf("start").forGetter(VoteMetadata::getStartTime),
             Codec.LONG.fieldOf("duration").forGetter(VoteMetadata::getDuration),
             VoteCost.CODEC.codec().listOf().fieldOf("cost").forGetter(VoteMetadata::getCost)
-        ).apply((Applicative)instance, VoteMetadata::new)
+        ).apply(instance, VoteMetadata::new)
     );
 
     /**

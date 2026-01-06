@@ -3,6 +3,7 @@ package net.zhengzhengyiyi.vote;
 import com.mojang.serialization.Codec;
 import java.util.List;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
@@ -56,8 +57,8 @@ public interface VoteValue {
         VoteRuleSyncS2CPacket syncPacket = new VoteRuleSyncS2CPacket(false, action, List.of(this));
 
 	    server.getPlayerManager().getPlayerList().forEach(player -> {
-//	        ServerPlayNetworking.send(player, syncPacket);
-	    	player.networkHandler.sendPacket(syncPacket);
+	        ServerPlayNetworking.send(player, syncPacket);
+//	    	player.networkHandler.sendPacket(syncPacket);
 	    });
     }
 

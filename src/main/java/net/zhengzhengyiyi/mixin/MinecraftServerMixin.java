@@ -1,6 +1,8 @@
 package net.zhengzhengyiyi.mixin;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.MinecraftServer;
@@ -136,7 +138,12 @@ public class MinecraftServerMixin implements VoteServer {
      */
     public void startVote(UUID uUID, VoteDefinition arg) {
         this.voteManager.addVote(uUID, arg);
-        this.playerManager.sendToAll(new class_8483(uUID, arg));
+//        this.playerManager.sendToAll(new class_8483(uUID, arg));
+        CustomPayload payload = new class_8483(uUID, arg);
+        
+        for (ServerPlayerEntity allPlayer : ((MinecraftServer)(Object)this).getPlayerManager().getPlayerList()) {
+            ServerPlayNetworking.send(allPlayer, payload);
+        }
     }
     
     public void method_51120() {
@@ -184,7 +191,10 @@ public class MinecraftServerMixin implements VoteServer {
     public void method_51121() {
         this.voteManager.initializeRules();
         VoteState lv = method_51116();
-        this.playerManager.sendToAll((Packet<?>)new VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, lv.activeValues()));
+//        this.playerManager.sendToAll(new VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, lv.activeValues()));
+        for (ServerPlayerEntity allPlayer : ((MinecraftServer)(Object)this).getPlayerManager().getPlayerList()) {
+            ServerPlayNetworking.send(allPlayer, new VoteRuleSyncS2CPacket(true, VoterAction.APPROVE, lv.activeValues()));
+        }
 //        this.playerManager.getPlayerList().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket((Packet)this.playerManager.method_50050(serverPlayerEntity.getUuid())));
         // TODO
     }
@@ -236,7 +246,10 @@ public class MinecraftServerMixin implements VoteServer {
           } 
           this.playerManager.broadcast((Text)mutableText, false);
         } 
-        this.playerManager.sendToAll(new class_8481(arg.id()));
+//        this.playerManager.sendToAll(new class_8481(arg.id()));
+        for (ServerPlayerEntity allPlayer : this.playerManager.getPlayerList()) {
+            ServerPlayNetworking.send(allPlayer, new class_8481(arg.id()));
+        }
         if (bl)
           Lists.reverse(list).forEach($$1 -> $$1.apply((MinecraftServer)(Object)this)); 
      }
@@ -246,7 +259,10 @@ public class MinecraftServerMixin implements VoteServer {
         VoterData lv = this.voteManager.method_50566(arg);
         VoteChoice lv2 = (VoteChoice)lv.voters().get(uUID);
         if (lv2 != null)
-          serverPlayerEntity.networkHandler.sendPacket((Packet<?>)new class_8482(arg, VoterData.createSingle(uUID, lv2))); 
+//          serverPlayerEntity.networkHandler.sendPacket(new class_8482(arg, VoterData.createSingle(uUID, lv2)));
+        	for (ServerPlayerEntity allPlayer : this.playerManager.getPlayerList()) {
+        	    ServerPlayNetworking.send(allPlayer, new class_8482(arg, VoterData.createSingle(uUID, lv2)));
+        	}
      }
 
     @Override
