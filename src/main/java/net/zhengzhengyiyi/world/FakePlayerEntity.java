@@ -9,12 +9,14 @@ import net.minecraft.entity.mob.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.server.PlayerManager;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.world.World;
+import net.minecraft.world.rule.GameRules;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -125,10 +127,10 @@ public class FakePlayerEntity extends PathAwareEntity {
     @Override
     public void onDeath(DamageSource damageSource) {
         if (!this.getEntityWorld().isClient() && this.getEntityWorld() instanceof ServerWorld serverWorld) {
-//            PlayerManager pm = serverWorld.getServer().getPlayerManager();
-//            if (this.getEntityWorld().getServer().getBoolean(GameRules.SHOW_DEATH_MESSAGES)) {
-//                pm.broadcast(this.getDamageTracker().getDeathMessage(), false);
-//            }
+            PlayerManager pm = serverWorld.getServer().getPlayerManager();
+            if (GameRules.SHOW_DEATH_MESSAGES.getDefaultValue()) {
+                pm.broadcast(this.getDamageTracker().getDeathMessage(), false);
+            }
         }
         super.onDeath(damageSource);
     }

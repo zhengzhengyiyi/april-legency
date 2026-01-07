@@ -15,12 +15,14 @@ public final record class_8483(UUID id, VoteDefinition voteData) implements Cust
 
     public class_8483 {}
 
-    public class_8483(PacketByteBuf packetByteBuf) {
+    @SuppressWarnings("deprecation")
+	public class_8483(PacketByteBuf packetByteBuf) {
         this(packetByteBuf.readUuid(), packetByteBuf.decode(NbtOps.INSTANCE, VoteDefinition.CODEC));
 //    	this(packetByteBuf.readUuid(), packetByteBuf.decodeAsJson(VoteDefinition.CODEC));
     }
 
-    public void write(PacketByteBuf buf) {
+    @SuppressWarnings("deprecation")
+	public void write(PacketByteBuf buf) {
         buf.writeUuid(this.id);
         buf.encode(NbtOps.INSTANCE, VoteDefinition.CODEC, this.voteData);
 //        buf.encodeAsJson(VoteDefinition.CODEC, voteData());

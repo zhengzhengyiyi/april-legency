@@ -39,6 +39,8 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     private final boolean hasVoted;
     @Nullable
     private final Tooltip tooltip;
+    @Nullable
+//    private final ClientVoteManager.VoteEntry voteEntry;
     public final MultilineText multilineText;
     private final String ruleName;
 
@@ -111,9 +113,10 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     @Override
     public boolean mouseClicked(Click click, boolean doubled) {
         if (click.button() == 0) {
-        	System.out.println(this.definition);
             if (this.definition != null) {
-                this.client.setScreen(new VoteScreen(client.player.playerScreenHandler, client.player.getInventory(), this.voteId, this.manager, null));
+            	var voteInstance = this.manager.getVote(this.voteId);
+            	
+                this.client.setScreen(new VoteScreen(client.player.playerScreenHandler, client.player.getInventory(), this.voteId, this.manager, voteInstance));
             }
             return true;
         }

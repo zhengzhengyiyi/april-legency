@@ -52,6 +52,7 @@ public class ClientVoteManager {
     }
 
     public void addVote(UUID uuid, VoteDefinition definition) {
+//    	System.out.println(definition);
         Text titleText = definition.metadata().getDisplayName();
         List<List<VoteSeparator>> optionSeparators = definition.options().values().stream()
                 .map(option -> {

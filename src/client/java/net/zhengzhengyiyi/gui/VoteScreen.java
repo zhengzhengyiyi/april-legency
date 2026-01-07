@@ -4,6 +4,7 @@ package net.zhengzhengyiyi.gui;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.Alignment;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
@@ -60,7 +61,6 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
     private NavButton nextButton;
     private VoteButton submitButton;
 
-//    public record OptionData(int id, Text display, VoteDefinition.Option data) {}
     public record OptionData(VoteOptionId id, Text display, VoteDefinition.Option data) {}
 
     public VoteScreen(PlayerScreenHandler playerScreenHandler, PlayerInventory inventory, UUID voteId, ClientVoteManager manager, ClientVoteManager.VoteEntry entry) {
@@ -155,17 +155,25 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
 
     @Override
     protected void drawBackground(DrawContext context, float delta, int mouseX, int mouseY) {
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.x, this.y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.width, this.height);
+//        context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.x, this.y, 0, 0, this.backgroundWidth, this.backgroundHeight, this.width, this.height);
+    	context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.x, this.y, 0.0F, 0.0F, this.backgroundWidth, this.backgroundHeight, 256, 256);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
         if (this.descriptionText != null) {
-//            int textHeight = this.descriptionText.getLineCount() * 9;
+            int textHeight = this.descriptionText.getLineCount() * 9;
 //            this.descriptionText.drawCenterWithShadow(context, this.x + 115, this.y + 27 + (68 - textHeight) / 2);
+            context.drawCenteredTextWithShadow(textRenderer, this.descriptionText.toString(), this.x + 115, this.y + 27 + (68 - textHeight) / 2, textHeight);
+
+            descriptionText.draw(
+		        Alignment.CENTER,
+		        this.x + 115, this.y+27+(68-textHeight)/2, 9,
+		        context.getTextConsumer()
+	        );
         }
         this.drawMouseoverTooltip(context, mouseX, mouseY);
+        super.render(context, mouseX, mouseY, delta);
     }
 
     @Override
@@ -194,7 +202,8 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
             int u = 231;
             int v = this.vOffset;
             if (!this.active) v += this.width;
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.getX(), this.getY(), u, v, this.width, this.height, this.width, this.height);
+//            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.getX(), this.getY(), u, v, this.width, this.height, this.width, this.height);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.getX(), this.getY(), u, v, this.width, this.height, 256, 256);
         }
 
         @Override
@@ -223,7 +232,13 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
         protected void drawIcon(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
             int v = 219;
             int u = this.active ? (this.isSelected() ? 89 : 0) : 0;
-            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.getX(), this.getY(), u, v, this.width, this.height, this.width, this.height);
+//            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, this.getX(), this.getY(), u, v, this.width, this.height, this.width, this.height);
+            context.drawTexture(RenderPipelines.GUI_TEXTURED, BACKGROUND_TEXTURE, 
+            	    this.getX(), this.getY(),
+            	    (float)u, (float)v,
+            	    this.width, this.height,
+            	    256, 256
+            	);
             context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, this.active ? 16777215 : 10526880);
         }
 

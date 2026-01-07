@@ -147,6 +147,7 @@ public class VoteCommands {
                     )
                     .then(CommandManager.literal("reload")
                         .executes(ctx -> {
+                        	((VoteServer)(Object)ctx.getSource().getServer()).reloadAndBroadcastVotes();
                             ctx.getSource().sendFeedback(() -> Text.literal("Reloaded votes"), true);
                             return 1;
                         })

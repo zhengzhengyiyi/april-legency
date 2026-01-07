@@ -18,7 +18,7 @@ import net.minecraft.client.gui.DrawContext;
 
 @Environment(EnvType.CLIENT)
 public class PendingVoteScreen extends Screen {
-    protected static final Identifier VOTES_TEXTURE = Identifier.of("textures/gui/votes.png");
+    protected static final Identifier VOTES_TEXTURE = Identifier.of("zhengzhengyiyi","textures/gui/votes.png");
     @SuppressWarnings("unused")
 	private static final int field_44337 = 8;
     @SuppressWarnings("unused")

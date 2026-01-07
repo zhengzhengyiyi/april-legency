@@ -52,9 +52,10 @@ public record VoteState(
     public static VoteState create(Stream<Object> activeRules, Map<UUID, VoteDefinition> activeVotes, VoteStatistics statistics, int totalCount) {
         // In the original bytecode, this filters and collects values from the world's registry
         List<VoteValue> values = activeRules
-            .flatMap(rule -> ((VoteValue.Provider) rule).getValues())
+        	.filter(rule -> rule instanceof Provider)
+            .flatMap(rule -> ((Provider) rule).getValues())
             .collect(Collectors.toList());
-            
+
         return new VoteState(values, activeVotes, statistics, totalCount);
     }
 }

@@ -3,7 +3,6 @@ package net.zhengzhengyiyi.mixin;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.packet.CustomPayload;
-import net.minecraft.network.packet.Packet;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.PlayerManager;
@@ -40,6 +39,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.google.common.collect.Lists;
 
@@ -264,6 +264,11 @@ public class MinecraftServerMixin implements VoteServer {
         	    ServerPlayNetworking.send(allPlayer, new class_8482(arg, VoterData.createSingle(uUID, lv2)));
         	}
      }
+    
+    @Inject(method="saveAll", at=@At("HEAD"))
+    public void saveAll(boolean suppressLogs, boolean flush, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    	this.saveVotes();
+    }
 
     @Override
     public void saveVotes() {

@@ -1,6 +1,5 @@
 package net.zhengzhengyiyi.mixin;
 
-import com.google.common.base.Charsets;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.internal.Streams;
@@ -10,6 +9,7 @@ import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+
 import net.minecraft.util.Util;
 import net.minecraft.util.WorldSavePath;
 import net.minecraft.world.level.storage.LevelStorage;
@@ -25,6 +25,7 @@ import org.spongepowered.asm.mixin.Unique;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -37,9 +38,10 @@ public abstract class LevelStorageSessionMixin implements VoteSession {
     @Override
     public VoteState loadVotes() {
         Path path = this.getDirectory(WorldSavePathMixin.create("votes.json"));
+//    	Path path = Path.of(FabricLoader.getInstance().getGameDir().toString(), "vote.json");
         if (Files.exists(path)) {
-            try (@SuppressWarnings("deprecation")
-			BufferedReader bufferedReader = Files.newBufferedReader(path, Charsets.UTF_8)) {
+            try (
+			BufferedReader bufferedReader = Files.newBufferedReader(path, Charset.defaultCharset())) {
                 JsonReader jsonReader = new JsonReader(bufferedReader);
                 JsonElement jsonElement = Streams.parse(jsonReader);
                 if (!jsonElement.isJsonNull() && jsonReader.peek() != JsonToken.END_DOCUMENT) {
@@ -54,25 +56,50 @@ public abstract class LevelStorageSessionMixin implements VoteSession {
         }
         return new VoteState();
     }
-
-    @SuppressWarnings("deprecation")
-	@Override
+    
+    @Override
     public void saveVotes(VoteState state) {
         Path path = this.getDirectory(WorldSavePathMixin.create("votes.json"));
+        Path tempPath = this.getDirectory(WorldSavePathMixin.create("votes.json_tmp"));
+        Path oldPath = this.getDirectory(WorldSavePathMixin.create("votes.json_old"));
+        
+        System.out.println(state);
+
         try {
-            Path path2 = Files.createTempFile(this.directory.path(), "votes", ".json");
-            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path2, Charsets.UTF_8)) {
+            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempPath, Charset.defaultCharset())) {
                 JsonWriter jsonWriter = new JsonWriter(bufferedWriter);
                 jsonWriter.setIndent("  ");
-//                Streams.write(Util.getResult(VoteState.CODEC.encodeStart(JsonOps.INSTANCE, state), IOException::new), jsonWriter);
                 DataResult<JsonElement> dataResult = VoteState.CODEC.encodeStart(JsonOps.INSTANCE, state);
+                System.out.println(dataResult);
                 JsonElement jsonElement = dataResult.getOrThrow(IOException::new);
                 Streams.write(jsonElement, jsonWriter);
             }
-            Path path3 = this.getDirectory(WorldSavePathMixin.create("votes.json_old"));
-            Util.backupAndReplace(path, path2, path3);
+            
+            Util.backupAndReplace(path, tempPath, oldPath);
+            
         } catch (Exception exception) {
             LOGGER.warn("Failed to write votes to {}", path, exception);
         }
     }
+
+//    @SuppressWarnings("deprecation")
+//	@Override
+//    public void saveVotes(VoteState state) {
+//        Path path = this.getDirectory(WorldSavePathMixin.create("votes.json"));
+//        try {
+//            Path path2 = Files.createTempFile(this.directory.path(), "votes", ".json");
+//            try (BufferedWriter bufferedWriter = Files.newBufferedWriter(path2, Charsets.UTF_8)) {
+//                JsonWriter jsonWriter = new JsonWriter(bufferedWriter);
+//                jsonWriter.setIndent("  ");
+////                Streams.write(Util.getResult(VoteState.CODEC.encodeStart(JsonOps.INSTANCE, state), IOException::new), jsonWriter);
+//                DataResult<JsonElement> dataResult = VoteState.CODEC.encodeStart(JsonOps.INSTANCE, state);
+//                JsonElement jsonElement = dataResult.getOrThrow(IOException::new);
+//                Streams.write(jsonElement, jsonWriter);
+//            }
+//            Path path3 = this.getDirectory(WorldSavePathMixin.create("votes.json_old"));
+//            Util.backupAndReplace(path, path2, path3);
+//        } catch (Exception exception) {
+//            LOGGER.warn("Failed to write votes to {}", path, exception);
+//        }
+//    }
 }

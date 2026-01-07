@@ -2,6 +2,7 @@ package net.zhengzhengyiyi.vote;
 
 import com.mojang.serialization.Codec;
 import java.util.List;
+import java.util.stream.Stream;
 
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.server.MinecraftServer;
@@ -17,7 +18,7 @@ import net.zhengzhengyiyi.world.Vote;
  * Official Name: bee
  * Intermediary Name: net.minecraft.class_8371
  */
-public interface VoteValue {
+public interface VoteValue extends Provider {
     /**
      * Dispatches the codec based on the VoteRuleType.
      * ja.ao refers to Registries.VOTE_RULE_TYPE.
@@ -61,6 +62,10 @@ public interface VoteValue {
 //	    	player.networkHandler.sendPacket(syncPacket);
 	    });
     }
+    
+    default Stream<VoteValue> getValues() {
+    	return Stream.of(this);
+    }
 
     /**
      * Internal logic to apply or undo the effect.
@@ -83,9 +88,5 @@ public interface VoteValue {
             // In the original bytecode, the switch logic was simplified to return the same text
             return this.getStaticDescription();
         }
-    }
-    
-    public interface Provider {
-        java.util.stream.Stream<VoteValue> getValues();
     }
 }

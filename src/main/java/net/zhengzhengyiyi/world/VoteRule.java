@@ -20,6 +20,7 @@ import net.zhengzhengyiyi.vote.VoterAction;
  * * @param <T> The type of the value this rule governs (e.g., Block, EntityType, etc.)
  * <p>Official Obfuscated Name: beb
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class VoteRule<T> implements Vote {
     /** The registry key identifying the registry this rule belongs to. */
     private final RegistryKey<? extends Registry<T>> registryKey;
@@ -70,7 +71,7 @@ public abstract class VoteRule<T> implements Vote {
      * @param random The random source for selection.
      * @param limit The number of options to generate.
      */
-    @Override
+	@Override
     public Stream generateOptions(MinecraftServer server, Random random, int limit) {
         Registry<T> registry = server.getRegistryManager().getOrThrow(this.registryKey);
         return Stream.generate(() -> registry.getRandom(random))
@@ -88,7 +89,7 @@ public abstract class VoteRule<T> implements Vote {
      */
     public abstract Text getDisplayText(RegistryKey<T> value);
     
-    public static final Codec<VoteRule> CODEC = Identifier.CODEC.xmap(
+    public static final Codec<VoteRule<?>> CODEC = Identifier.CODEC.xmap(
     	    id -> {
     	        throw new UnsupportedOperationException("Abstract class cannot be instantiated directly");
     	    },

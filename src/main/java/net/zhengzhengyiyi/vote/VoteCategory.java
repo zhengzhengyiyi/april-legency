@@ -3,7 +3,6 @@ package net.zhengzhengyiyi.vote;
 import java.util.List;
 import net.minecraft.util.math.intprovider.IntProvider;
 import net.minecraft.util.math.random.Random;
-import net.zhengzhengyiyi.rules.VoteRules;
 
 /**
  * Configuration context for generating vote proposals.
