@@ -35,17 +35,7 @@ public abstract class VoteRule<T> implements Vote {
         this.registryKey = registryKey;
         this.defaultValue = defaultValue;
         this.currentValue = defaultValue;
-        
-        // Maps the registry key codec to create VoteOption instances
-//        this.optionCodec = Vote.createCodec(RegistryKey.createCodec(registryKey)
-//            .xmap(key -> new Option(key), opt -> opt.value));
     }
-
-//    @SuppressWarnings("unchecked")
-//	@Override
-//    public Codec getOptionCodec() {
-//        return this.optionCodec;
-//    }
 
     public RegistryKey<T> getCurrentValue() {
         return this.currentValue;

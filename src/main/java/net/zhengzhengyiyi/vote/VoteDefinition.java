@@ -20,14 +20,6 @@ import net.zhengzhengyiyi.world.Vote;
  * Defines the content and structure of a vote.
  */
 public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
-//    public static final Codec<VoteDefinition> CODEC = 
-//    		RecordCodecBuilder.create(instance -> 
-//        instance.group(
-//            VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
-//            Codec.unboundedMap(VoteOptionId.CODEC, Option.CODEC).fieldOf("options").forGetter(VoteDefinition::options)
-//        ).apply(instance, VoteDefinition::new)
-//    );
-	
 	public static final Codec<VoteDefinition> CODEC = RecordCodecBuilder.create(instance -> 
     instance.group(
         VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
@@ -141,26 +133,11 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
         return Optional.of(finalizeProposal(id, server, settings, optionList));
     }
     
-//    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
-//        Vote rule = VoteRules.AIR_BLOCKS; 
-//        
-//        List<VoteValue> values = rule.generateOptions(server, context.random(), 1).toList();
-//        
-//        if (values.isEmpty()) return Optional.empty();
-//
-//        List<Option> optionList = List.of(
-//            new Option(Text.literal("test"),
-//            List.of(new Effect(values.get(0), VoterAction.APPROVE)))
-//        );
-//
-//        return Optional.of(finalizeProposal(id, server, context, optionList));
-//    }
-    
     public static Stream<RegistryEntry.Reference<Vote>> method_50525(Set<Vote> set, VoteDefinition.Context arg) {
         return Stream.generate(() -> VoteRules.getRandomRule(arg.random))
-          .filter(opt -> opt.hasKeyAndValue())
-          .limit(1000L)
-          .filter(reference -> !set.contains(reference.value()));
+            .filter(opt -> opt.hasKeyAndValue())
+            .limit(1000L)
+            .filter(reference -> !set.contains(reference.value()));
     }
 
     /**

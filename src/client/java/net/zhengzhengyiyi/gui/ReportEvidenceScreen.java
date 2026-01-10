@@ -86,18 +86,6 @@ public class ReportEvidenceScreen extends Screen {
         public int getRowWidth() {
             return 320;
         }
-        
-        public static EvidenceListWidget createFromStream(java.util.stream.Stream<? extends VoteLine> stream) {
-            MinecraftClient client = MinecraftClient.getInstance();
-            int width = client.getWindow().getScaledWidth();
-            int height = client.getWindow().getScaledHeight();
-            int top = 40;
-            int itemHeight = 18;
-
-            List<VoteLine> lines = stream.map(line -> (VoteLine) line).collect(java.util.stream.Collectors.toList());
-            
-            return new EvidenceListWidget(client, width, height, top, itemHeight, lines);
-        }
 
         protected int getScrollbarPositionX() {
             return getRowRight() - 2;

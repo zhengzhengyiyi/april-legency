@@ -1,20 +1,27 @@
 package net.zhengzhengyiyi.vote;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.network.VoterData;
 import net.zhengzhengyiyi.world.Vote;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.network.ServerPlayerEntity;
-import org.jetbrains.annotations.Nullable;
 
 public class VoteManager {
     private static final long TICKS_PER_DAY = 18000L;
@@ -80,8 +87,6 @@ public class VoteManager {
         Random random = context.random();
         
         boolean attemptPropose = this.shouldProposeRandomly(server, context.pos(), random) && context.isProposeEnabled();
-        System.out.println(attemptPropose);
-        // TODO
         
         boolean isRevokeMode = context.isRevokeMode();
         

@@ -1,6 +1,7 @@
 package net.zhengzhengyiyi.gui;
 
-import java.util.stream.Stream;
+import java.util.Comparator;
+import java.util.List;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
@@ -11,11 +12,16 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.widget.VoteListWidget;
-import net.zhengzhengyiyi.vote.ClientVoteManager;
+import net.zhengzhengyiyi.vote.VoteRegistries;
+import net.zhengzhengyiyi.vote.VoteValue;
+import net.zhengzhengyiyi.vote.VoterAction;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 
+/**
+ * class_8447
+ */
 @Environment(EnvType.CLIENT)
 public class PendingVoteScreen extends Screen {
     protected static final Identifier VOTES_TEXTURE = Identifier.of("zhengzhengyiyi","textures/gui/votes.png");
@@ -64,18 +70,26 @@ public class PendingVoteScreen extends Screen {
         int i = getBackgroundX() + 3;
         int j = getButtonsY() + 8 + 4;
 
-        addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, buttonWidget -> {
-        	ClientVoteManager voteManager = ((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager();
-        	Stream<Text> stream = voteManager.activeVotes.values().stream()
-                    .flatMap(entry -> {
-                        Text path = Text.of(entry.title().getString());
-//                        Text desc = ((Vote) regEntry.value()).getDescription(VoterAction.REPEAL);
-                        return Stream.<Text>of(path, entry.definition().metadata().getDisplayName());
-                    })
-                    .map(text -> (Text)text);
-            
-            this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, VoteLine.wrap(this.client.textRenderer, stream, 320).toList()));
-        }).dimensions(i, j, 236, 20).build());
+        this.addDrawableChild(
+                ButtonWidget.builder(
+                	SHOW_RULES_TEXT,
+                      buttonWidget -> {
+                         List<Text> textList = VoteRegistries.VOTE_RULE_TYPE
+                            .streamEntries()
+                            .sorted(Comparator.comparing(reference -> reference.registryKey().getValue()))
+                            .<VoteValue>flatMap(reference -> reference.value().getActiveOptions())
+                            .map(arg -> arg.getDescription(VoterAction.APPROVE))
+                            .toList();
+                         
+                         this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, VoteLine.wrap(this.client.textRenderer, textList.stream(), 320).toList()));
+                         
+                         // TODO
+//                         textList.forEach(v -> System.out.println(v.getString()));
+                      }
+                   )
+                   .dimensions(i, j, 236, 20)
+                   .build()
+             );
 
         addDrawableChild(ButtonWidget.builder(ScreenTexts.CANCEL, buttonWidget -> close()).dimensions(i, j + 20 + 2, 236, 20).build());
         

@@ -64,7 +64,7 @@ public interface Vote {
     /**
      * Gets the current active options for this vote (options currently winning or selected).
      */
-    Stream<Vote> getActiveOptions();
+    Stream<VoteValue> getActiveOptions();
 
     /**
      * Generates a new set of random options for this vote.

@@ -7,7 +7,9 @@
 		"RegistriesMixin",
 		"ClientPlayPacketListenerMixin",
 		"WorldSavePathMixin",
-		"LevelStorageSessionMixin"
+		"LevelStorageSessionMixin",
+		"ServerPlayNetworkHandlerMixin",
+		"PlayerManagerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -365,6 +365,10 @@ public class VoteRules {
 	public static final Vote getDefaultRule(Registry<Vote> registry) {
 		return TEST_RULE;
 	}
+	
+	public static final WeightedList<Reference<Vote>> getPool() {
+		return FINAL_POOL;
+	}
 
 	public static final RegistryEntry.Reference<Vote> getRandomRule(Random random) {
 		FINAL_POOL.shuffle();
