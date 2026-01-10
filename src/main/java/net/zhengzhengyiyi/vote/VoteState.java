@@ -24,14 +24,22 @@ public record VoteState(
     /**
      * Codec for serializing and deserializing the entire vote system state.
      */
-    public static final Codec<VoteState> CODEC = RecordCodecBuilder.create(instance -> 
-        instance.group(
-            VoteValue.CODEC.listOf().fieldOf("approved").forGetter(VoteState::activeValues),
-            Codec.unboundedMap(Uuids.INT_STREAM_CODEC, VoteDefinition.CODEC).fieldOf("pending").forGetter(VoteState::activeVotes),
-            VoteStatistics.CODEC.fieldOf("votes").forGetter(VoteState::statistics),
-            Codec.INT.fieldOf("total_proposal_count").forGetter(VoteState::totalProposalsCount)
-        ).apply(instance, VoteState::new)
-    );
+	public static final Codec<VoteState> CODEC = RecordCodecBuilder.create(instance -> 
+	    instance.group(
+	        VoteValue.CODEC.listOf().fieldOf("approved").forGetter(VoteState::activeValues),
+	        Codec.unboundedMap(Uuids.STRING_CODEC, VoteDefinition.CODEC).fieldOf("pending").forGetter(VoteState::activeVotes),
+	        VoteStatistics.CODEC.fieldOf("votes").forGetter(VoteState::statistics),
+	        Codec.INT.fieldOf("total_proposal_count").forGetter(VoteState::totalProposalsCount)
+	    ).apply(instance, VoteState::new)
+	);
+//    public static final Codec<VoteState> CODEC = RecordCodecBuilder.create(instance -> 
+//        instance.group(
+//            VoteValue.CODEC.listOf().fieldOf("approved").forGetter(VoteState::activeValues),
+//            Codec.unboundedMap(Uuids.INT_STREAM_CODEC, VoteDefinition.CODEC).fieldOf("pending").forGetter(VoteState::activeVotes),
+//            VoteStatistics.CODEC.fieldOf("votes").forGetter(VoteState::statistics),
+//            Codec.INT.fieldOf("total_proposal_count").forGetter(VoteState::totalProposalsCount)
+//        ).apply(instance, VoteState::new)
+//    );
 
     /**
      * Creates an empty state with no active votes or changes.

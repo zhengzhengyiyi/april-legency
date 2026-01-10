@@ -22,8 +22,8 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
     
     public List<VoteEntry> entryList;
 
-    public VoteListWidget(ClientVoteManager manager, PendingVoteScreen screen, MinecraftClient client, int width, int height, int top, int bottom, int entryHeight) {
-        super(client, width, height, top, bottom);
+    public VoteListWidget(ClientVoteManager manager, PendingVoteScreen screen, MinecraftClient client, int width, int height, int top, int bottom) {
+        super(client, width, height, top, 34);
 
 //        UUID playerUuid = client.player.getUuid();
         entryList = new ArrayList<>();
@@ -33,7 +33,7 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
             entryList.add(new VoteEntry(
                 client,
                 manager,
-                hasVoted, 
+                hasVoted,
                 this.getRowWidth(), 
                 voteId, 
                 screen, 
@@ -44,6 +44,15 @@ public class VoteListWidget extends AlwaysSelectedEntryListWidget<VoteEntry> {
 
         entryList.sort(VoteEntry.COMPARATOR);
         entryList.forEach(this::addEntry);
+    }
+    
+    @Override
+    public void renderWidget(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
+    	super.renderWidget(context, mouseX, mouseY, deltaTicks);
+    }
+    
+    public int getRowWidth() {
+    	return 220;
     }
 
     public boolean updateVotes() {

@@ -29,15 +29,9 @@ public class TheJokeRule extends VoteEffect {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return null;
+			return Text.of("no description");
 		}
     };
-
-    @Override
-    public Codec getOptionCodec() {
-//        return Codec.unit(this.option);
-    	return null;
-    }
 
     @Override
     public Stream generateOptions(MinecraftServer server, Random random, int limit) {

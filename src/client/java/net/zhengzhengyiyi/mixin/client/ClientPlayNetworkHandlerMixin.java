@@ -76,7 +76,6 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     
     public int method_51006(VoteOptionId arg, ClientVoteManager.ResponseHandler arg2) {
     	int i = this.field_44385.registerCallback(arg2);
-//    	this.getConnection().send(new class_8258(i, arg));
     	ClientPlayNetworking.send(new class_8258(i, arg));
     	return i;
     }

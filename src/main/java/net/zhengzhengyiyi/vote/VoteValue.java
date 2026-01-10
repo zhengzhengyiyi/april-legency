@@ -26,11 +26,19 @@ public interface VoteValue extends Provider {
 //    Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
 //        .dispatch(VoteValue::getType, VoteRuleType::getCodec);
 	
+//	public static final Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
+//		.dispatch(
+//	    VoteValue::getType,
+//			type -> type.getOptionCodec().fieldOf("value")
+//		);
+	
 	public static final Codec<VoteValue> CODEC = VoteRegistries.VOTE_RULE_TYPE.getCodec()
-		.dispatch(
-	    VoteValue::getType,
-			type -> type.getOptionCodec().fieldOf("value")
-		);
+		    .dispatch(
+		        VoteValue::getType,
+		        type -> {
+		            return type.getOptionCodec().fieldOf("value"); 
+		        }
+		    );
 	
 	static java.util.Optional<VoteValue> getRandomValue(net.minecraft.server.MinecraftServer server, net.minecraft.util.math.random.Random random) {
         return server.getRegistryManager()

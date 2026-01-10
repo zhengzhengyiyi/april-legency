@@ -3,6 +3,7 @@ package net.zhengzhengyiyi.gui.widget;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.font.Alignment;
 import net.minecraft.client.font.MultilineText;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
@@ -62,7 +63,7 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
     }
 
     @Override
-    public void render(DrawContext context, int x, int y, boolean hovered, float deltaTicks) {
+    public void render(DrawContext context, int mouseX, int mouseY, boolean hovered, float deltaTicks) {
         int vOffset;
         if (!this.hasVoted || this.definition == null) {
             vOffset = 66;
@@ -71,15 +72,17 @@ public class VoteEntry extends AlwaysSelectedEntryListWidget.Entry<VoteEntry> {
         } else {
             vOffset = 0;
         }
-
-        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.MENU_BACKGROUND_TEXTURE, x, y, 0.0F, 36.0F + vOffset, 220, 33, 256, 256);
         
-        int textX = x + 4;
-        int textY = y + 4;
+        context.drawTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.MENU_BACKGROUND_TEXTURE, getX(), getY(), 0.0F, 36.0F + vOffset, 220, 33, 256, 256);
+        
+        int textX = getX() + 4;
+        int textY = getY() + 4;
+        
+        multilineText.draw(Alignment.CENTER, textX, textY, 9, context.getTextConsumer());
 
         String timeString = this.getTimeDisplay();
         int timeWidth = this.client.textRenderer.getWidth(timeString);
-        context.drawTextWithShadow(this.client.textRenderer, timeString, (textX + this.getWidth() - timeWidth - 8), textY, 0xFFFFFF);
+        context.drawTextWithShadow(client.textRenderer, timeString, (textX + this.getWidth() - timeWidth - 8), textY, 0xFFFFFFFF);
 
 //        if (hovered && this.tooltip != null) {
 //            this.parentScreen.setTooltip(this.tooltip);

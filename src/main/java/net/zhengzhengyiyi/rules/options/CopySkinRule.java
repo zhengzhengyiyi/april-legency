@@ -87,14 +87,12 @@ public class CopySkinRule extends VoteEffect {
 
 		@Override
 		public Vote getType() {
-			// TODO Auto-generated method stub
 			return CopySkinRule.this;
 		}
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			// TODO Auto-generated method stub
-			return null;
+			return Text.of("no description");
 		}
     }
 }

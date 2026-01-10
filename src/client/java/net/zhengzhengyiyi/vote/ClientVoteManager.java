@@ -125,7 +125,7 @@ public class ClientVoteManager {
 //                    .mapToInt(m -> m.getOrDefault(playerUuid, 0))
 //                    .sum();
 //            return totalVotes < this.definition.getMaxVotesPerPlayer();
-        	return true;
+            return true;
         }
     }
 

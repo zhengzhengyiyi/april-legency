@@ -62,15 +62,13 @@ public abstract class LevelStorageSessionMixin implements VoteSession {
         Path path = this.getDirectory(WorldSavePathMixin.create("votes.json"));
         Path tempPath = this.getDirectory(WorldSavePathMixin.create("votes.json_tmp"));
         Path oldPath = this.getDirectory(WorldSavePathMixin.create("votes.json_old"));
-        
-        System.out.println(state);
 
         try {
             try (BufferedWriter bufferedWriter = Files.newBufferedWriter(tempPath, Charset.defaultCharset())) {
                 JsonWriter jsonWriter = new JsonWriter(bufferedWriter);
                 jsonWriter.setIndent("  ");
                 DataResult<JsonElement> dataResult = VoteState.CODEC.encodeStart(JsonOps.INSTANCE, state);
-                System.out.println(dataResult);
+
                 JsonElement jsonElement = dataResult.getOrThrow(IOException::new);
                 Streams.write(jsonElement, jsonWriter);
             }

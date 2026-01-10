@@ -150,14 +150,6 @@ public class VoteRules {
 	});
 
 	public static final StaticVoteRule SILENT_VOTE = register("silent_vote", 125, new StaticVoteRule(Text.translatable("rule.silent_vote")));
-//	public static final ReplaceItemModelRule REPLACE_ITEM_MODEL = register("replace_item_model", 1000, new ReplaceItemModelRule());
-//	public static final ReplaceBlockModelRule REPLACE_BLOCK_MODEL = register("replace_block_model", 1000, new ReplaceBlockModelRule());
-
-//	public static final EnumVoteRule<AutoJumpAlternative> AUTO_JUMP_ALTERNATIVES = register("auto_jump_alternatives", 500, new EnumVoteRule<>(AutoJumpAlternative.values(), AutoJumpAlternative.OFF, AutoJumpAlternative.CODEC) {
-//		protected Text getOptionDescription(AutoJumpAlternative val) {
-//			return val.getDisplayName();
-//		}
-//	});
 
 	public static final StaticVoteRule UNCONTROLLABLE_LAVA = register("uncontrolable_lave", 125, new StaticVoteRule(Text.translatable("rule.uncontrolable_lave")));
 	public static final StaticVoteRule MINECART_WHEELS = register("wheels_on_minecarts", 500, new StaticVoteRule(Text.translatable("rule.wheels_on_minecarts")));
@@ -255,18 +247,6 @@ public class VoteRules {
 	public static final StaticVoteRule BETA_ENTITY_IDS = register("beta_entity_ids", 500, new StaticVoteRule(Text.translatable("rule.beta_entity_ids")));
 	public static final TheJokeRule THE_JOKE = register("the_joke", 500, new TheJokeRule());
 
-//	public static final EnumVoteRule<NameVisibility> NORMAL_NAME_VISIBILITY = register("normal_name_visibility", 1000, new EnumVoteRule<>(NameVisibility.values(), NameVisibility.SEE_THROUGH, NameVisibility.CODEC) {
-//		protected Text getOptionDescription(NameVisibility val) {
-//			return Text.translatable("rule.normal_name_visibility", val.getDisplayName());
-//		}
-//	});
-//
-//	public static final EnumVoteRule<NameVisibility> SNEAKING_NAME_VISIBILITY = register("sneaking_name_visibility", 1000, new EnumVoteRule<>(NameVisibility.values(), NameVisibility.NORMAL, NameVisibility.CODEC) {
-//		protected Text getOptionDescription(NameVisibility val) {
-//			return Text.translatable("rule.sneaking_name_visibility", val.getDisplayName());
-//		}
-//	});
-
 	public static final StaticVoteRule ENTITY_COLLISIONS = register("entity_collisions", 500, new StaticVoteRule(Text.translatable("rule.entity_collisions")));
 	public static final StaticVoteRule DAY_BEDS = register("day_beds", 500, new StaticVoteRule(Text.translatable("rule.day_beds")));
 	public static final StaticVoteRule PICKAXE_BLOCK = register("pickaxe_block", 1000, new StaticVoteRule(Text.translatable("rule.pickaxe_block")));
@@ -274,56 +254,14 @@ public class VoteRules {
 //	public static final ParentTrapRule PARENT_TRAP = register("parent_trap", 500, new ParentTrapRule());
 	public static final StaticVoteRule GLOW_BEES = register("glow_bees", 1000, new StaticVoteRule(Text.translatable("rule.glow_bees")));
 
-//	public static final EnumVoteRule<FlailingLevel> FLAILING = register("flailing_level", 1000, new EnumVoteRule<>(FlailingLevel.values(), FlailingLevel.NORMAL, FlailingLevel.CODEC) {
-//		protected Text getOptionDescription(FlailingLevel val) {
-//			return val.getDisplayName();
-//		}
-//	});
-//
-//	public static final EnumVoteRule<RecipeFlip> RECIPE_FLIP = register("recipe_flip", 1000, new EnumVoteRule<>(RecipeFlip.values(), RecipeFlip.BOTH, RecipeFlip.CODEC) {
-//		protected Text getOptionDescription(RecipeFlip val) {
-//			return val.getDisplayName();
-//		}
-//	});
-
 	public static final EntityVoteRule AI_ATTACK = register("ai_attack", 500, new EntityVoteRule() {
-//		protected Text getOptionDescription(EntityReference entry) {
-//			return Text.translatable("rule.ai_attack", entry.displayName());
-//		}
-
 		@Override
 		protected Text getElementDescription(EntityReference element) {
 			return Text.translatable("rule.ai_attack", element.displayName());
 		}
 	});
 
-//	public static final EntityVoteRule PRESIDENT = register("president", 1000, new EntityVoteRule() {
-//		protected Text getOptionDescription(EntityReference entry) {
-//			return Text.translatable("rule.president", entry.displayName());
-//		}
-//
-//		@Override
-//		protected boolean apply(EntityReference entry) {
-//			this.getActiveEntries().forEach(this::deactivate);
-//			return super.apply(entry);
-//		}
-//
-//		@Override
-//		protected Text getElementDescription(EntityReference element) {
-//			return null;
-//		}
-//	});
-
 	public static final CopySkinRule COPY_SKIN = register("copy_skin", 1000, new CopySkinRule());
-//
-//	public static final EnumVoteRule<ItemDespawnStrategy> ITEM_DESPAWN = register("item_despawn", 125, new EnumVoteRule<>(ItemDespawnStrategy.values(), ItemDespawnStrategy.DESPAWN_ALL, ItemDespawnStrategy.CODEC) {
-//		protected Text getOptionDescription(ItemDespawnStrategy val) {
-//			return val.getDisplayName();
-//		}
-//	});
-//
-//	public static final ItemDespawnTimeRule ITEM_DESPAWN_TIME = register("item_despawn_time", 1000, new ItemDespawnTimeRule());
-//	public static final DayLengthRule DAY_LENGTH = register("day_length", 1000, new DayLengthRule());
 	public static final StaticVoteRule BEDS_ON_BANNERS = register("beds_on_banners", 500, new StaticVoteRule(Text.translatable("rule.beds_on_banners")));
 
 	public static final EnumVoteRule<FoodRestriction> FOOD_RESTRICTION = register("food_restriction", 1000, new EnumVoteRule<>(FoodRestriction.values(), FoodRestriction.ANY, FoodRestriction.CODEC) {
@@ -332,65 +270,16 @@ public class VoteRules {
 		}
 	});
 
-//	public static final CodepointStyleRule CODEPOINT_STYLE = register("codepoint_style", 1000, new CodepointStyleRule());
-//	public static final CodepointReplaceRule CODEPOINT_REPLACE = register("codepoint_replace", 1000, new CodepointReplaceRule());
-//	public static final OptimizeRule OPTIMIZE = register("optimize", 500, new OptimizeRule());
-//	public static final BinaryGameruleRule BINARY_GAMERULE = register("binary_gamerule_rule", 1000, new BinaryGameruleRule());
-//	public static final IntegerGameruleRule INTEGER_GAMERULE = register("integer_gamerule_rule", 1000, new IntegerGameruleRule());
-
-//	public static final RegistryEntryVoteRule<EntityType<?>> DINNERBONIZE = register("dinnerbonize", 1000, new RegistryEntryVoteRule<EntityType<?>>("entity", RegistryKeys.ENTITY_TYPE) {
-//		@Override
-//		protected Text getLabel(Text name) {
-//			return Text.translatable("rule.dinnerbonize", name);
-//		}
-//	});
-//
-//	public static final RegistryEntryVoteRule<EntityType<?>> GRUMMIZE = register("grummize", 1000, new RegistryEntryVoteRule<EntityType<?>>("entity", RegistryKeys.ENTITY_TYPE) {
-//		@Override
-//		protected Text getLabel(Text name) {
-//			return Text.translatable("rule.grummize", name);
-//		}
-//	});
-
-//	public static final GiveItemRule GIVE_ITEM = register("give_item", 1000, new GiveItemRule());
-//
-//	public static final DyeColorVoteRule SHEEP_COLOR = register("default_sheep_color", 500, new DyeColorVoteRule(DyeColor.WHITE) {
-//		protected Text getOptionDescription(DyeColor color) {
-//			return Text.translatable("rule.default_sheep_color", Text.translatable("color.minecraft." + color.getName()));
-//		}
-//	});
-
 	public static final StaticVoteRule FLINTSPLODER = register("flintsploder", 500, new StaticVoteRule(Text.translatable("rule.flintsploder")));
 	public static final StaticVoteRule FIX_PISTON = register("fix_piston", 125, new StaticVoteRule(Text.translatable("rule.fix_piston")));
 	public static final StaticVoteRule PLAYER_HEAD_DROP = register("player_head_drop", 500, new StaticVoteRule(Text.translatable("rule.player_head_drop")));
 	public static final StaticVoteRule CHARGED_CREEPERS = register("charged_creepers", 500, new StaticVoteRule(Text.translatable("rule.charged_creepers")));
-//	public static final EggFreeRule EGG_FREE = register("egg_free", 1000, new EggFreeRule());
-//	public static final VillagerGemRule VILLAGER_GEM = register("villager_gem", 1000, new VillagerGemRule());
 	public static final StaticVoteRule UNSTABLE_TNT = register("unstable_tnt", 500, new StaticVoteRule(Text.translatable("rule.unstable_tnt")));
 	public static final StaticVoteRule TNT_TENNIS = register("tnt_tennis", 500, new StaticVoteRule(Text.translatable("rule.tnt_tennis")));
 	public static final StaticVoteRule UNDEAD_PLAYERS = register("undead_players", 125, new StaticVoteRule(Text.translatable("rule.undead_players")));
 	public static final StaticVoteRule HAUNTED_WORLD = register("haunted_world", 500, new StaticVoteRule(Text.translatable("rule.haunted_world")));
-//	public static final ExplosionPowerRule EXPLOSION_POWER = register("explosion_power", 500, new ExplosionPowerRule());
-//	public static final ReplaceRegistryRule REPLACE_LOOT = register("replace_loot_drop", 1000, new ReplaceRegistryRule("rule.replace_loot_drop"));
-//	public static final DoubleHalfRule LOOT_DOUBLE_HALF = register("loot_double_or_half", 1000, new DoubleHalfRule("rule.loot_double_or_half", -4, 4));
-//	public static final ReplaceRegistryRule REPLACE_RECIPE = register("replace_recipe_output", 1000, new ReplaceRegistryRule("rule.replace_recipe_output"));
-//	public static final DoubleHalfRule RECIPE_DOUBLE_HALF = register("recipe_double_or_half", 1000, new DoubleHalfRule("rule.recipe_double_or_half", -4, 4));
-//	public static final DoubleHalfRule STACK_SIZE_DOUBLE_HALF = register("stack_size_double_or_half", 1000, new DoubleHalfRule("rule.stack_size_double_or_half", -6, 4));
-//	public static final DamageModifierRule DAMAGE_MODIFIER = register("damage_modifier", 1000, new DamageModifierRule("rule.damage_modifier", -3, 10));
-//	public static final InflammabilityRule INFLAMMABILITY = register("inflammability", 1000, new InflammabilityRule());
 	public static final StaticVoteRule MINECART_LIES = register("minecart_lies", 500, new StaticVoteRule(Text.translatable("rule.minecart_lies")));
-//	public static final Vote WIP_RULE = register("wipwipwi-_-pwipwip", 1, new WIPRule());
 	public static final StaticVoteRule SWAP_SKY = register("swap_sky", 500, new StaticVoteRule(Text.translatable("rule.swap_skies")));
-
-//	public static final RegistryEntryVoteRule<EntityType<?>> SPAWN_DISABLE = register("natural_spawn_disable", 1000, new RegistryEntryVoteRule<EntityType<?>>("entity", RegistryKeys.ENTITY_TYPE) {
-//		@Override
-//		protected Text getLabel(Text name) {
-//			return Text.translatable("rule.natural_spawn_disable", name);
-//		}
-//	});
-
-//	public static final SpawnReplacementRule SPAWN_REPLACEMENT = register("natural_spawn_replacement", 1000, new SpawnReplacementRule());
-//	public static final SoundReplaceRule SOUND_REPLACE = register("sound_replace", 1000, new SoundReplaceRule());
 
 	public static final EnumVoteRule<CollisionStrategy> MINECART_COLLISIONS = register("minecart_collisions", 125, new EnumVoteRule<>(CollisionStrategy.values(), CollisionStrategy.NONE, CollisionStrategy.CODEC) {
 		protected Text getOptionDescription(CollisionStrategy val) {
@@ -403,16 +292,7 @@ public class VoteRules {
 			return Text.translatable("rule.boat_collisions." + val.asString());
 		}
 	});
-
-//	public static final BiomeColorRule GRASS_COLOR = register("biome_grass_color", 1000, new BiomeColorRule("rule.biome_color.grass"));
-//	public static final BiomeColorRule FOLIAGE_COLOR = register("biome_foliage_color", 1000, new BiomeColorRule("rule.biome_color.foliage"));
-//	public static final BiomeColorRule SKY_COLOR = register("biome_sky_color", 1000, new BiomeColorRule("rule.biome_color.sky"));
-//	public static final BiomeColorRule WATER_COLOR = register("biome_water_color", 1000, new BiomeColorRule("rule.biome_color.water"));
-//	public static final BiomeColorRule FOG_COLOR = register("biome_fog_color", 1000, new BiomeColorRule("rule.biome_color.fog"));
-//	public static final BiomeColorRule WATER_FOG_COLOR = register("biome_water_fog_color", 1000, new BiomeColorRule("rule.biome_color.water_fog"));
 	public static final StaticVoteRule RUBIES = register("rubies", 500, new StaticVoteRule(Text.translatable("rule.rubies")));
-//	public static final TransformScaleRule TRANSFORM_SCALE = register("transform_scale", 1000, new TransformScaleRule());
-//	public static final TransformEntityRule TRANSFORM_ENTITY = register("transform_entity", 125, new TransformEntityRule());
 	public static final StaticVoteRule ULTRA_REALISTIC = register("ultra_realistic_mode", 500, new StaticVoteRule(Text.translatable("rule.ultra_realistic_mode")));
 	public static final StaticVoteRule REMOVE_PHANTOMS = register("remove_phantoms", 125, new StaticVoteRule(Text.translatable("rule.remove_phantoms")));
 	public static final StaticVoteRule PHANTOM_PHANTOM = register("phantom_phantom", 500, new StaticVoteRule(Text.translatable("rule.phantom_phantom")));
@@ -422,12 +302,6 @@ public class VoteRules {
 	public static final StaticVoteRule UNIVERSAL_JEB = register("universal_jeb", 500, new StaticVoteRule(Text.translatable("rule.universal_jeb")));
 	public static final StaticVoteRule WORLD_OF_GIANTS = register("world_of_giants", 125, new StaticVoteRule(Text.translatable("rule.world_of_giants")));
 	public static final StaticVoteRule RAY_TRACING = register("ray_tracing", 125, new StaticVoteRule(Text.translatable("rule.ray_tracing")));
-
-//	public static final DyeColorVoteRule COLORED_LIGHT = register("colored_light", 125, new DyeColorVoteRule(DyeColor.WHITE) {
-//		protected Text getOptionDescription(DyeColor color) {
-//			return Text.translatable("rule.colored_light", Text.translatable("color.minecraft." + color.getName()));
-//		}
-//	});
 
 	public static final StaticVoteRule GLOWING_GLOW_SQUIDS = register("glowing_glow_squids", 500, new StaticVoteRule(Text.translatable("rule.glowing_glow_squids")));
 	public static final StaticVoteRule BEDROCK_SHADOWS = register("bedrock_shadows", 1000, new StaticVoteRule(Text.translatable("rule.bedrock_shadows")));
@@ -462,19 +336,6 @@ public class VoteRules {
 		}
 	});
 
-//	public static final EnumVoteRule<LightEngineOptimization> OPTIMIZE_LIGHT = register("optimize_light_engine", 125, new EnumVoteRule<>(LightEngineOptimization.values(), LightEngineOptimization.NONE, LightEngineOptimization.CODEC) {
-//		protected Text getOptionDescription(LightEngineOptimization val) {
-//			return val.getDisplayName();
-//		}
-//	});
-
-//	public static final RegistryEntryVoteRule<EntityType<?>> RIDEABLE_ENTITIES = register("rideable_entities", 1000, new RegistryEntryVoteRule<EntityType<?>>("entity", RegistryKeys.ENTITY_TYPE) {
-//		@Override
-//		protected Text getLabel(Text name) {
-//			return Text.translatable("rule.rideable_entities", name);
-//		}
-//	});
-
 	public static final StaticVoteRule ENDERMEN_PICK_ANYTHING = register("endermen_pick_up_anything", 500, new StaticVoteRule(Text.translatable("rule.endermen_pick_up_anything")));
 	public static final StaticVoteRule ENDERMEN_BLOCK_UPDATE = register("endermen_block_update", 500, new StaticVoteRule(Text.translatable("rule.endermen_block_update")));
 	public static final StaticVoteRule VOTING_FIREWORKS = register("voting_fireworks", 500, new StaticVoteRule(Text.translatable("rule.voting_fireworks")));
@@ -486,8 +347,9 @@ public class VoteRules {
 	public static final StaticVoteRule TRAILS_AND_TAILS = register("trails_and_tails", 500, new StaticVoteRule(Text.translatable("rule.trails_and_tails")));
 
 //	private static final DataPool<RegistryEntry.Reference<Vote>> FINAL_POOL = POOL_BUILDER.build();
-	private static final WeightedList<Reference<Vote>> FINAL_POOL = new WeightedList<RegistryEntry.Reference<Vote>>();
-
+//	private static final WeightedList<Reference<Vote>> FINAL_POOL = new WeightedList<RegistryEntry.Reference<Vote>>();
+	private static final WeightedList<Reference<Vote>> FINAL_POOL = POOL_BUILDER.shuffle();
+	
 	private static ClampedIntProvider createClampedPercentProvider(int padding) {
 		return ClampedIntProvider.create(UniformIntProvider.create(-padding, 100 + padding), 0, 100);
 	}
@@ -496,6 +358,7 @@ public class VoteRules {
 	private static <R extends Vote> R register(String name, int weight, R rule) {
 		Reference<Vote> ref = Registry.registerReference(VoteRegistries.VOTE_RULE_TYPE, Identifier.of("minecraft", name), rule);
 		POOL_BUILDER.add((Reference<Vote>)(Object)ref, weight);
+
 		return rule;
 	}
 
@@ -504,7 +367,6 @@ public class VoteRules {
 	}
 
 	public static final RegistryEntry.Reference<Vote> getRandomRule(Random random) {
-//		return FINAL_POOL.getDataOrEmpty(random).orElseThrow();
 		FINAL_POOL.shuffle();
 		return FINAL_POOL.stream()
 		    .findFirst()
@@ -512,7 +374,6 @@ public class VoteRules {
 	}
 
 	public static final RegistryEntry.Reference<Vote> pickRule(Random random) {
-//		return FINAL_POOL.getDataOrEmpty(random).orElseThrow();
 		FINAL_POOL.shuffle();
 		return FINAL_POOL.stream()
 		    .findFirst()

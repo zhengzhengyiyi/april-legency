@@ -1,6 +1,5 @@
 package net.zhengzhengyiyi.gui;
 
-import java.util.Comparator;
 import java.util.stream.Stream;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -12,7 +11,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.accessor.VoteClientPlayNetworkHandler;
 import net.zhengzhengyiyi.gui.widget.VoteListWidget;
-import net.zhengzhengyiyi.vote.VoteRegistries;
+import net.zhengzhengyiyi.vote.ClientVoteManager;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 
@@ -58,23 +58,21 @@ public class PendingVoteScreen extends Screen {
 
     @Override
     protected void init() {
-        this.voteListWidget = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager(), this, this.client, this.width, this.height, 68, getButtonsY(), 33);
+//        this.voteListWidget = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager(), this, this.client, this.width, this.height, 68, getButtonsY(), 33);
+    	this.voteListWidget = new VoteListWidget(((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager(), this, this.client, this.width, 200, 20, getButtonsY());
 
         int i = getBackgroundX() + 3;
         int j = getButtonsY() + 8 + 4;
 
         addDrawableChild(ButtonWidget.builder(SHOW_RULES_TEXT, buttonWidget -> {
-            Stream<Text> stream = VoteRegistries.VOTE_RULE_TYPE.streamEntries()
-                .sorted(Comparator.comparing(entry -> entry.registryKey().getValue().getPath()))
-                .flatMap(entry -> {
-                    var regEntry = (net.minecraft.registry.entry.RegistryEntry<?>) entry;
-                    
-                    Text path = Text.literal(regEntry.getKey().get().getValue().getPath());
-//                    Text desc = ((Vote) regEntry.value()).getDescription(VoterAction.REPEAL);
-                    
-                    return Stream.<Text>of(path, Text.of("no description"));
-                })
-                .map(text -> (Text)text);
+        	ClientVoteManager voteManager = ((VoteClientPlayNetworkHandler)this.client.getNetworkHandler()).getVoteManager();
+        	Stream<Text> stream = voteManager.activeVotes.values().stream()
+                    .flatMap(entry -> {
+                        Text path = Text.of(entry.title().getString());
+//                        Text desc = ((Vote) regEntry.value()).getDescription(VoterAction.REPEAL);
+                        return Stream.<Text>of(path, entry.definition().metadata().getDisplayName());
+                    })
+                    .map(text -> (Text)text);
             
             this.client.setScreen(new ReportEvidenceScreen(CURRENT_RULES_TEXT, this, VoteLine.wrap(this.client.textRenderer, stream, 320).toList()));
         }).dimensions(i, j, 236, 20).build());
@@ -91,16 +89,20 @@ public class PendingVoteScreen extends Screen {
 
     @Override
     public void renderBackground(DrawContext context, int mouseX, int mouseY, float deltaTicks) {
-//        int i = getBackgroundX() + 3;
         super.renderBackground(context, mouseX, mouseY, deltaTicks);
 //        RenderSystem.setShaderTexture(0, VOTES_TEXTURE);
-//        context.drawNineSlicedTexture(context, i, 64, 236, getListHeight() + 16, 8, 236, 34, 1, 1);
     }
 
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-//        renderBackground(matrices);
+    	int i = getBackgroundX() + 3;
+    	
+    	context.enableScissor(60, 20, width-60, height);
+    	
+    	context.drawGuiTexture(RenderPipelines.GUI_TEXTURED, PendingVoteScreen.MENU_BACKGROUND_TEXTURE, i, 64, 236, getListHeight() + 16, 8, 236, 34, 1, 1);
+//        renderBackground(context, mouseX, mouseY, delta);
         this.voteListWidget.render(context, mouseX, mouseY, delta);
+        context.disableScissor();
         super.render(context, mouseX, mouseY, delta);
     }
 

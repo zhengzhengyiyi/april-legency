@@ -54,8 +54,7 @@ public class BooleanVoteRule implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			// TODO Auto-generated method stub
-			return null;
+			return Text.of("no description");
 		}
     }
 }

@@ -86,7 +86,5 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
         public Text getDescription(VoterAction action) {
             return RegistryEntryVoteRule.this.getOptionDescription(this.key);
         }
-
-		 
     }
 }

@@ -37,31 +37,6 @@ public class VoteManager {
             value.apply(VoterAction.APPROVE);
         }
     }
-    
-    public void addExampleVote() {
-        VoteMetadata metadata = new VoteMetadata(
-            Text.literal("Experimental Gravity Change"),
-            System.currentTimeMillis(),
-            60000L,
-            java.util.List.of()
-        );
-
-        java.util.Map<VoteOptionId, VoteDefinition.Option> options = new java.util.HashMap<>();
-        
-        options.put(
-            new VoteOptionId(UUID.randomUUID(), 0), 
-            new VoteDefinition.Option(Text.literal("Apply Effects"), java.util.List.of())
-        );
-        
-        options.put(
-            new VoteOptionId(UUID.randomUUID(), 1), 
-            new VoteDefinition.Option(Text.literal("Maintain Status Quo"), java.util.List.of())
-        );
-
-        VoteDefinition definition = new VoteDefinition(metadata, options);
-
-        this.addVote(java.util.UUID.randomUUID(), definition);
-    }
 
     public void initializeRules() {
     }
@@ -88,6 +63,15 @@ public class VoteManager {
         );
     }
     
+    @SuppressWarnings("unchecked")
+	public Set<Vote> method_50570() {
+    	Set<Vote> set = new HashSet<>();
+    	for (VoteDefinition lv : this.activeVotes.values()) {
+    		collectUsedRules((Set<Object>)(Object)set, lv);
+    	}
+    	return set;
+    }
+    
     public VoterData method_50566(VoteOptionId arg) {
     	return this.tracker.method_50590(arg, false);
     }
@@ -96,6 +80,8 @@ public class VoteManager {
         Random random = context.random();
         
         boolean attemptPropose = this.shouldProposeRandomly(server, context.pos(), random) && context.isProposeEnabled();
+        System.out.println(attemptPropose);
+        // TODO
         
         boolean isRevokeMode = context.isRevokeMode();
         

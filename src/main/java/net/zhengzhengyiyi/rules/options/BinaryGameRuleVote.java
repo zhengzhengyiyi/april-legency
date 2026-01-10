@@ -2,20 +2,14 @@ package net.zhengzhengyiyi.rules.options;
 
 // TODO: fix this class
 
-import com.mojang.serialization.Codec;
 import java.util.List;
-//import java.util.Map;
 import java.util.Optional;
-//import java.util.stream.Collectors;
+
 import net.minecraft.server.MinecraftServer;
-//import net.minecraft.text.Text;
-//import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.rule.GameRule;
 import net.minecraft.world.rule.GameRules;
-//import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
-import net.zhengzhengyiyi.vote.VoterAction;
 //import net.zhengzhengyiyi.world.Vote;
 
 public class BinaryGameRuleVote extends VoteEffect.Weighted {
@@ -105,12 +99,6 @@ public class BinaryGameRuleVote extends VoteEffect.Weighted {
 //			return null;
 //		}
 //    }
-
-	@Override
-	public Codec<VoteValue> getOptionCodec() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	protected Optional<VoteValue> selectRandomOption(MinecraftServer server, Random random) {

@@ -25,12 +25,6 @@ public abstract class SetVoteRule<T> implements Vote {
         return this.activeElements.stream().map(element -> new SetVoteRule.Option(element));
     }
 
-    @Override
-    public Codec getOptionCodec() {
-//        return Vote.createCodec(this.getElementCodec().xmap(element -> new SetVoteRule.Option(element), opt -> opt.values()));
-    	return null;
-    }
-
     public boolean contains(T element) {
         return this.activeElements.contains(element);
     }
@@ -75,7 +69,7 @@ public abstract class SetVoteRule<T> implements Vote {
 
 		@Override
 		public Vote getType() {
-			return this.getType();
+			return SetVoteRule.this;
 		}
 
 		@Override

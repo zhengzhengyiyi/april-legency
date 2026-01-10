@@ -40,9 +40,4 @@ public class SpecialRecipeRule extends SetVoteRule<Identifier> {
     protected Text getElementDescription(Identifier id) {
         return Text.translatable(id.toTranslationKey("rule.recipe"));
     }
-
-	@Override
-	public Codec<VoteValue> getOptionCodec() {
-		return null;
-	}
 }

@@ -3,7 +3,10 @@ package net.zhengzhengyiyi.vote;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.*;
+import java.util.stream.Stream;
+import java.util.Optional;
 
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.text.Text;
 import net.minecraft.text.TextCodecs;
@@ -95,20 +98,69 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * <p>
      * Corresponds to the 'a' method in bgp for generating new apply votes.
      */
+    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, VoteDefinition.Context settings) {
+        Set<Vote> activeRules = new HashSet<>();
+        
+        for (VoteDefinition definition : ((VoteServer) server).getVoteManager().activeVotes.values()) {
+            for (VoteDefinition.Option option : definition.options().values()) {
+                for (VoteDefinition.Effect effect : option.effects()) {
+                    activeRules.add(effect.change().getType());
+                }
+            }
+        }
+
+        activeRules.addAll(((VoteServer) server).getVoteManager().method_50570());
+
+        Optional<Vote> randomRule = method_50525(activeRules, settings)
+                .findAny()
+                .map(net.minecraft.registry.entry.RegistryEntry.Reference::value);
+
+        if (randomRule.isEmpty()) {
+            return Optional.empty();
+        }
+
+        Vote rule = randomRule.get();
+        int optionCount = settings.maxOptions();
+        List<List<VoteValue>> generatedValues = new ArrayList<>();
+        
+        rule.generateOptions(server, settings.random(), optionCount).forEach(val -> {
+            generatedValues.add(new ArrayList<>(List.of(val)));
+        });
+
+        if (generatedValues.isEmpty()) {
+            return Optional.empty();
+        }
+
+        List<Option> optionList = generatedValues.stream().map(valueList -> {
+            List<Effect> effects = valueList.stream()
+                    .map(val -> new Effect(val, VoterAction.APPROVE))
+                    .toList();
+            return new Option(createOptionText(effects), effects);
+        }).toList();
+
+        return Optional.of(finalizeProposal(id, server, settings, optionList));
+    }
     
-    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
-        Vote rule = VoteRules.AIR_BLOCKS; 
-        
-        List<VoteValue> values = rule.generateOptions(server, context.random(), 1).toList();
-        
-        if (values.isEmpty()) return Optional.empty();
-
-        List<Option> optionList = List.of(
-            new Option(Text.literal("test"), 
-            List.of(new Effect(values.get(0), VoterAction.APPROVE)))
-        );
-
-        return Optional.of(finalizeProposal(id, server, context, optionList));
+//    public static Optional<VoteDefinition> proposeApply(UUID id, MinecraftServer server, Context context) {
+//        Vote rule = VoteRules.AIR_BLOCKS; 
+//        
+//        List<VoteValue> values = rule.generateOptions(server, context.random(), 1).toList();
+//        
+//        if (values.isEmpty()) return Optional.empty();
+//
+//        List<Option> optionList = List.of(
+//            new Option(Text.literal("test"),
+//            List.of(new Effect(values.get(0), VoterAction.APPROVE)))
+//        );
+//
+//        return Optional.of(finalizeProposal(id, server, context, optionList));
+//    }
+    
+    public static Stream<RegistryEntry.Reference<Vote>> method_50525(Set<Vote> set, VoteDefinition.Context arg) {
+        return Stream.generate(() -> VoteRules.getRandomRule(arg.random))
+          .filter(opt -> opt.hasKeyAndValue())
+          .limit(1000L)
+          .filter(reference -> !set.contains(reference.value()));
     }
 
     /**

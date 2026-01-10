@@ -54,7 +54,7 @@ public class StaticVoteRule implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return null;
+			return Text.of("no description");
 		}
     }
 }
