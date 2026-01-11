@@ -25,6 +25,9 @@ public class VoteCriteria {
     public static Iterable<? extends Criterion<?>> getCriteria() {
         return VALUES.values();
     }
+    
+    public static void init() {
+    }
 
     @Nullable
     @SuppressWarnings("unchecked")

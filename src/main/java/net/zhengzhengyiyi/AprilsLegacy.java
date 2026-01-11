@@ -3,12 +3,17 @@ package net.zhengzhengyiyi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.text.Text;
+import net.zhengzhengyiyi.advancement.VoteCriteria;
+import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.command.VoteCommands;
+import net.zhengzhengyiyi.entity.ModEntities;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.vote.VoteServer;
@@ -32,6 +37,10 @@ public class AprilsLegacy implements ModInitializer {
 
         PayloadTypeRegistry.playC2S().register(class_8258.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8258::new));
         PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
+        
+        ServerPlayNetworking.registerGlobalReceiver(class_8258.PAYLOAD_ID, (payload, context) -> {
+        	payload.apply(context.player().networkHandler);
+        });
 	}
 
 	@Override
@@ -40,6 +49,10 @@ public class AprilsLegacy implements ModInitializer {
 		
 		VoteRules.init();
 		VoteRegistries.init();
+		VoteCriteria.init();
+		ModEntities.init();
+		ModBlocks.init();
+		VoteStats.init();
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);

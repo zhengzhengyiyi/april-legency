@@ -1,6 +1,7 @@
 package net.zhengzhengyiyi.vote;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import java.util.*;
 import java.util.stream.Stream;
@@ -21,17 +22,23 @@ import net.zhengzhengyiyi.world.Vote;
  */
 public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
 	public static final Codec<VoteDefinition> CODEC = RecordCodecBuilder.create(instance -> 
-    instance.group(
-        VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
-        Codec.unboundedMap(
-            Codec.STRING.xmap(
-                s -> new VoteOptionId(UUID.fromString(s), 0),
-                id -> id.voteId().toString()
-            ), 
-            Option.CODEC
-        ).fieldOf("options").forGetter(VoteDefinition::options)
-    ).apply(instance, VoteDefinition::new)
-);
+	    instance.group(
+	        VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
+	        Codec.<VoteOptionId, Option>unboundedMap(
+	            Codec.STRING.comapFlatMap(
+	                s -> {
+	                    try {
+	                        return DataResult.success(new VoteOptionId(UUID.fromString(s), 0));
+	                    } catch (Exception e) {
+	                        return DataResult.error(() -> "Invalid UUID string: " + s);
+	                    }
+	                },
+	                id -> id.voteId().toString()
+	            ), 
+	            Option.CODEC
+	        ).fieldOf("options").forGetter(VoteDefinition::options)
+	    ).apply(instance, VoteDefinition::new)
+	);
 
     public static final Text NOTHING_RULE_TEXT = Text.translatable("rule.nothing");
 

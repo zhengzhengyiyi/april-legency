@@ -9,6 +9,7 @@ import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.codec.PacketCodec;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.network.ClientModNetworkManager;
+import net.zhengzhengyiyi.renderer.ModEntityRenderers;
 import net.zhengzhengyiyi.network.*;
 
 public class AprilsLegacyClient implements ClientModInitializer {
@@ -37,6 +38,7 @@ public class AprilsLegacyClient implements ClientModInitializer {
 	@Override
 	public void onInitializeClient() {
 		ClientModNetworkManager.registerReceivers();
+		ModEntityRenderers.register();
 		
 //		registerNetworkPacket();
 		

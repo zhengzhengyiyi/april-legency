@@ -8,6 +8,9 @@ import net.minecraft.util.Identifier;
 
 public class VoteStats {
     public static final Identifier VOTES = register("votes", StatFormatter.DEFAULT);
+    
+    public static void init() {
+    }
 
     private static Identifier register(String id, StatFormatter formatter) {
         Identifier identifier = Identifier.of("minecraft", id);

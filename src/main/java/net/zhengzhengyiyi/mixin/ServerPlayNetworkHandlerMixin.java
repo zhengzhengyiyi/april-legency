@@ -62,7 +62,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
 	            VoteCriteria.VOTE.trigger(this.player);
 	
 	            if (VoteRules.VOTING_FIREWORKS.isActive()) {
-	                this.method_50047();
+	                createFirework();
 	            }
 	
 	            if (VoteRules.SNITCH.isActive()) {
@@ -82,7 +82,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
     }
     
     @Unique
-    private void method_50047() {
+    private void createFirework() {
         net.minecraft.util.math.random.Random random = this.player.getRandom();
         
         int flightDuration = random.nextBetween(1, 3);
