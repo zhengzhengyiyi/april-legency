@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 public class ModBlocks {
     public static final RegistryKey<Block> CHEESE_BLOCK_KEY = RegistryKey.of(
         RegistryKeys.BLOCK, 
-        Identifier.of("minecraft", "cheese_block")
+        Identifier.of("minecraft", "cheese")
     );
 
     public static final Block CHEESE = register(
