@@ -1,0 +1,50 @@
+{
+  "carvers": {},
+  "creature_spawn_probability": 0.07,
+  "downfall": 0.5,
+  "effects": {
+    "foliage_color": 16777215,
+    "grass_color": 6908265,
+    "water_color": 0,
+    "dry_foliage_color": 0,
+    "grass_color_modifier": "swamp"
+  },
+  "features": [
+    [
+      "minecraft:crater_mega",
+      "minecraft:crater_large",
+      "minecraft:crater_small"
+    ],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "zhengzhengyiyi:lunar_base"
+    ]
+  ],
+  "has_precipitation": false,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "zhengzhengyiyi:moon_cow",
+        "maxCount": 6,
+        "minCount": 2,
+        "weight": 8
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": -0.5
+}

@@ -1,0 +1,22 @@
+{
+  "attributes": {
+    "minecraft:gameplay/respawn_anchor_works": false,
+    "minecraft:gameplay/bed_rule": {
+      "can_sleep": "always",
+      "can_set_spawn": "always"
+    },
+    "minecraft:gameplay/can_start_raid": false
+  },
+  "ambient_light": 0,
+  "coordinate_scale": 1,
+  "has_ceiling": false,
+  "has_skylight": true,
+  "skybox": "end",
+  "cardinal_light": "default",
+  "height": 256,
+  "infiniburn": "#minecraft:infiniburn_end",
+  "logical_height": 256,
+  "min_y": 0,
+  "monster_spawn_block_light_limit": 2,
+  "monster_spawn_light_level": 4
+}

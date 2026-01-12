@@ -9,7 +9,8 @@
 		"WorldSavePathMixin",
 		"LevelStorageSessionMixin",
 		"ServerPlayNetworkHandlerMixin",
-		"PlayerManagerMixin"
+		"PlayerManagerMixin",
+		"WeightedPressurePlateMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

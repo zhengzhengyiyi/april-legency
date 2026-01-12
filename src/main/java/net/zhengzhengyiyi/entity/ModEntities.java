@@ -4,12 +4,15 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRe
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.SpawnLocationTypes;
+import net.minecraft.entity.SpawnRestriction;
 import net.minecraft.entity.passive.CowEntity;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.Heightmap;
 import net.zhengzhengyiyi.world.FakePlayerEntity;
 
 public class ModEntities {
@@ -23,6 +26,7 @@ public class ModEntities {
 	
 	public static void init() {
 		FabricDefaultAttributeRegistry.register(MOON_COW, CowEntity.createCowAttributes());
+		SpawnRestriction.register(MOON_COW, SpawnLocationTypes.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, MoonCowEntity::canMobSpawn);
 	}
 	
 	private static <T extends Entity> EntityType<T> register(String id, EntityType.Builder<T> type) {
