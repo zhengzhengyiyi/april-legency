@@ -2,41 +2,11 @@
   "type": "zhengzhengyiyi:the_moon",
   "generator": {
     "type": "minecraft:noise",
-    "settings": "minecraft:overworld",
+    "settings": "zhengzhengyiyi:moon",
     "biome_source": {
-      "type": "minecraft:multi_noise",
-      "biomes": [
-        {
-          "biome": "zhengzhengyiyi:the_moon",
-          "parameters": {
-            "temperature": [
-              -1,
-              1
-            ],
-            "humidity": [
-              -1,
-              1
-            ],
-            "continentalness": [
-              -1,
-              1
-            ],
-            "erosion": [
-              -1,
-              1
-            ],
-            "weirdness": [
-              -1,
-              1
-            ],
-            "depth": [
-              -1,
-              1
-            ],
-            "offset": 0
-          }
-        }
-      ]
+      "type": "minecraft:fixed",
+      "preset": "zhengzhengyiyi:the_moon",
+      "biome": "zhengzhengyiyi:the_moon"
     }
   }
 }

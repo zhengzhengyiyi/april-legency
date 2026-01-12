@@ -1,19 +1,21 @@
 {
-  "carvers": {},
+  "carvers": [],
   "creature_spawn_probability": 0.07,
   "downfall": 0.5,
   "effects": {
-    "foliage_color": 16777215,
-    "grass_color": 6908265,
-    "water_color": 0,
-    "dry_foliage_color": 0,
-    "grass_color_modifier": "swamp"
+    "sky_color": 0,
+    "fog_color": 0,
+    "water_color": 4159204,
+    "water_fog_color": 329011,
+    "foliage_color": 10387589,
+    "grass_color": 9470285,
+    "grass_color_modifier": "swamp" 
   },
   "features": [
     [
-      "minecraft:crater_mega",
-      "minecraft:crater_large",
-      "minecraft:crater_small"
+      "zhengzhengyiyi:crater_mega",
+      "zhengzhengyiyi:crater_large",
+      "zhengzhengyiyi:crater_small"
     ],
     [],
     [],

@@ -3,17 +3,13 @@
   "config": {
     "depth": {
       "type": "minecraft:uniform",
-      "value": {
         "max_inclusive": 5,
         "min_inclusive": 3
-      }
     },
     "radius": {
       "type": "minecraft:uniform",
-      "value": {
         "max_inclusive": 15,
         "min_inclusive": 12
-      }
     }
   }
 }
