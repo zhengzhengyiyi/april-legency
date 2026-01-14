@@ -10,7 +10,8 @@
 		"LevelStorageSessionMixin",
 		"ServerPlayNetworkHandlerMixin",
 		"PlayerManagerMixin",
-		"WeightedPressurePlateMixin"
+		"WeightedPressurePlateMixin",
+		"EntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

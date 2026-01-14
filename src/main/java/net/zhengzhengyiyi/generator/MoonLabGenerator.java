@@ -33,6 +33,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.StructureWorldAccess;
 import net.minecraft.world.World;
+import net.zhengzhengyiyi.util.TickScheduler;
 
 public class MoonLabGenerator {
    @SuppressWarnings("unused")
@@ -241,7 +242,8 @@ private static final int MAX_SEARCH_DEPTH = 4;
       } else {
          Map<Direction, Integer> lengthMap = new EnumMap<>(Direction.class);
          List<Direction> directions = new ArrayList<>(this.pickDirections(depth, random).filter(dir -> {
-            int length = random.nextInt(dir == Direction.UP ? 3 : 4) + 3;
+//            int length = random.nextInt(dir == Direction.UP ? 3 : 4) + 3;
+        	int length = random.nextInt(dir == Direction.UP ? 3 : 4) + 4;
             lengthMap.put(dir, length);
 
             for (int i = 2; i < length + 1; i++) {
@@ -418,7 +420,8 @@ private static final int MAX_SEARCH_DEPTH = 4;
       schedule(serverWorld.getServer(), 200, () -> {
          ChunkRandom chunkRandom = new ChunkRandom(serverWorld.random);
          chunkRandom.setCarverSeed(serverWorld.getSeed(), pos.getX() >> 4, pos.getZ() >> 4);
-         MoonLabGenerator generator = new MoonLabGenerator(serverWorld, pos.up().up(), chunkRandom, 20, 20);
+//         MoonLabGenerator generator = new MoonLabGenerator(serverWorld, pos.up().up(), chunkRandom, 20, 20);
+         MoonLabGenerator generator = new MoonLabGenerator(serverWorld, pos.up().up(), chunkRandom, 25, 8);
          generator.generate();
       });
    }
@@ -441,7 +444,8 @@ private static final int MAX_SEARCH_DEPTH = 4;
    }
    
    private static void schedule(MinecraftServer server, int ticks, Runnable task) {
-       server.execute(task); 
+//       server.execute(task);
+	   TickScheduler.schedule(server, ticks, task);
    }
 
    record BranchData(BlockPos start, BlockPos pos, int length, int depth, int rustLevel, Direction direction) {}

@@ -19,7 +19,7 @@ public abstract class SetVoteRule<T> implements Vote {
 
     protected abstract Text getElementDescription(T element);
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public Stream getActiveOptions() {
         return this.activeElements.stream().map(element -> new SetVoteRule.Option(element));

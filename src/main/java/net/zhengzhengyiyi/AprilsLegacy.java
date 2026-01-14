@@ -26,6 +26,7 @@ import net.zhengzhengyiyi.feature.LunarBaseFeature;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.stat.VoteStats;
+import net.zhengzhengyiyi.util.TickScheduler;
 import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import net.zhengzhengyiyi.vote.VoteServer;
@@ -69,6 +70,8 @@ public class AprilsLegacy implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		registryNetworkPacket();
+		
+		TickScheduler.init();
 		
 		VoteRules.init();
 		VoteRegistries.init();

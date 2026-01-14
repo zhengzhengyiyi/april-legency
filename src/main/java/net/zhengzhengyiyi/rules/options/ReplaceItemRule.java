@@ -127,7 +127,7 @@ public class ReplaceItemRule extends VoteEffect.Weighted {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return null;
+			return Text.of("no description");
 		}
     }
 }

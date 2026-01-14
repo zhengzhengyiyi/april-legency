@@ -12,15 +12,16 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.RegistryEntryVoteRule;
 import net.zhengzhengyiyi.vote.VoteValue;
-import net.zhengzhengyiyi.vote.VoterAction;
 import net.zhengzhengyiyi.world.Vote;
 
 public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> implements Vote {
     protected final Block defaultBlock;
+    private final String id;
 
 	public ReplaceBlockRule(String id, Block block) {
         super(RegistryKeys.BLOCK, block.getRegistryEntry().registryKey());
         this.defaultBlock = block;
+        this.id = id;
     }
 
     public Block getTargetBlock() {
@@ -36,6 +37,6 @@ public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> implements Vo
 
 	@Override
 	protected Text getOptionDescription(RegistryKey<Block> key) {
-		return null;
+		return Text.translatable(id);
 	}
 }
