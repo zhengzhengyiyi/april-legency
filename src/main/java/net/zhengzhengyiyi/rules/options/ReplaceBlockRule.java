@@ -14,7 +14,7 @@ import net.zhengzhengyiyi.rules.RegistryEntryVoteRule;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.world.Vote;
 
-public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> implements Vote {
+public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> {
     protected final Block defaultBlock;
     private final String id;
 

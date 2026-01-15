@@ -85,7 +85,7 @@ public abstract class EnumVoteRule<T> implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return Text.of("enum rule no description");
+			return description;
 		}
     }
 }

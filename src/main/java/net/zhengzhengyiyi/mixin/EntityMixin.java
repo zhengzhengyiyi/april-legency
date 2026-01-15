@@ -1,7 +1,6 @@
 package net.zhengzhengyiyi.mixin;
 
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.BeeEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 import net.zhengzhengyiyi.ModDimensionTypes;
@@ -33,14 +32,6 @@ public abstract class EntityMixin {
     	if (tickCount % 30 != 0) return;
         if (!this.world.isClient() && this.world instanceof ServerWorld serverWorld) {
             if (this.getY() > 700.0) {
-                boolean isLeashedBee = false;
-                if ((Object)this instanceof BeeEntity beeEntity) {
-                    if (beeEntity.isLeashed()) {
-                        isLeashedBee = true;
-                    }
-                }
-
-                if (!isLeashedBee) {
                     ServerWorld targetWorld;
                     int targetY;
 
@@ -59,7 +50,6 @@ public abstract class EntityMixin {
                         targetWorld = null;
                         targetY = 0;
                     }
-                }
             }
         }
     }

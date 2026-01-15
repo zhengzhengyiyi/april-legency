@@ -5,10 +5,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 
 public enum WorldShape implements StringIdentifiable {
-    ONE("1", "earth_1.png"),
-    A("a", "earth_a.png"),
-    PRIME("prime", "earth_prime.png"),
-    DEFAULT("none", "earth.png");
+    ONE("1", "earth_1"),
+    A("a", "earth_a"),
+    PRIME("prime", "earth_prime"),
+    DEFAULT("none", "earth");
 
     public static final Codec<WorldShape> CODEC = StringIdentifiable.createCodec(WorldShape::values);
     private final String id;
@@ -16,7 +16,7 @@ public enum WorldShape implements StringIdentifiable {
 
     private WorldShape(String id, String textureName) {
         this.id = id;
-        this.texture = Identifier.of("textures/environment/" + textureName);
+        this.texture = Identifier.of("zhengzhengyiyi", "environment/" + textureName);
     }
 
     @Override

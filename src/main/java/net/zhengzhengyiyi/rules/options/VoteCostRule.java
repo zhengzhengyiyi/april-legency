@@ -131,7 +131,7 @@ public class VoteCostRule implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return Text.of("no description");
+			return description;
 		}
     }
 }

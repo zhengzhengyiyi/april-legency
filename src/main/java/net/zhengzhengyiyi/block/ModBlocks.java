@@ -16,7 +16,7 @@ public class ModBlocks {
 
     public static final Block CHEESE = register(
         CHEESE_BLOCK_KEY,
-        new CheeseBlock(AbstractBlock.Settings.create().registryKey(CHEESE_BLOCK_KEY))
+        new CheeseBlock(AbstractBlock.Settings.create().hardness(0.5F).registryKey(CHEESE_BLOCK_KEY))
     );
 
     private static Block register(RegistryKey<Block> key, Block block) {

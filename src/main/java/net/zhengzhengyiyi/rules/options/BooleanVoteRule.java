@@ -51,10 +51,9 @@ public class BooleanVoteRule implements Vote {
 //        }
 
 		 
-
 		@Override
 		public Text getDescription(VoterAction action) {
-			return Text.of("no description");
+			return BooleanVoteRule.this.description;
 		}
     }
 }

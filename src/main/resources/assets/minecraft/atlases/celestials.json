@@ -1,0 +1,24 @@
+{
+  "sources": [
+    {
+      "type": "minecraft:single",
+      "resource": "zhengzhengyiyi:environment/earth",
+      "sprite": "zhengzhengyiyi:environment/earth"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "zhengzhengyiyi:environment/earth_1",
+      "sprite": "zhengzhengyiyi:environment/earth_1"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "zhengzhengyiyi:environment/earth_a",
+      "sprite": "zhengzhengyiyi:environment/earth_a"
+    },
+    {
+      "type": "minecraft:single",
+      "resource": "zhengzhengyiyi:environment/earth_prime",
+      "sprite": "zhengzhengyiyi:environment/earth_prime"
+    }
+  ]
+}

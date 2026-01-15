@@ -11,7 +11,7 @@
   "coordinate_scale": 1,
   "has_ceiling": false,
   "has_skylight": true,
-  "skybox": "end",
+  "skybox": "overworld",
   "cardinal_light": "default",
   "height": 256,
   "infiniburn": "#minecraft:infiniburn_end",

@@ -126,7 +126,7 @@ public class VoteScreen extends HandledScreen<VoteScreen.VoteScreenHandler> {
     	if (this.selectedOption != null) {
             @SuppressWarnings("unused")
 			int callbackId = ((VoteClientPlayNetworkHandler)client.getNetworkHandler()).method_51006(this.selectedOption.id(), (id, response) -> {
-                this.statusText = (Text) DataFixUtils.orElse(response, VOTED_TEXT);
+                this.statusText = DataFixUtils.orElse(response, VOTED_TEXT);
             });
         }
     }

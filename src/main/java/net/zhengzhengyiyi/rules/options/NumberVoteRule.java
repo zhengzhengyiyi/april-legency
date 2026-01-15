@@ -71,11 +71,11 @@ public abstract class NumberVoteRule<T extends Number> implements Vote {
 
     class Option implements VoteValue {
         final T value;
-//        private final Text description;
+       private final Text description;
 
         Option(T value) {
             this.value = value;
-//            this.description = NumberVoteRule.this.getOptionDescription(value);
+            this.description = NumberVoteRule.this.getOptionDescription(value);
         }
 
         @Override
@@ -94,7 +94,7 @@ public abstract class NumberVoteRule<T extends Number> implements Vote {
 
 		@Override
 		public Text getDescription(VoterAction action) {
-			return Text.of("text");
+			return Text.of(description);
 		}
     }
 }

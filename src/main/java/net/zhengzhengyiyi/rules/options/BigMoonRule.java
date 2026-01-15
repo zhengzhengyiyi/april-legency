@@ -62,7 +62,7 @@ public class BigMoonRule extends NumberVoteRule.IntegerRule {
 
 			@Override
 			public Text getDescription(VoterAction action) {
-				return Text.of("big moon rule, no description");
+                return Text.of("bigmoonrule");
 			}
         };
     }

@@ -4,7 +4,7 @@
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ClientPlayNetworkHandlerMixin",
-		"WorldRendererMixin"
+		"SkyRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
