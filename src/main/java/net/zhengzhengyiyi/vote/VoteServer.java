@@ -53,5 +53,5 @@ public interface VoteServer {
      */
     void saveVotes();
     
-    void settleVote(VoterAction result, boolean shouldApply);
+//    void settleVote(VoterAction result, boolean shouldApply);
 }

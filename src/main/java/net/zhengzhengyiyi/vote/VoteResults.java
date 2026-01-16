@@ -2,7 +2,6 @@ package net.zhengzhengyiyi.vote;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import net.minecraft.text.Text;
@@ -60,16 +59,20 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
     /**
      * Collects all possible options, including those with zero votes.
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-	private List<VoteStatistics.OptionResult> getAllOptions() {
+    private List<VoteStatistics.OptionResult> getAllOptions() {
         Set<VoteOptionId> remaining = new HashSet<>(this.vote.options().keySet());
-        List<VoteStatistics.OptionResult> list = new ArrayList(this.results.options().entrySet().stream()
-                .peek(entry -> remaining.remove(entry.getKey()))
-                .collect(Collectors.toCollection(ArrayList::new)));
         
-//        remaining.stream()
-//                .map(id -> new VoteStatistics.OptionResult(id, VoteStatistics.VoteCount.EMPTY))
-//                .forEach(list::add);
+        List<VoteStatistics.OptionResult> list = this.results.options().entrySet().stream()
+                .map(entry -> {
+                    remaining.remove(entry.getKey());
+                    return new VoteStatistics.OptionResult(entry.getKey(), new ChoiceSummary(entry.getValue()));
+                })
+                .collect(Collectors.toCollection(ArrayList::new));
+        
+        for (VoteOptionId id : remaining) {
+            list.add(new VoteStatistics.OptionResult(id, new ChoiceSummary(VoteOptionStatistics.EMPTY)));
+        }
+        
         return list;
     }
 
@@ -114,34 +117,93 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
     /**
      * Filters options by minimum vote count and resolves ties.
      */
-    private List<VoteStatistics.OptionResult> filterAndTieBreak(Consumer<Text> feedback, List<VoteStatistics.OptionResult> options, ResultConfig config) {
-        Map<Object, Collection<net.zhengzhengyiyi.vote.VoteStatistics.OptionResult>> groupedByVotes = options.stream()
-                .collect(Collectors.groupingBy(opt -> opt.summary().getScore(), Collectors.toCollection(ArrayList::new)));
-        
-        List<VoteStatistics.OptionResult> winners = new ArrayList<>();
-        boolean tieReported = false;
-        int minVotes = this.getMinVotesRequired(feedback, config);
-        
-//        Comparator<Integer> scoreSort = config.reverseOrder() ? Comparator.reverseOrder() : Comparator.naturalOrder();
-//        List<Map.Entry<Integer, List<VoteStatistics.OptionResult>>> sortedGroups = groupedByVotes.entrySet().stream()
-//                .filter(entry -> (int)entry.getKey() >= minVotes)
-//                .sorted(Map.Entry.comparingByKey(scoreSort))
-//                .toList();
-        
-//        Map<Integer, List<VoteStatistics.OptionResult>> sortedGroups = options.stream()
+
+//    private List<VoteStatistics.OptionResult> filterAndTieBreak(Consumer<Text> feedback, List<VoteStatistics.OptionResult> options, ResultConfig config) {
+//        Map<Integer, List<VoteStatistics.OptionResult>> groupedByVotes = options.stream()
 //                .collect(Collectors.groupingBy(
 //                    opt -> opt.summary().getScore(), 
 //                    Collectors.toCollection(ArrayList::new)
-//        );
-        
-        List<Entry<Object, Collection<net.zhengzhengyiyi.vote.VoteStatistics.OptionResult>>> sortedGroups = groupedByVotes.entrySet().stream()
-                .filter(entry -> (int)entry.getKey() >= minVotes)
-//                .sorted(Map.Entry.<Integer, List<VoteStatistics.OptionResult>>comparingByKey(scoreSort))
-                .collect(Collectors.toList());
+//                ));
+//
+//        List<VoteStatistics.OptionResult> winners = new ArrayList<>();
+//        boolean tieReported = false;
+//        
+//        int minVotes = this.getMinVotesRequired(feedback, config);
+//        
+//        Comparator<Integer> scoreComparator = config.reverseOrder() ? Comparator.naturalOrder() : Comparator.reverseOrder();
+//
+//        List<Map.Entry<Integer, List<VoteStatistics.OptionResult>>> sortedEntries = groupedByVotes.entrySet()
+//                .stream()
+//                .filter(entry -> entry.getKey() >= minVotes)
+//                .sorted(Map.Entry.comparingByKey(scoreComparator))
+//                .collect(Collectors.toList());
+//
+//        for (Map.Entry<Integer, List<VoteStatistics.OptionResult>> entry : sortedEntries) {
+//            int currentScore = entry.getKey();
+//            List<VoteStatistics.OptionResult> tiedOptions = entry.getValue();
+//
+//            if (config.skipEmpty() && currentScore == 0) {
+//                continue;
+//            }
+//
+//            if (tiedOptions.size() > 1) {
+//                TieBreaker strategy = config.tieBreaker();
+//                if (!tieReported) {
+//                    tieReported = true;
+//                    feedback.accept(Text.translatable("vote.tie", strategy.asString()));
+//                }
+//
+//                switch (strategy) {
+//                    case FIRST: // PICK_LOW
+//                        tiedOptions.stream().min(OPTION_INDEX_COMPARATOR).ifPresent(winners::add);
+//                        break;
+//                    case LAST: // PICK_HIGH
+//                        tiedOptions.stream().max(OPTION_INDEX_COMPARATOR).ifPresent(winners::add);
+//                        break;
+//                    case RANDOM:
+//                        net.minecraft.util.Util.getRandomOrEmpty(tiedOptions, config.randomSource()).ifPresent(winners::add);
+//                        break;
+//                    case ALL: // PICK_ALL
+//                        tiedOptions.stream().sorted(OPTION_INDEX_COMPARATOR).forEach(winners::add);
+//                        break;
+//                    case NONE: // PICK_NONE
+//                        break;
+//                }
+//            } else {
+//                winners.addAll(tiedOptions);
+//            }
+//
+//            if (winners.size() >= config.maxWinners()) {
+//                break;
+//            }
+//        }
+//
+//        return winners;
+//    }
+    
+    private List<VoteStatistics.OptionResult> filterAndTieBreak(Consumer<Text> feedback, List<VoteStatistics.OptionResult> options, ResultConfig config) {
+        Map<Integer, List<VoteStatistics.OptionResult>> groupedByVotes = new HashMap<>();
+        for (VoteStatistics.OptionResult opt : options) {
+            int score = opt.summary().getScore();
+            groupedByVotes.computeIfAbsent(score, k -> new ArrayList<>()).add(opt);
+        }
 
-        for (Entry<Object, Collection<net.zhengzhengyiyi.vote.VoteStatistics.OptionResult>> group : sortedGroups) {
-            List<VoteStatistics.OptionResult> tiedOptions = (List<net.zhengzhengyiyi.vote.VoteStatistics.OptionResult>) group.getValue();
-            if (config.skipEmpty() && (int)group.getKey() == 0) continue;
+        List<VoteStatistics.OptionResult> winners = new ArrayList<>();
+        boolean tieReported = false;
+        int minVotes = this.getMinVotesRequired(feedback, config);
+
+        List<Integer> sortedScores = new ArrayList<>(groupedByVotes.keySet());
+        if (config.reverseOrder()) {
+            Collections.sort(sortedScores);
+        } else {
+            sortedScores.sort(Collections.reverseOrder());
+        }
+
+        for (Integer score : sortedScores) {
+            if (score < minVotes) continue;
+
+            List<VoteStatistics.OptionResult> tiedOptions = groupedByVotes.get(score);
+            if (config.skipEmpty() && score == 0) continue;
 
             if (tiedOptions.size() > 1) {
                 TieBreaker strategy = config.tieBreaker();
@@ -149,20 +211,27 @@ public record VoteResults(UUID id, VoteDefinition vote, VoteStatistics results) 
                     tieReported = true;
                     feedback.accept(Text.translatable("vote.tie", strategy.asString()));
                 }
+
                 switch (strategy) {
                     case FIRST -> tiedOptions.stream().min(OPTION_INDEX_COMPARATOR).ifPresent(winners::add);
                     case LAST -> tiedOptions.stream().max(OPTION_INDEX_COMPARATOR).ifPresent(winners::add);
-//                    case RANDOM -> Util.getRandom(tiedOptions, config.randomSource()).ifPresent(winners::add);
-                    case ALL -> winners.addAll(tiedOptions.stream().sorted(OPTION_INDEX_COMPARATOR).toList());
-                    case NONE -> { winners.clear(); return winners; }
-                    default -> {}
+                    case RANDOM -> net.minecraft.util.Util.getRandomOrEmpty(tiedOptions, config.randomSource()).ifPresent(winners::add);
+                    case ALL -> {
+                        tiedOptions.sort(OPTION_INDEX_COMPARATOR);
+                        winners.addAll(tiedOptions);
+                    }
+                    case NONE -> {}
                 }
             } else {
                 winners.addAll(tiedOptions);
             }
-            if (winners.size() >= config.maxWinners()) break;
+
+            if (winners.size() >= config.maxWinners()) {
+                break;
+            }
         }
-        return winners;
+
+        return winners.size() > config.maxWinners() ? winners.subList(0, config.maxWinners()) : winners;
     }
 
     /**

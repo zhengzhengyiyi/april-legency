@@ -182,7 +182,9 @@ public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> op
      * Official Name: bgp$c
      */
     public record Context(BlockPos pos, float difficulty, List<VoteCost> costs, int durationTicks, int maxOptions, Random random, boolean isRevokeMode) {
-        public int getDuration() { return durationTicks * 1200; }
+//        public int getDuration() { return durationTicks * 1200; }
+// TODO
+    	public int getDuration() { return durationTicks * 600; }
         public int getOptionCount() { return maxOptions; }
         public boolean allowNothingOption() { return true; }
         public List<VoteCost> getCosts() { return costs; }

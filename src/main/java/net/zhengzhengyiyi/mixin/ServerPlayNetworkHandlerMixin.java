@@ -58,7 +58,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
 	
 	            ((VoteServer)server).sendVoteUpdatePacket(this.player, arg.optionId());
 
-	            this.player.incrementStat(VoteStats.VOTES);
+	            player.incrementStat(VoteStats.VOTES);
 	            VoteCriteria.VOTE.trigger(this.player);
 	
 	            if (VoteRules.VOTING_FIREWORKS.isActive()) {

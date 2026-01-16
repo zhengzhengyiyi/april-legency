@@ -13,7 +13,6 @@ import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.vote.VoteValue;
 import net.zhengzhengyiyi.vote.VoterAction;
-import net.zhengzhengyiyi.world.Vote;
 
 public abstract class EnumVoteRule<T> implements Vote {
     private final List<T> possibleValues;

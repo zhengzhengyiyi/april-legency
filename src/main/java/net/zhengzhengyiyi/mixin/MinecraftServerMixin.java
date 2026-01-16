@@ -275,8 +275,8 @@ public class MinecraftServerMixin implements VoteServer {
         this.method_51120();
     }
 
-    @Override
-    public void settleVote(VoterAction result, boolean shouldApply) {
-        this.method_51109((VoteResults)(Object)result, shouldApply);
-    }
+//    @Override
+//    public void settleVote(VoterAction result, boolean shouldApply) {
+//        this.method_51109((VoteResults)(Object)result, shouldApply);
+//    }
 }
