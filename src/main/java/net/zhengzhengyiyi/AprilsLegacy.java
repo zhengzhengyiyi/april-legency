@@ -23,6 +23,7 @@ import net.zhengzhengyiyi.entity.ModEntities;
 import net.zhengzhengyiyi.feature.CraterFeature;
 import net.zhengzhengyiyi.feature.CraterFeatureConfig;
 import net.zhengzhengyiyi.feature.LunarBaseFeature;
+import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.stat.VoteStats;
@@ -78,6 +79,7 @@ public class AprilsLegacy implements ModInitializer {
 		VoteCriteria.init();
 		ModEntities.init();
 		ModBlocks.init();
+		ModItems.init();
 		ModDimensionTypes.init();
 		ModBiomeKeys.init();
 		VoteStats.init();

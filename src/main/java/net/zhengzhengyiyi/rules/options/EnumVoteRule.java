@@ -74,13 +74,11 @@ public abstract class EnumVoteRule<T> implements Vote {
         @Override
         public void apply(VoterAction action) {
             EnumVoteRule.this.currentValue = switch (action) {
-                case APPROVE -> this.value;
+                case APPROVE -> value;
                 case REPEAL -> EnumVoteRule.this.defaultValue;
 			default -> null;
             };
         }
-
-		 
 
 		@Override
 		public Text getDescription(VoterAction action) {

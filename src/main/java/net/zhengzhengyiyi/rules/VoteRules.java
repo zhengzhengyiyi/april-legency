@@ -179,6 +179,7 @@ public class VoteRules {
     public static final StaticVoteRule PICKAXE_BLOCK = register("pickaxe_block", 1000, new StaticVoteRule(Text.translatable("rule.pickaxe_block")));
     public static final StaticVoteRule PLACE_BLOCK = register("place_block", 1000, new StaticVoteRule(Text.translatable("rule.place_block")));
     public static final StaticVoteRule GLOW_BEES = register("glow_bees", 1000, new StaticVoteRule(Text.translatable("rule.glow_bees")));
+    public static final StaticVoteRule NATURE_SPAWN = register("natural_spawn_disable", 1000, new StaticVoteRule(Text.translatable("rule.natural_spawn_disable")));
 
     public static class NamedEntityVoteRule extends EntityVoteRule implements VoteValue {
         @Override

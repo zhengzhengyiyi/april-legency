@@ -23,7 +23,7 @@ public class CheeseBlock extends Block {
    public static final int field_44222 = 8;
    public static final int field_44223 = 255;
    public static final IntProperty field_44224 = IntProperty.of("slices", 1, 255);
-   public static final VoxelShape[] field_44225 = Util.make(new VoxelShape[8], voxelShapes -> {
+   public static final VoxelShape[] CUBE = Util.make(new VoxelShape[8], voxelShapes -> {
       voxelShapes[0] = VoxelShapes.cuboid(0.0, 0.0, 0.0, 0.5, 0.5, 0.5);
       voxelShapes[1] = VoxelShapes.cuboid(0.5, 0.0, 0.0, 1.0, 0.5, 0.5);
       voxelShapes[2] = VoxelShapes.cuboid(0.0, 0.0, 0.5, 0.5, 0.5, 1.0);
@@ -39,7 +39,7 @@ public class CheeseBlock extends Block {
 
          for (int j = 0; j < 8; j++) {
             if (method_50856(i, j)) {
-               voxelShape = VoxelShapes.union(voxelShape, field_44225[j]);
+               voxelShape = VoxelShapes.union(voxelShape, CUBE[j]);
             }
          }
 
@@ -96,6 +96,7 @@ public class CheeseBlock extends Block {
                }
 
                world.emitGameEvent(player, GameEvent.EAT, pos);
+               player.getHungerManager().add(2, 0.1F);
             }
 
             return ActionResult.SUCCESS;
@@ -108,9 +109,9 @@ public class CheeseBlock extends Block {
       double d = Double.MAX_VALUE;
       int j = -1;
 
-      for (int k = 0; k < field_44225.length; k++) {
+      for (int k = 0; k < CUBE.length; k++) {
          if (method_50856(i, k)) {
-            VoxelShape voxelShape = field_44225[k];
+            VoxelShape voxelShape = CUBE[k];
             Optional<Vec3d> optional = voxelShape.getClosestPointTo(vec3d);
             if (optional.isPresent()) {
                double e = optional.get().squaredDistanceTo(vec3d);

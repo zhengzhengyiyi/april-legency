@@ -2,6 +2,7 @@ package net.zhengzhengyiyi.block;
 
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
+import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -13,7 +14,24 @@ public class ModBlocks {
         RegistryKeys.BLOCK, 
         Identifier.of("minecraft", "cheese")
     );
-
+    public static final RegistryKey<Block> PICKAXE_BLOCK_KEY = RegistryKey.of(
+        RegistryKeys.BLOCK, 
+        Identifier.of("minecraft", "pickaxe_block")
+    );
+    public static final RegistryKey<Block> PLACE_BLOCK_KEY = RegistryKey.of(
+        RegistryKeys.BLOCK, 
+        Identifier.of("minecraft", "place_block")
+    );
+    
+    
+    public static final Block PICKAXE_BLOCK = register(
+    	PICKAXE_BLOCK_KEY,
+    	new PickaxeBlock(AbstractBlock.Settings.copy(Blocks.STONE).strength(1.0F).solidBlock(Blocks::always).registryKey(PICKAXE_BLOCK_KEY))
+    );
+    public static final Block PLACE_BLOCK = register(
+    	PLACE_BLOCK_KEY,
+        new PickaxeBlock(AbstractBlock.Settings.copy(Blocks.STONE).strength(1.0F).solidBlock(Blocks::always).registryKey(PLACE_BLOCK_KEY))
+    );
     public static final Block CHEESE = register(
         CHEESE_BLOCK_KEY,
         new CheeseBlock(AbstractBlock.Settings.create().hardness(0.5F).registryKey(CHEESE_BLOCK_KEY))
