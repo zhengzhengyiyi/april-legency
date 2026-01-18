@@ -11,14 +11,13 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
 import net.zhengzhengyiyi.block.ModBlocks;
+import net.zhengzhengyiyi.command.TransformCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.datagen.ModWorldGenerator;
 import net.zhengzhengyiyi.entity.ModEntities;
@@ -30,9 +29,7 @@ import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.util.TickScheduler;
-import net.zhengzhengyiyi.vote.VoteManager;
 import net.zhengzhengyiyi.vote.VoteRegistries;
-import net.zhengzhengyiyi.vote.VoteServer;
 import net.zhengzhengyiyi.network.*;
 
 import org.slf4j.Logger;
@@ -103,32 +100,17 @@ public class AprilsLegacy implements ModInitializer {
 				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
 				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
 			});
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE)
+			.register((itemGroup) -> {
+				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
+				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
+			});
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);
 		});
-		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-		    dispatcher.register(CommandManager.literal("test")
-		        .executes(context -> {
-		            var source = context.getSource();
-		            var server = source.getServer();
-		            
-		            source.sendFeedback(() -> Text.literal("§e[Debug] testing mod"), false);
-		            
-		            VoteManager manager = ((VoteServer) server).getVoteManager();
-		            
-		            if (manager != null) {
-		                AprilsLegacy.LOGGER.info("test: registries has {} rules", 
-		                    net.zhengzhengyiyi.vote.VoteRegistries.VOTE_RULE_TYPE.size());
-		                
-		                source.sendFeedback(() -> Text.literal("§a test finished"), false);
-		            } else {
-		                source.sendError(Text.literal("error: vote manager is null"));
-		            }
-		            
-		            return 1;
-		        }));
+		    TransformCommand.register(dispatcher, registryAccess);
 		});
 		
 		LOGGER.info(MOD_ID + " init, please enjoy april fools");
