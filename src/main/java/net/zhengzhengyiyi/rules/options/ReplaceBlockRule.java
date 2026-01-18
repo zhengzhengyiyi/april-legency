@@ -12,12 +12,12 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.random.Random;
 import net.zhengzhengyiyi.rules.RegistryEntryVoteRule;
 import net.zhengzhengyiyi.vote.VoteValue;
-import net.zhengzhengyiyi.world.Vote;
 
 public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> {
     protected final Block defaultBlock;
     private final String id;
 
+	@SuppressWarnings("deprecation")
 	public ReplaceBlockRule(String id, Block block) {
         super(RegistryKeys.BLOCK, block.getRegistryEntry().registryKey());
         this.defaultBlock = block;
@@ -32,7 +32,7 @@ public class ReplaceBlockRule extends RegistryEntryVoteRule<Block> {
 
 	@Override
 	public Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit) {
-		return null;
+		return this.getActiveOptions();
 	}
 
 	@Override

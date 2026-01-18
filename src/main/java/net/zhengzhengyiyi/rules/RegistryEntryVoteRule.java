@@ -44,7 +44,7 @@ public abstract class RegistryEntryVoteRule<T> implements Vote {
     
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public Stream getActiveOptions() {
+    public Stream<VoteValue> getActiveOptions() {
         return this.currentKey.equals(this.defaultKey) ? Stream.empty() : Stream.of(new RegistryEntryVoteRule.Option(this.currentKey));
     }
 

@@ -35,16 +35,8 @@ public class MoonCowEntityRenderer extends MobEntityRenderer<MoonCowEntity, CowE
 
     @Environment(EnvType.CLIENT)
     public static class MoonCowModel extends CowEntityModel implements ModelWithHead {
-        private final ModelPart head;
-
         public MoonCowModel(ModelPart root) {
             super(root);
-            this.head = root.getChild("head");
-        }
-
-        @Override
-        public ModelPart getHead() {
-            return this.head;
         }
     }
 }
