@@ -10,6 +10,7 @@ public class AprilsLegacyDataGenerator implements DataGeneratorEntrypoint {
 	public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator) {
 		FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
 		pack.addProvider(ModWorldGenerator::new);
+		pack.addProvider(ModRecipeProvider::new);
 	}
 
 	@Override

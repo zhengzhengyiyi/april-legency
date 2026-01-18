@@ -98,3 +98,9 @@ tasks.withType(Javadoc) {
     
     classpath = sourceSets.main.compileClasspath + sourceSets.client.compileClasspath
 }
+
+fabricApi {
+	configureDataGeneration() {
+		client = true
+	}
+}

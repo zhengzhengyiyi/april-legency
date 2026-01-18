@@ -9,6 +9,8 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.logging.LogUtils;
 import com.mojang.serialization.Dynamic;
 import com.mojang.serialization.JsonOps;
+
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.NbtElementArgumentType;
@@ -27,6 +29,7 @@ import net.minecraft.text.HoverEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.vote.*;
 import net.zhengzhengyiyi.world.Vote;
 import net.zhengzhengyiyi.world.VoteRule;
@@ -204,6 +207,7 @@ public class VoteCommands {
 	
 	        return definition.map(def -> {
 	            manager.addVote(id, def);
+
 	            source.sendFeedback(() -> Text.literal("Started vote for ").append(createVoteHoverText(id, def, source)), true);
 	            return 1;
 	        }).orElseGet(() -> {
@@ -330,11 +334,17 @@ public class VoteCommands {
     @SuppressWarnings("unchecked")
 	private static int applyEffectToWorld(VoteRule<?> rule, VoterAction category, ServerCommandSource source) {
         Text feedback = rule.getDisplayText(null);
-        rule.getActiveOptions().forEach(option -> {
-            if (option instanceof VoteValue voteValue) {
-                voteValue.apply(category);
-            }
-        });
+//        rule.getActiveOptions().forEach(option -> {
+//            if (option instanceof VoteValue voteValue) {
+//                voteValue.apply(category);
+//            }
+//        });
+        VoteRuleSyncS2CPacket syncPacket = new VoteRuleSyncS2CPacket(false, category, rule.getActiveOptions().toList());
+
+	    source.getServer().getPlayerManager().getPlayerList().forEach(player -> {
+	        ServerPlayNetworking.send(player, syncPacket);
+//	    	player.networkHandler.sendPacket(syncPacket);
+	    });
         source.sendFeedback(() -> Text.literal("Applied ").append(feedback), true);
         return 1;
     }

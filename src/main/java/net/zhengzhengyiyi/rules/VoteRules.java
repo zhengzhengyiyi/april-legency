@@ -252,6 +252,8 @@ public class VoteRules {
     public static final StaticVoteRule FISH_ANYTHING = register("fish_anything", 500, new StaticVoteRule(Text.translatable("rule.fish_anything")));
     public static final StaticVoteRule ONLY_MENDING = register("only_mending_trades", 500, new StaticVoteRule(Text.translatable("rule.only_mending_trades")));
     public static final StaticVoteRule TRAILS_AND_TAILS = register("trails_and_tails", 500, new StaticVoteRule(Text.translatable("rule.trails_and_tails")));
+    
+    public static final HackerVoteRule WIPWIPWI___PWIPWIP = register("wipwipwi-_-pwipwip", 1, new HackerVoteRule());
 
     private static final WeightedList<Reference<Vote>> FINAL_POOL = POOL_BUILDER.shuffle();
     private static ClampedIntProvider createClampedPercentProvider(int padding) {

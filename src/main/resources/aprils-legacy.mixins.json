@@ -14,7 +14,8 @@
 		"EntityMixin",
 		"CreeperEntityMixin",
 		"SpawnhelperMixin",
-		"EndermanEntityMixin"
+		"EndermanEntityMixin",
+		"ServerWorldMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

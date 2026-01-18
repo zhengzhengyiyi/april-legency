@@ -2,8 +2,10 @@ package net.zhengzhengyiyi;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.item.ItemGroups;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -74,15 +76,33 @@ public class AprilsLegacy implements ModInitializer {
 		
 		TickScheduler.init();
 		
+		ModBlocks.init();
 		VoteRules.init();
 		VoteRegistries.init();
 		VoteCriteria.init();
 		ModEntities.init();
-		ModBlocks.init();
 		ModItems.init();
 		ModDimensionTypes.init();
 		ModBiomeKeys.init();
 		VoteStats.init();
+		
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE)
+			.register((itemGroup) -> {
+				itemGroup.add(ModItems.DOUBLE_TAG);
+				itemGroup.add(ModItems.INT_TAG);
+				itemGroup.add(ModItems.LIST_TAG);
+				itemGroup.add(ModItems.BYTE_TAG);
+				itemGroup.add(ModItems.LONG_TAG);
+				itemGroup.add(ModItems.FLOAT_TAG);
+				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
+				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
+			});
+		
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
+			.register((itemGroup) -> {
+				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
+				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
+			});
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);
