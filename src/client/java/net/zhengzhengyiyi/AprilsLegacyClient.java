@@ -24,14 +24,14 @@ public class AprilsLegacyClient implements ClientModInitializer {
 	 * THis method will not be called, it is all registried inside server side entry point.
 	 */
 	public static void registerNetworkPacket() {
-	    PayloadTypeRegistry.playS2C().register(class_8480.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8480::new));
+	    PayloadTypeRegistry.playS2C().register(voteResponsepacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), voteResponsepacket::new));
 	    PayloadTypeRegistry.playS2C().register(class_8481.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8481::new));
 	    PayloadTypeRegistry.playS2C().register(class_8482.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8482::new));
 	    PayloadTypeRegistry.playS2C().register(class_8483.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8483::new));
 	    PayloadTypeRegistry.playS2C().register(VoteRuleSyncS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteRuleSyncS2CPacket::new));
 	    PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
 
-	    PayloadTypeRegistry.playC2S().register(class_8258.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8258::new));
+	    PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
 	    PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
 	}
 	

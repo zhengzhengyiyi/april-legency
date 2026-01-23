@@ -11,9 +11,9 @@ public interface VoteClientPlayPacketListener {
     
     void onVoteStop(class_8482 paramclass_8482);
     
-    void onVoteResponse(class_8480 paramclass_8480);
+    void onVoteResponse(voteResponsepacket paramclass_8480);
     
-    void method_50043(class_8258 paramclass_8258);
+    void method_50043(VoteCastpacket paramclass_8258);
     
     void method_50045(class_8484 paramclass_8484);
 }

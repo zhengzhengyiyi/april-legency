@@ -52,17 +52,17 @@ public class AprilsLegacy implements ModInitializer {
 	public static final Feature<DefaultFeatureConfig> LUNAR_BASE = ModWorldGenerator.register("lunar_base", new LunarBaseFeature(DefaultFeatureConfig.CODEC));
 	
 	private static void registryNetworkPacket() {
-		PayloadTypeRegistry.playS2C().register(class_8480.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8480::new));
+		PayloadTypeRegistry.playS2C().register(voteResponsepacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), voteResponsepacket::new));
         PayloadTypeRegistry.playS2C().register(class_8481.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8481::new));
         PayloadTypeRegistry.playS2C().register(class_8482.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8482::new));
         PayloadTypeRegistry.playS2C().register(class_8483.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8483::new));
         PayloadTypeRegistry.playS2C().register(VoteRuleSyncS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteRuleSyncS2CPacket::new));
         PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
 
-        PayloadTypeRegistry.playC2S().register(class_8258.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8258::new));
+        PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
         PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
         
-        ServerPlayNetworking.registerGlobalReceiver(class_8258.PAYLOAD_ID, (payload, context) -> {
+        ServerPlayNetworking.registerGlobalReceiver(VoteCastpacket.PAYLOAD_ID, (payload, context) -> {
         	payload.apply(context.player().networkHandler);
         });
 	}

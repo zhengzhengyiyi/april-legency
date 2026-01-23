@@ -6,8 +6,8 @@ import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.zhengzhengyiyi.network.VoteClientPlayPacketListener;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.network.VoteUpdateS2CPacket;
-import net.zhengzhengyiyi.network.class_8258;
-import net.zhengzhengyiyi.network.class_8480;
+import net.zhengzhengyiyi.network.VoteCastpacket;
+import net.zhengzhengyiyi.network.voteResponsepacket;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.network.class_8482;
 import net.zhengzhengyiyi.network.class_8483;
@@ -25,9 +25,9 @@ public interface ClientPlayPacketListenerMixin extends VoteClientPlayPacketListe
     
     void method_51014(class_8482 paramclass_8482);
     
-    void method_51012(class_8480 paramclass_8480);
+    void method_51012(voteResponsepacket paramclass_8480);
     
-    void method_50043(class_8258 paramclass_8258);
+    void method_50043(VoteCastpacket paramclass_8258);
     
     void method_50045(class_8484 paramclass_8484);
 }

@@ -4,7 +4,7 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public class ClientModNetworkManager {
     public static void registerReceivers() {
-        ClientPlayNetworking.registerGlobalReceiver(class_8480.PAYLOAD_ID, (payload, context) -> {
+        ClientPlayNetworking.registerGlobalReceiver(voteResponsepacket.PAYLOAD_ID, (payload, context) -> {
             context.client().execute(() -> payload.apply(context.client().getNetworkHandler()));
         });
 

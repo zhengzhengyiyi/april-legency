@@ -76,7 +76,7 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     
     public int method_51006(VoteOptionId arg, ClientVoteManager.ResponseHandler arg2) {
     	int i = this.field_44385.registerCallback(arg2);
-    	ClientPlayNetworking.send(new class_8258(i, arg));
+    	ClientPlayNetworking.send(new VoteCastpacket(i, arg));
     	return i;
     }
 
@@ -131,7 +131,7 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     }
 
     @Override
-    public void onVoteResponse(class_8480 packet) {
+    public void onVoteResponse(voteResponsepacket packet) {
         if (!this.client.isOnThread()) {
             this.client.execute(() -> this.onVoteResponse(packet));
             return;
@@ -214,7 +214,7 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
     	}
 
 	@Override
-	public void method_50043(class_8258 paramclass_8258) {
+	public void method_50043(VoteCastpacket paramclass_8258) {
 		
 	}
 

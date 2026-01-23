@@ -6,12 +6,12 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
 import net.zhengzhengyiyi.vote.VoteOptionId;
 
-public final record class_8258(int transactionId, VoteOptionId optionId) implements CustomPayload {
+public final record VoteCastpacket(int transactionId, VoteOptionId optionId) implements CustomPayload {
     public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_cast");
-    public static final CustomPayload.Id<class_8258> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
+    public static final CustomPayload.Id<VoteCastpacket> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
 //    public static final PacketType<class_8258> TYPE = new PacketType<>(NetworkSide.SERVERBOUND, PACKET_ID);
 
-    public class_8258(PacketByteBuf buf) {
+    public VoteCastpacket(PacketByteBuf buf) {
         this(buf.readVarInt(), buf.decodeAsJson(VoteOptionId.CODEC));
     }
 
@@ -28,7 +28,7 @@ public final record class_8258(int transactionId, VoteOptionId optionId) impleme
 //    }
 
     @Override
-    public Id<class_8258> getId() {
+    public Id<VoteCastpacket> getId() {
         return PAYLOAD_ID;
     }
 }

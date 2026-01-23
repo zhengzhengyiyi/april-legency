@@ -367,8 +367,8 @@ public class NbtCraftingRecipe extends SpecialCraftingRecipe {
 
    @Override
    public ItemStack craft(CraftingRecipeInput input, WrapperLookup registries) {
-	   // TODO reversed NBT_CRAFTING
-       if (VoteRules.NBT_CRAFTING.isActive()) {
+	   // TODO NBT_CRAFTING
+       if (!VoteRules.NBT_CRAFTING.isActive()) {
            return ItemStack.EMPTY;
        }
        

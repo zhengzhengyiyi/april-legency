@@ -15,8 +15,8 @@ import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
 import net.zhengzhengyiyi.network.VoteClientPlayPacketListener;
-import net.zhengzhengyiyi.network.class_8258;
-import net.zhengzhengyiyi.network.class_8480;
+import net.zhengzhengyiyi.network.VoteCastpacket;
+import net.zhengzhengyiyi.network.voteResponsepacket;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.vote.VoteManager;
@@ -35,14 +35,14 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
     @Shadow public ServerPlayerEntity player;
 
     @Override
-    public void method_50043(class_8258 arg) {
+    public void method_50043(VoteCastpacket arg) {
     	MinecraftServer server = player.getEntityWorld().getServer();
     	server.execute(() -> {
 	        VoteManager voteManager = ((VoteServer)server).getVoteManager();
 	        VoteManager.OptionHandle handle = voteManager.getOptionHandle(arg.optionId());
 	
 	        if (handle == null) {
-	            ServerPlayNetworking.getSender(this.player).sendPacket(class_8480.method_51142(
+	            ServerPlayNetworking.getSender(this.player).sendPacket(voteResponsepacket.method_51142(
 	                arg.transactionId(), 
 	                Text.literal("Option " + arg.optionId() + " not found")
 	            ));
@@ -54,7 +54,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
 	        if (availability == VoteManager.VoteAvailability.ALLOWED) {
 	            handle.submit(this.player, 1);
 	            
-	            ServerPlayNetworking.getSender(this.player).sendPacket(class_8480.method_51141(arg.transactionId()));
+	            ServerPlayNetworking.getSender(this.player).sendPacket(voteResponsepacket.method_51141(arg.transactionId()));
 	
 	            ((VoteServer)server).sendVoteUpdatePacket(this.player, arg.optionId());
 
@@ -77,7 +77,7 @@ public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPac
 	        }
 	
 	        Text errorText = (availability == VoteManager.VoteAvailability.DENIED) ? Text.translatable("vote.no_resources") : Text.translatable("vote.already_voted");
-	        ServerPlayNetworking.getSender(this.player).sendPacket(class_8480.method_51142(arg.transactionId(), errorText));
+	        ServerPlayNetworking.getSender(this.player).sendPacket(voteResponsepacket.method_51142(arg.transactionId(), errorText));
         });
     }
     

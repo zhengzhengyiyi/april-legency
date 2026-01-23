@@ -8,25 +8,25 @@ import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 /*    */ 
-/*    */ public record class_8480(int transactionId, Optional<Text> rejectReason) implements CustomPayload {
+/*    */ public record voteResponsepacket(int transactionId, Optional<Text> rejectReason) implements CustomPayload {
 /*    */   
-/*  9 */   public class_8480 {}
+/*  9 */   public voteResponsepacket {}
 /*    */ 
 /*    */ 	
 public static final Identifier PACKET_ID = Identifier.of("aprils_legacy", "vote_response");
-public static final CustomPayload.Id<class_8480> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
+public static final CustomPayload.Id<voteResponsepacket> PAYLOAD_ID = new CustomPayload.Id<>(PACKET_ID);
 //public static final PacketType<class_8480> TYPE = new PacketType<>(NetworkSide.CLIENTBOUND, PACKET_ID);
 /*    */ 
 /*    */   
-/*    */   public static class_8480 method_51141(int i) {
-/* 15 */     return new class_8480(i, Optional.empty());
+/*    */   public static voteResponsepacket method_51141(int i) {
+/* 15 */     return new voteResponsepacket(i, Optional.empty());
 /*    */   }
 /*    */   
-/*    */   public static class_8480 method_51142(int i, Text text) {
-/* 19 */     return new class_8480(i, Optional.of(text));
+/*    */   public static voteResponsepacket method_51142(int i, Text text) {
+/* 19 */     return new voteResponsepacket(i, Optional.of(text));
 /*    */   }
 /*    */   
-/*    */   public class_8480(PacketByteBuf packetByteBuf) {
+/*    */   public voteResponsepacket(PacketByteBuf packetByteBuf) {
 /* 23 */     this(packetByteBuf
 /* 24 */         .readVarInt(),
 				packetByteBuf
