@@ -36,7 +36,7 @@ public abstract class NumberVoteRule<T extends Number> implements Vote {
     }
 
     @Override
-    public Stream getActiveOptions() {
+    public Stream<VoteValue> getActiveOptions() {
         return !Objects.equals(this.currentValue, this.defaultValue) ? Stream.of(new NumberVoteRule.Option(this.currentValue)) : Stream.empty();
     }
 

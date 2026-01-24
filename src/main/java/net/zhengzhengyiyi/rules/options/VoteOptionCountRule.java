@@ -38,7 +38,7 @@ public abstract class VoteOptionCountRule implements Vote {
     }
 
     @Override
-    public Stream getActiveOptions() {
+    public Stream<VoteValue> getActiveOptions() {
         return this.defaultRange.equals(this.currentRange) ? Stream.empty() : Stream.of(new VoteOptionCountRule.Option(this.currentRange));
     }
 

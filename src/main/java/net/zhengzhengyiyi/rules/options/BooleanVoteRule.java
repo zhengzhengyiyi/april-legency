@@ -25,12 +25,12 @@ public class BooleanVoteRule implements Vote {
     }
 
     @Override
-    public Stream getActiveOptions() {
+    public Stream<VoteValue> getActiveOptions() {
         return this.currentValue ? Stream.of(this.option) : Stream.empty();
     }
 
     @Override
-    public Stream generateOptions(MinecraftServer server, Random random, int limit) {
+    public Stream<VoteValue> generateOptions(MinecraftServer server, Random random, int limit) {
         return !this.currentValue && limit > 0 ? Stream.of(this.option) : Stream.empty();
     }
 

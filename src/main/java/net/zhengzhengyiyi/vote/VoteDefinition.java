@@ -20,7 +20,7 @@ import net.zhengzhengyiyi.world.Vote;
 /**
  * Defines the content and structure of a vote.
  */
-public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, Option> options) {
+public record VoteDefinition(VoteMetadata metadata, Map<VoteOptionId, VoteDefinition.Option> options) {
 	public static final Codec<VoteDefinition> CODEC = RecordCodecBuilder.create(instance -> 
 	    instance.group(
 	        VoteMetadata.CODEC.forGetter(VoteDefinition::metadata),
