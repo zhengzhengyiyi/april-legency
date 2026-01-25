@@ -26,12 +26,12 @@ import net.minecraft.util.math.ChunkPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
-public class CursorBlock extends HorizontalFacingBlock {
+public class BookBox extends HorizontalFacingBlock {
    private static final char[] ALPHABET = new char[]{
       ' ', ',', '.', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'
    };
 
-   public CursorBlock(AbstractBlock.Settings settings) {
+   public BookBox(AbstractBlock.Settings settings) {
       super(settings);
    }
    

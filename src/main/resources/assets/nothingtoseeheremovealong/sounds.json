@@ -6,5 +6,11 @@
 	  "nothingtoseeheremovealong:the_joke/sad3",
 	  "nothingtoseeheremovealong:the_joke/sad4"
     ]
+  },
+  "awesome_intro": {
+    "sounds": [
+        "nothingtoseeheremovealong:banana/bananana",
+        "nothingtoseeheremovealong:banana/banananana"
+    ]
   }
 }

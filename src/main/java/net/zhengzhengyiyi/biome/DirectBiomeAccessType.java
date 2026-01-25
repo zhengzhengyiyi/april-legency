@@ -1,4 +1,4 @@
-package net.zhengzhengyiyi;
+package net.zhengzhengyiyi.biome;
 
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.source.BiomeAccess;

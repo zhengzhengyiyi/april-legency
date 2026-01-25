@@ -1,4 +1,4 @@
-package net.zhengzhengyiyi;
+package net.zhengzhengyiyi.biome;
 
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;

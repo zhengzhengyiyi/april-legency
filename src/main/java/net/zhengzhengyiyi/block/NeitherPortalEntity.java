@@ -2,7 +2,6 @@ package net.zhengzhengyiyi.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.listener.ClientPlayPacketListener;
 import net.minecraft.network.packet.Packet;
@@ -16,7 +15,7 @@ public class NeitherPortalEntity extends BlockEntity {
     private int dimensionId;
 
     public NeitherPortalEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityType.END_PORTAL, pos, state);
+        super(ModBlocks.NEITHER_PORTAL_ENTITY, pos, state);
     }
 
     public NeitherPortalEntity(BlockPos pos, BlockState state, int dimensionId) {

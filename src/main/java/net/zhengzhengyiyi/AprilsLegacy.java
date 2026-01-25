@@ -16,7 +16,9 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
+import net.zhengzhengyiyi.biome.ModBiomeKeys;
 import net.zhengzhengyiyi.block.ModBlocks;
+import net.zhengzhengyiyi.command.DebugDimensionCommand;
 import net.zhengzhengyiyi.command.TransformCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.datagen.ModWorldGenerator;
@@ -108,8 +110,7 @@ public class AprilsLegacy implements ModInitializer {
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);
-		});
-		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
+		    DebugDimensionCommand.register(dispatcher);
 		    TransformCommand.register(dispatcher, registryAccess);
 		});
 		

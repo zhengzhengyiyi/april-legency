@@ -26,6 +26,7 @@ public class ModItems {
 	
 	public static final Item PICKAXE_BLOCK_ITEM = register(ModBlocks.PICKAXE_BLOCK);
 	public static final Item PLACE_BLOCK_ITEM = register(ModBlocks.PLACE_BLOCK);
+	public static final Item CHEESE_ITEM = register(ModBlocks.CHEESE);
 	
 	public static final Item MOON_COW_SPAWN_EGG = registerSpawnEgg(ModEntities.MOON_COW);
 	
@@ -53,6 +54,10 @@ public class ModItems {
 	public static final Item NAME = register("name", new Name(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "name")))));
 	
 	public static final Item STRING2 = register("string2", new Item(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "string2")))));
+	
+	// INFINITY 20W14INFINITY ITEMS
+	public static final Item CURSOR_ITEM = register(ModBlocks.CURSOR);
+	public static final Item FINE_ITEM = register("fine_item", new Item(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("fine_item")))));
 	
 	public static RecipeSerializer<NbtCraftingRecipe> NBT_CRAFTING_RECIPE = RecipeSerializer.register("nbt_crafting_recipe", new SpecialCraftingRecipe.SpecialRecipeSerializer<>(NbtCraftingRecipe::new));
 	
