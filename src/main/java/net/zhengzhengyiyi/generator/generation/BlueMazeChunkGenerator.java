@@ -1,4 +1,4 @@
-package net.zhengzhengyiyi.generator;
+package net.zhengzhengyiyi.generator.generation;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.BlockState;

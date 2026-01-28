@@ -2,6 +2,7 @@ package net.zhengzhengyiyi;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -12,6 +13,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
@@ -32,6 +34,7 @@ import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.util.TickScheduler;
 import net.zhengzhengyiyi.vote.VoteRegistries;
+import xyz.nucleoid.fantasy.Fantasy;
 import net.zhengzhengyiyi.network.*;
 
 import org.slf4j.Logger;
@@ -39,6 +42,8 @@ import org.slf4j.LoggerFactory;
 
 public class AprilsLegacy implements ModInitializer {
 	public static final String MOD_ID = "aprils-legacy";
+	
+	public static Fantasy fantasy;
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	
@@ -115,6 +120,10 @@ public class AprilsLegacy implements ModInitializer {
 		});
 		
 		LOGGER.info(MOD_ID + " init, please enjoy april fools");
+		
+		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
+			fantasy = Fantasy.get(server);
+		});
 	}
 	
 	public static RegistryKey<ConfiguredFeature<?, ?>> registerFeature(String id) {

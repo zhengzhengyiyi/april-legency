@@ -5,8 +5,6 @@ import com.google.common.collect.Sets;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -21,6 +19,7 @@ import net.minecraft.entity.EntityCollisionHandler;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.network.packet.s2c.play.BlockUpdateS2CPacket;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.tag.BlockTags;
@@ -39,6 +38,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
 import net.minecraft.world.tick.ScheduledTickView;
+import net.zhengzhengyiyi.InfiniteDimensionManager;
 import net.zhengzhengyiyi.generator.DimensionHasher;
 
 import org.jetbrains.annotations.Nullable;
@@ -55,7 +55,7 @@ public class DimensionPortalBlock extends Block implements Portal {
 
    @Override
    public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
-      return state.get(AXIS) == Direction.Axis.Z ? Z_SHAPE : X_SHAPE;
+	   return state.get(AXIS) == Direction.Axis.Z ? Z_SHAPE : X_SHAPE;
    }
 
    @Override
@@ -89,7 +89,7 @@ public class DimensionPortalBlock extends Block implements Portal {
 
                if (!bookText.isEmpty()) {
                   int dimId = DimensionHasher.hash(bookText);
-                  this.convertPortal(world, pos, state, dimId);
+                  convertPortal(world, pos, state, dimId);
                   entity.discard();
                }
                return;
@@ -106,8 +106,7 @@ public class DimensionPortalBlock extends Block implements Portal {
       Set<BlockPos> visited = Sets.newHashSet();
       Queue<BlockPos> queue = Queues.newArrayDeque();
       Direction.Axis axis = state.get(AXIS);
-      BlockState newPortalState = Blocks.NETHER_PORTAL.getDefaultState().with(AXIS, axis);
-
+      BlockState newPortalState = ModBlocks.NEITHER_PORTAL.getDefaultState().with(AXIS, axis);
       queue.add(startPos);
       while (!queue.isEmpty()) {
          BlockPos current = queue.poll();
@@ -116,6 +115,9 @@ public class DimensionPortalBlock extends Block implements Portal {
             BlockEntity be = world.getBlockEntity(current);
             if (be instanceof NeitherPortalEntity shiny) {
                shiny.setDimensionId(dimId);
+               world.updateListeners(current, newPortalState, newPortalState, 3);
+               if (!world.isClient())
+            	   world.getServer().getPlayerManager().sendToAll(new BlockUpdateS2CPacket(startPos, state));
             }
             for (Direction dir : Direction.values()) {
                queue.add(current.offset(dir));
@@ -124,7 +126,6 @@ public class DimensionPortalBlock extends Block implements Portal {
       }
    }
 
-   @Environment(EnvType.CLIENT)
    @Override
    public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
       if (random.nextInt(100) == 0) {
@@ -138,7 +139,6 @@ public class DimensionPortalBlock extends Block implements Portal {
       }
    }
 
-   @Environment(EnvType.CLIENT)
    protected ParticleEffect getParticle(BlockState state, World world, BlockPos pos) {
       return ParticleTypes.PORTAL;
    }
@@ -231,9 +231,26 @@ public class DimensionPortalBlock extends Block implements Portal {
    }
 
    @Override
-   public @org.jspecify.annotations.Nullable TeleportTarget createTeleportTarget(ServerWorld world, Entity entity,
-		BlockPos pos) {
-	   // TODO
-	return null;
+   public @org.jspecify.annotations.Nullable TeleportTarget createTeleportTarget(ServerWorld world, Entity entity, BlockPos pos) {
+       BlockEntity blockEntity = world.getBlockEntity(pos);
+       if (!(blockEntity instanceof NeitherPortalEntity neitherPortal)) {
+           return null;
+       }
+
+       int dimId = neitherPortal.getDimensionId();
+       ServerWorld targetWorld = InfiniteDimensionManager.getOrCreateInfiniteDimension(world.getServer(), dimId);
+
+       if (targetWorld == null) {
+           return null;
+       }
+
+       return new TeleportTarget(
+           targetWorld,
+           entity.getEntityPos(),
+           entity.getVelocity(),
+           entity.getYaw(),
+           entity.getPitch(),
+           TeleportTarget.SEND_TRAVEL_THROUGH_PORTAL_PACKET
+       );
    }
 }

@@ -15,7 +15,9 @@
 		"CreeperEntityMixin",
 		"SpawnhelperMixin",
 		"EndermanEntityMixin",
-		"ServerWorldMixin"
+		"ServerWorldMixin",
+		"CakeBlockMixin",
+		"PortalManagerMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

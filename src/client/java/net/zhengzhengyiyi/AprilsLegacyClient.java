@@ -3,10 +3,14 @@ package net.zhengzhengyiyi;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.codec.PacketCodec;
+import net.zhengzhengyiyi.block.ModBlocks;
+import net.zhengzhengyiyi.block.NeitherPortalEntity;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.network.ClientModNetworkManager;
 import net.zhengzhengyiyi.renderer.ModEntityRenderers;
@@ -49,5 +53,15 @@ public class AprilsLegacyClient implements ClientModInitializer {
 			    }
 			}
 		});
+		
+		ColorProviderRegistry.BLOCK.register((state, world, pos, tintIndex) -> {
+            if (world != null && pos != null) {
+                BlockEntity blockEntity = world.getBlockEntity(pos);
+                if (blockEntity instanceof NeitherPortalEntity portal) {
+                    return portal.getDimensionId() & 0xFFFFFF;
+                }
+            }
+            return 0xFFFFFF;
+        }, ModBlocks.NEITHER_PORTAL);
 	}
 }
