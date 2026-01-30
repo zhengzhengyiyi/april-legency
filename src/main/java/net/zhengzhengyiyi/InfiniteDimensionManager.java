@@ -11,8 +11,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 import net.zhengzhengyiyi.generator.generation.BiomeSourceFactory;
-import net.zhengzhengyiyi.generator.generation.BlueMazeChunkGenerator;
-import net.zhengzhengyiyi.generator.generation.ColorGridChunkGenerator;
+import net.zhengzhengyiyi.generator.generation.*;
 import xyz.nucleoid.fantasy.RuntimeWorldConfig;
 import xyz.nucleoid.fantasy.RuntimeWorldHandle;
 
@@ -38,7 +37,6 @@ public class InfiniteDimensionManager {
          config = new RuntimeWorldConfig()
                  .setSeed(hash)
                  .setGenerator(server.getOverworld().getChunkManager().getChunkGenerator());
-         // TODO change the chunk generator to get different worlds
       }
 
       RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
@@ -47,9 +45,9 @@ public class InfiniteDimensionManager {
 
    static {
 	   field_23484.put(741472677, method_26506((server, h) -> 
-       new ColorGridChunkGenerator(
-           BiomeSourceFactory.createOverworldBiomeSource(server)
-       )
+	       new ColorGridChunkGenerator(
+	           BiomeSourceFactory.createOverworldBiomeSource(server)
+	       )
 	   ));
 	
 	   field_23484.put(236157810, method_26506((server, h) -> 
@@ -57,9 +55,30 @@ public class InfiniteDimensionManager {
 	           BiomeSourceFactory.createOverworldBiomeSource(server)
 	       )
 	   ));
-//      field_23484.put(1896587401, method_26506((server, h) -> class_5021.createGenerator(server, h)));
-//      field_23484.put(726931095, method_26506((server, h) -> class_5027.createGenerator(server, h)));
-//      field_23484.put(233542201, method_26506((server, h) -> class_5029.createGenerator(server, h)));
+	   field_23484.put(1896587401, method_26506((server, h) -> 
+		    new class_5021(
+		        BiomeSourceFactory.createOverworldBiomeSource(server)
+		    )
+		));
+	
+		field_23484.put(726931095, method_26506((server, h) -> 
+		    new class_5027(
+		        BiomeSourceFactory.createOverworldBiomeSource(server)
+		    )
+		));
+	
+		field_23484.put(233542201, method_26506((server, h) -> 
+		    new class_5029(
+		        BiomeSourceFactory.createOverworldBiomeSource(server)
+		    )
+		));
+	
+		field_23484.put(107712651, method_26506((server, h) -> 
+		    new class_5087(
+		        BiomeSourceFactory.createOverworldBiomeSource(server)
+		    )
+		));
+      
 //      field_23484.put(669175628, method_26506((server, h) -> class_5031.createGenerator(server, h)));
 //      field_23484.put(1929426645, method_26506((server, h) -> class_5034.createGenerator(server, h)));
 //      field_23484.put(378547252, method_26506((server, h) -> class_5036.createGenerator(server, h)));
@@ -92,7 +111,6 @@ public class InfiniteDimensionManager {
 //      field_23484.put(1028465021, method_26506((server, h) -> class_5081.createGenerator(server, h)));
 //      field_23484.put(2003598857, method_26506((server, h) -> class_5083.createGenerator(server, h)));
 //      field_23484.put(985130845, method_26506((server, h) -> class_5085.createGenerator(server, h)));
-//      field_23484.put(107712651, method_26506((server, h) -> class_5087.createGenerator(server, h)));
 //      field_23484.put(251137100, method_26506((server, h) -> class_5089.createGenerator(server, h)));
 //      field_23484.put(1537997313, method_26506((server, h) -> class_5091.createGenerator(server, h)));
 //      field_23484.put(1916276638, method_26506((server, h) -> class_5093.createGenerator(server, h)));

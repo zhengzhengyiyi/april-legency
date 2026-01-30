@@ -17,17 +17,21 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
 import net.zhengzhengyiyi.biome.ModBiomeKeys;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.command.DebugDimensionCommand;
+import net.zhengzhengyiyi.command.DebugdimCommand;
 import net.zhengzhengyiyi.command.TransformCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
+import net.zhengzhengyiyi.command.WarpCommand;
 import net.zhengzhengyiyi.datagen.ModWorldGenerator;
 import net.zhengzhengyiyi.entity.ModEntities;
 import net.zhengzhengyiyi.feature.CraterFeature;
 import net.zhengzhengyiyi.feature.CraterFeatureConfig;
 import net.zhengzhengyiyi.feature.LunarBaseFeature;
+import net.zhengzhengyiyi.generator.generation.RainbowBlockStateProvider;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
@@ -90,6 +94,8 @@ public class AprilsLegacy implements ModInitializer {
 		ModBiomeKeys.init();
 		VoteStats.init();
 		
+		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
+		
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE)
 			.register((itemGroup) -> {
 				itemGroup.add(ModItems.DOUBLE_TAG);
@@ -116,7 +122,9 @@ public class AprilsLegacy implements ModInitializer {
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 		    VoteCommands.register(dispatcher, registryAccess);
 		    DebugDimensionCommand.register(dispatcher);
+		    WarpCommand.register(dispatcher);
 		    TransformCommand.register(dispatcher, registryAccess);
+		    DebugdimCommand.register(dispatcher);
 		});
 		
 		LOGGER.info(MOD_ID + " init, please enjoy april fools");
