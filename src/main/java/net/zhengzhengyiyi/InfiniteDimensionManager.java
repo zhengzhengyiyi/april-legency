@@ -9,6 +9,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
 import net.zhengzhengyiyi.generator.generation.BiomeSourceFactory;
 import net.zhengzhengyiyi.generator.generation.*;
@@ -25,23 +26,95 @@ public class InfiniteDimensionManager {
               .setGenerator(generatorFactory.apply(server, hash))
               .setSeed(hash);
    }
-
+   
    public static ServerWorld getOrCreateInfiniteDimension(MinecraftServer server, int hash) {
-      Identifier id = Identifier.of(AprilsLegacy.MOD_ID, "dim_" + hash);
-      BiFunction<MinecraftServer, Integer, RuntimeWorldConfig> configFactory = field_23484.get(hash);
+	    Identifier id = Identifier.of(AprilsLegacy.MOD_ID, "dim_" + hash);
+	    BiFunction<MinecraftServer, Integer, RuntimeWorldConfig> configFactory = field_23484.get(hash);
 
-      RuntimeWorldConfig config;
-      if (configFactory != null) {
-         config = configFactory.apply(server, hash);
-      } else {
-         config = new RuntimeWorldConfig()
-                 .setSeed(hash)
-                 .setGenerator(server.getOverworld().getChunkManager().getChunkGenerator());
-      }
+	    var registryManager = server.getRegistryManager();
+	    var dimensionTypes = registryManager.getOrThrow(RegistryKeys.DIMENSION_TYPE);
+	    
+	    var overworldTypeEntry = dimensionTypes.getEntry(net.minecraft.world.dimension.DimensionTypes.OVERWORLD.getValue()).orElseThrow();
 
-      RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
-      return handle.asWorld();
-   }
+	    RuntimeWorldConfig config;
+	    var settingsRegistry = registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
+	    java.util.Random random = new java.util.Random(hash);
+	    var biomeSource = BiomeSourceFactory.createOverworldBiomeSource(server);
+
+	    net.minecraft.world.gen.chunk.ChunkGenerator baseGenerator;
+	    int type = random.nextInt(3); 
+
+	    if (type == 0) {
+	        baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settingsRegistry.getOrThrow(ChunkGeneratorSettings.OVERWORLD));
+	    } else if (type == 1) {
+	        baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settingsRegistry.getOrThrow(ChunkGeneratorSettings.CAVES));
+	    } else {
+	        baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settingsRegistry.getOrThrow(ChunkGeneratorSettings.FLOATING_ISLANDS));
+	    }
+	    
+	    if (configFactory != null) {
+	        config = configFactory.apply(server, hash);
+	    } else {
+	        config = new RuntimeWorldConfig()
+	                .setSeed(hash)
+	                .setGenerator(new InfiniteChunkGenerator(
+	                    BiomeSourceFactory.createOverworldBiomeSource(server), 
+	                    baseGenerator,
+	                    hash
+	                ));
+	    }
+
+	    config.setDimensionType(overworldTypeEntry);
+
+	    RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
+	    return handle.asWorld();
+	}
+
+//   public static ServerWorld getOrCreateInfiniteDimension(MinecraftServer server, int hash) {
+//      Identifier id = Identifier.of(AprilsLegacy.MOD_ID, "dim_" + hash);
+//      BiFunction<MinecraftServer, Integer, RuntimeWorldConfig> configFactory = field_23484.get(hash);
+//
+//      RuntimeWorldConfig config;
+//      
+//      var registryManager = server.getRegistryManager();
+//      var settingsRegistry = registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
+//
+//      java.util.Random random = new java.util.Random(hash);
+//      int internalSeed = random.nextInt();
+//      var biomeSource = BiomeSourceFactory.createOverworldBiomeSource(server);
+//
+//      net.minecraft.world.gen.chunk.ChunkGenerator baseGenerator;
+//      int type = random.nextInt(3); 
+//
+//      if (type == 0) {
+//          var settings = settingsRegistry.getOrThrow(net.minecraft.world.gen.chunk.ChunkGeneratorSettings.OVERWORLD);
+//          baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settings);
+//      } else if (type == 1) {
+//          var settings = settingsRegistry.getOrThrow(net.minecraft.world.gen.chunk.ChunkGeneratorSettings.CAVES);
+//          baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settings);
+//      } else {
+//          var settings = settingsRegistry.getOrThrow(net.minecraft.world.gen.chunk.ChunkGeneratorSettings.FLOATING_ISLANDS);
+//          baseGenerator = new net.minecraft.world.gen.chunk.NoiseChunkGenerator(biomeSource, settings);
+//      }
+//      
+//      if (configFactory != null) {
+//         config = configFactory.apply(server, hash);
+//      } else {
+////         config = new RuntimeWorldConfig()
+////                 .setSeed(hash)
+////                 .setGenerator(server.getOverworld().getChunkManager().getChunkGenerator());
+//    	  config = new RuntimeWorldConfig()
+//    			    .setSeed(hash)
+//    			    .setGenerator(new InfiniteChunkGenerator(
+//    			        BiomeSourceFactory.createOverworldBiomeSource(server), 
+//    			        baseGenerator,
+//    			        (int) hash
+//    			    ));
+//      }
+//
+//      RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
+//      return handle.asWorld();
+//   }
 
    static {
 	   field_23484.put(741472677, method_26506((server, h) -> 

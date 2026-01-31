@@ -43,7 +43,7 @@ import net.zhengzhengyiyi.generator.DimensionHasher;
 
 import org.jetbrains.annotations.Nullable;
 
-public class DimensionPortalBlock extends Block implements Portal {
+public class DimensionPortalBlock extends Block implements Portal, AbstractDimensionBlock {
    public static final EnumProperty<Direction.Axis> AXIS = Properties.HORIZONTAL_AXIS;
    protected static final VoxelShape X_SHAPE = Block.createCuboidShape(0.0, 0.0, 6.0, 16.0, 16.0, 10.0);
    protected static final VoxelShape Z_SHAPE = Block.createCuboidShape(6.0, 0.0, 0.0, 10.0, 16.0, 16.0);
@@ -75,6 +75,27 @@ public class DimensionPortalBlock extends Block implements Portal {
          ? Blocks.AIR.getDefaultState()
          : super.getStateForNeighborUpdate(state, world, tickView, pos, direction, neighborPos, neighborState, random);
    }
+   
+   public static boolean method_26480(WorldAccess iWorld, BlockPos blockPos, Block block) {
+		DimensionPortalBlock.AreaHelper areaHelper = createAreaHelper(iWorld, blockPos, block);
+		if (areaHelper != null) {
+		areaHelper.createPortal();
+		 	return true;
+		} else {
+			return false;
+		}
+	}
+   
+   @Nullable
+   public static DimensionPortalBlock.AreaHelper createAreaHelper(WorldAccess iWorld, BlockPos blockPos, Block block) {
+      DimensionPortalBlock.AreaHelper areaHelper = new DimensionPortalBlock.AreaHelper(iWorld, blockPos, Direction.Axis.X, block);
+      if (areaHelper.isValid() && areaHelper.foundPortalBlocks == 0) {
+         return areaHelper;
+      } else {
+         DimensionPortalBlock.AreaHelper areaHelper2 = new DimensionPortalBlock.AreaHelper(iWorld, blockPos, Direction.Axis.Z, block);
+         return areaHelper2.isValid() && areaHelper2.foundPortalBlocks == 0 ? areaHelper2 : null;
+      }
+   }
 
    @Override
    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity, EntityCollisionHandler handler, boolean bl) {
@@ -102,7 +123,7 @@ public class DimensionPortalBlock extends Block implements Portal {
       }
    }
 
-   private void convertPortal(World world, BlockPos startPos, BlockState state, int dimId) {
+   public void convertPortal(World world, BlockPos startPos, BlockState state, int dimId) {
       Set<BlockPos> visited = Sets.newHashSet();
       Queue<BlockPos> queue = Queues.newArrayDeque();
       Direction.Axis axis = state.get(AXIS);
@@ -228,6 +249,15 @@ public class DimensionPortalBlock extends Block implements Portal {
       public boolean wasAlreadyValid() {
          return isValid() && foundPortalBlocks >= width * height;
       }
+      
+      public void createPortal() {
+          for (int i = 0; i < this.width; i++) {
+             BlockPos blockPos = this.lowerCorner.offset(this.negativeDir, i);
+             for (int j = 0; j < this.height; j++) {
+            	 this.world.setBlockState(blockPos.up(j), ModBlocks.NEITHER_PORTAL.getDefaultState().with(AXIS, this.axis), 18);
+             }
+          }
+       }
    }
 
    @Override
@@ -243,6 +273,8 @@ public class DimensionPortalBlock extends Block implements Portal {
        if (targetWorld == null) {
            return null;
        }
+       
+       method_26480(targetWorld, pos, targetWorld.getBlockState(pos).getBlock());
 
        return new TeleportTarget(
            targetWorld,

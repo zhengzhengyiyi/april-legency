@@ -17,7 +17,8 @@
 		"EndermanEntityMixin",
 		"ServerWorldMixin",
 		"CakeBlockMixin",
-		"PortalManagerMixin"
+		"PortalManagerMixin",
+		"NetherPortalBlockMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
