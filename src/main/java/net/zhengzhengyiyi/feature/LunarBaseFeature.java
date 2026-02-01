@@ -50,7 +50,7 @@ public class LunarBaseFeature extends Feature<DefaultFeatureConfig> {
       this.setBlockState(world, dropperPos.east().up(), Blocks.END_ROD.getDefaultState());
       this.setBlockState(world, dropperPos.west().up(), Blocks.LIGHTNING_ROD.getDefaultState().with(LightningRodBlock.FACING, Direction.DOWN));
       
-      System.out.println(dropperPos);
+//      System.out.println(dropperPos);
       
 //      if (world.getBlockEntity(dropperPos) instanceof DropperBlockEntity dropper) {
 //         dropper.setSpecialRocketFlag(); 

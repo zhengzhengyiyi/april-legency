@@ -99,7 +99,14 @@ public class ColorGridChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world, NoiseConfig noiseConfig) {
-		return null;
+		int minY = world.getBottomY();
+	    int height = world.getHeight();
+	    
+	    net.minecraft.block.BlockState[] states = new net.minecraft.block.BlockState[height];
+	    
+	    java.util.Arrays.fill(states, net.minecraft.block.Blocks.AIR.getDefaultState());
+
+	    return new net.minecraft.world.gen.chunk.VerticalBlockSample(minY, states);
 	}
 
 	@Override
