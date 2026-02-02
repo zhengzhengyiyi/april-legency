@@ -2,6 +2,8 @@ package net.zhengzhengyiyi.block;
 
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
+
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,13 +32,17 @@ import net.minecraft.state.property.Properties;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Direction.Axis;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.world.BlockLocating;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.TeleportTarget;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 import net.minecraft.world.WorldView;
+import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.tick.ScheduledTickView;
 import net.zhengzhengyiyi.InfiniteDimensionManager;
 import net.zhengzhengyiyi.generator.DimensionHasher;
@@ -259,6 +265,23 @@ public class DimensionPortalBlock extends Block implements Portal, AbstractDimen
           }
        }
    }
+   
+   public BlockPos createExitPortal(ServerWorld targetWorld, BlockPos pos, Direction.Axis axis) {
+	    WorldBorder worldBorder = targetWorld.getWorldBorder();
+	    BlockPos clampedPos = worldBorder.clampFloored(pos.getX(), pos.getY(), pos.getZ());
+	    
+	    Optional<BlockLocating.Rectangle> existingPortal = targetWorld.getPortalForcer().getPortalPos(clampedPos, targetWorld.getRegistryKey() == World.NETHER, worldBorder)
+	        .map(p -> {
+	            BlockState state = targetWorld.getBlockState(p);
+	            return BlockLocating.getLargestRectangle(p, state.get(Properties.HORIZONTAL_AXIS), 21, Direction.Axis.Y, 21, posx -> targetWorld.getBlockState(posx) == state);
+	        });
+
+	    if (existingPortal.isEmpty()) {
+	        targetWorld.getPortalForcer().createPortal(clampedPos, axis);
+	    }
+	    
+	    return clampedPos;
+	}
 
    @Override
    public @org.jspecify.annotations.Nullable TeleportTarget createTeleportTarget(ServerWorld world, Entity entity, BlockPos pos) {
@@ -275,10 +298,12 @@ public class DimensionPortalBlock extends Block implements Portal, AbstractDimen
        }
        
        method_26480(targetWorld, pos, targetWorld.getBlockState(pos).getBlock());
+       
+       BlockPos clamped_pos = createExitPortal(targetWorld, pos, world.getRandom().nextBoolean() ? Axis.Z : Axis.X);
 
        return new TeleportTarget(
            targetWorld,
-           entity.getEntityPos(),
+           new Vec3d(clamped_pos),
            entity.getVelocity(),
            entity.getYaw(),
            entity.getPitch(),
