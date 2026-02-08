@@ -26,6 +26,7 @@ import net.zhengzhengyiyi.command.DebugdimCommand;
 import net.zhengzhengyiyi.command.TransformCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.command.WarpCommand;
+import net.zhengzhengyiyi.component.ModDataComponentTypes;
 import net.zhengzhengyiyi.datagen.ModWorldGenerator;
 import net.zhengzhengyiyi.entity.ModEntities;
 import net.zhengzhengyiyi.feature.CraterFeature;
@@ -35,6 +36,7 @@ import net.zhengzhengyiyi.generator.generation.RainbowBlockStateProvider;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.screen.ModScreenHandlerType;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.util.TickScheduler;
 import net.zhengzhengyiyi.vote.VoteRegistries;
@@ -93,6 +95,8 @@ public class AprilsLegacy implements ModInitializer {
 		ModDimensionTypes.init();
 		ModBiomeKeys.init();
 		VoteStats.init();
+		ModScreenHandlerType.init();
+		ModDataComponentTypes.init();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
 		

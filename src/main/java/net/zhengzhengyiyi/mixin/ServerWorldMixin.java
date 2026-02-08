@@ -11,8 +11,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.rules.VoteRules;
 
@@ -23,8 +27,21 @@ public class ServerWorldMixin {
 		return null;
 	}
 	
+	@Shadow
+	public RegistryKey<World> getRegistryKey() {return null;}
+	
 	@Unique
 	private boolean field_43412;
+	
+	@Unique
+	// TODO - 
+	public void method_69089(RegistryEntry<DimensionType> registryEntry) {
+		if (this.getRegistryKey() == World.OVERWORLD) {
+	       this.field_58288.getSaveProperties().method_70234(registryEntry);
+		}
+
+		getPlayers().forEach(serverPlayerEntity -> serverPlayerEntity.networkHandler.sendPacket(new ClientPacket0(registryEntry)));
+	}
 	
 	@Inject(method="tick", at=@At("TAIL"))
 	public void tick(CallbackInfo ci) {

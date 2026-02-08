@@ -4,8 +4,10 @@ import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityT
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.block.enums.NoteBlockInstrument;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -30,6 +32,10 @@ public class ModBlocks {
             RegistryKeys.BLOCK, 
             Identifier.of("minecraft", "book_box")
         );
+    public static final Block DIMENSION_CONTROL = register(
+    	      RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("dimension_control")),
+    	      new DimensionControlBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLUE).instrument(NoteBlockInstrument.BANJO).strength(2.5F).sounds(BlockSoundGroup.WOOD))
+    	   );
     public static final RegistryKey<Block> CURSOR_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("cursor"));
     public static final RegistryKey<Block> ANT_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("ant"));
     
