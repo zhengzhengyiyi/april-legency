@@ -46,7 +46,7 @@ public record VoteRuleSyncS2CPacket(
     }
 
     public void apply(ClientPlayPacketListener listener) {
-        if (listener instanceof VoteClientPlayPacketListener voteListener) {
+        if (listener instanceof ModClientPlayPacketListener voteListener) {
             voteListener.onVoteRuleSync(this);
         }
     }

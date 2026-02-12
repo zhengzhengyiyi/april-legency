@@ -222,4 +222,8 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
 	public void method_50045(class_8484 paramclass_8484) {
 		
 	}
+
+	@Override
+	public void method_68892(ClientPacket0 arg) {
+	}
 }

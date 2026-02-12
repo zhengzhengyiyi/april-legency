@@ -21,7 +21,7 @@ public final record VoteCastpacket(int transactionId, VoteOptionId optionId) imp
     }
 
     public void apply(ServerPlayPacketListener listener) {
-        ((VoteClientPlayPacketListener) listener).method_50043(this);
+        ((ModClientPlayPacketListener) listener).method_50043(this);
     }
 //    public PacketType<class_8258> getPacketType() {
 //        return TYPE;

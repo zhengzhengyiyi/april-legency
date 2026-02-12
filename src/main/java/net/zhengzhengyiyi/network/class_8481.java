@@ -21,7 +21,7 @@ public final record class_8481(UUID id) implements CustomPayload {
     }
 
     public void apply(ClientPlayPacketListener clientPlayPacketListener) {
-        ((VoteClientPlayPacketListener)clientPlayPacketListener).onVoteResult(this);
+        ((ModClientPlayPacketListener)clientPlayPacketListener).onVoteResult(this);
     }
 
 //    public PacketType<class_8481> getPacketType() {

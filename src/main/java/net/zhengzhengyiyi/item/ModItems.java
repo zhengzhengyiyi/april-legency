@@ -16,6 +16,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Rarity;
 import net.zhengzhengyiyi.NbtCraftingRecipe;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.entity.ModEntities;
@@ -58,6 +59,9 @@ public class ModItems {
 	// INFINITY 20W14INFINITY ITEMS
 	public static final Item CURSOR_ITEM = register(ModBlocks.CURSOR);
 	public static final Item FINE_ITEM = register("fine_item", new Item(new Item.Settings().registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("fine_item")))));
+	
+	// CRAFTMINE 25W14CRAFTMINE ITEMS
+	public static final Item SKY_BOX = register("sky_box", new Item(new Item.Settings().rarity(Rarity.EPIC).maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "sky_box")))));
 	
 	public static RecipeSerializer<NbtCraftingRecipe> NBT_CRAFTING_RECIPE = RecipeSerializer.register("nbt_crafting_recipe", new SpecialCraftingRecipe.SpecialRecipeSerializer<>(NbtCraftingRecipe::new));
 	

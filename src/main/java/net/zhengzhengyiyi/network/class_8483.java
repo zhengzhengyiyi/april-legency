@@ -62,7 +62,7 @@ public final record class_8483(UUID id, VoteDefinition voteData) implements Cust
     }
 
     public void apply(ClientPlayPacketListener clientPlayPacketListener) {
-        if (clientPlayPacketListener instanceof VoteClientPlayPacketListener listener) {
+        if (clientPlayPacketListener instanceof ModClientPlayPacketListener listener) {
             listener.onVoteStart(this);
         }
     }

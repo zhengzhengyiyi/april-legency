@@ -9,10 +9,8 @@ import java.util.function.Consumer;
 import java.util.function.IntFunction;
 
 import net.minecraft.component.ComponentsAccess;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.Item.TooltipContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.network.RegistryByteBuf;
@@ -27,7 +25,6 @@ import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import org.jetbrains.annotations.Nullable;
 
 public record DimensionEffects(
    Optional<Float> cloudsHeight,
@@ -124,17 +121,20 @@ public record DimensionEffects(
       CUBE(2, "cube", DimensionEffects.class_11077.field_58985, DimensionEffects.class_11077.field_58986),
       PANORAMA(3, "panorama", DimensionEffects.class_11081.field_59006, DimensionEffects.class_11081.field_59007),
       CODE(4, "code", DimensionEffects.class_11076.field_58983, DimensionEffects.class_11076.field_58984);
+	  private final int field_59016;
+	  private final String field_59017;
+	      
 
       private static final IntFunction<DimensionEffects.SkyType> field_59015 = ValueLists.createIndexToValueFunction(
-         skyType -> skyType.field_59016, values(), ValueLists.OutOfBoundsHandling.ZERO
+    	(DimensionEffects.SkyType skyType) -> skyType.field_59016,
+         values(),
+         ValueLists.OutOfBoundsHandling.ZERO
       );
       public static final Codec<DimensionEffects.SkyType> field_59013 = StringIdentifiable.createCodec(DimensionEffects.SkyType::values);
       public static final PacketCodec<RegistryByteBuf, DimensionEffects.SkyType> field_59014 = PacketCodecs.<DimensionEffects.SkyType>indexed(
             field_59015, skyType -> skyType.field_59016
          )
          .cast();
-      private final int field_59016;
-      private final String field_59017;
       final MapCodec<? extends DimensionEffects.class_11082> field_59018;
       final PacketCodec<? super RegistryByteBuf, ? extends DimensionEffects.class_11082> field_59019;
 
@@ -257,7 +257,7 @@ public record DimensionEffects(
       };
 
       private static final IntFunction<DimensionEffects.class_11079> field_58996 = ValueLists.createIndexToValueFunction(
-         arg -> arg.field_58997, values(), ValueLists.OutOfBoundsHandling.ZERO
+         (class_11079 arg) -> arg.field_58997, values(), ValueLists.OutOfBoundsHandling.ZERO
       );
       public static final Codec<DimensionEffects.class_11079> field_58994 = StringIdentifiable.createCodec(DimensionEffects.class_11079::values);
       public static final PacketCodec<ByteBuf, DimensionEffects.class_11079> field_58995 = PacketCodecs.indexed(field_58996, arg -> arg.field_58997);

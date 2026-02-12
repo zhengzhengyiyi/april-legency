@@ -42,7 +42,7 @@ public static final CustomPayload.Id<voteResponsepacket> PAYLOAD_ID = new Custom
 /*    */ 
 /*    */   
 /*    */   public void apply(ClientPlayPacketListener clientPlayPacketListener) {
-/* 37 */     ((VoteClientPlayPacketListener)clientPlayPacketListener).onVoteResponse(this);
+/* 37 */     ((ModClientPlayPacketListener)clientPlayPacketListener).onVoteResponse(this);
 /*    */   }
 /*    */
 //public PacketType<? extends Packet<ClientPlayPacketListener>> getPacketType() {

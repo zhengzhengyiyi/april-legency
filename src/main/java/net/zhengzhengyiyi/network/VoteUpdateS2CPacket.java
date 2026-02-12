@@ -51,7 +51,7 @@ public record VoteUpdateS2CPacket(
     }
 
     public void apply(ClientPlayPacketListener listener) {
-        ((VoteClientPlayPacketListener)(Object)listener).onVoteUpdate(this);
+        ((ModClientPlayPacketListener)(Object)listener).onVoteUpdate(this);
     }
 
 //	@Override

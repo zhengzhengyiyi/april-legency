@@ -14,7 +14,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Formatting;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
-import net.zhengzhengyiyi.network.VoteClientPlayPacketListener;
+import net.zhengzhengyiyi.network.ModClientPlayPacketListener;
 import net.zhengzhengyiyi.network.VoteCastpacket;
 import net.zhengzhengyiyi.network.voteResponsepacket;
 import net.zhengzhengyiyi.rules.VoteRules;
@@ -31,7 +31,7 @@ import org.spongepowered.asm.mixin.Unique;
 import it.unimi.dsi.fastutil.ints.IntList;
 
 @Mixin(ServerPlayNetworkHandler.class)
-public abstract class ServerPlayNetworkHandlerMixin implements VoteClientPlayPacketListener {
+public abstract class ServerPlayNetworkHandlerMixin implements ModClientPlayPacketListener {
     @Shadow public ServerPlayerEntity player;
 
     @Override

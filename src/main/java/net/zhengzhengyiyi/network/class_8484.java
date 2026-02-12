@@ -19,7 +19,7 @@ public final record class_8484(float speed) implements CustomPayload {
     }
 
     public void apply(ServerPlayPacketListener listener) {
-        ((VoteClientPlayPacketListener) listener).method_50045(this);
+        ((ModClientPlayPacketListener) listener).method_50045(this);
     }
 
 //    @Override

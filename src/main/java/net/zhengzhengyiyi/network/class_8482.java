@@ -21,7 +21,7 @@ public final record class_8482(VoteOptionId id, VoterData voters) implements Cus
     }
 
     public void apply(ClientPlayPacketListener clientPlayPacketListener) {
-        ((VoteClientPlayPacketListener) clientPlayPacketListener).onVoteStop(this);
+        ((ModClientPlayPacketListener) clientPlayPacketListener).onVoteStop(this);
     }
 
 //    @Override

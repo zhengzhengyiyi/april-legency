@@ -4,7 +4,7 @@ import net.zhengzhengyiyi.network.*;
 import net.zhengzhengyiyi.vote.ClientVoteManager;
 import net.zhengzhengyiyi.vote.VoteOptionId;
 
-public interface VoteClientPlayNetworkHandler extends VoteClientPlayPacketListener {
+public interface VoteClientPlayNetworkHandler extends ModClientPlayPacketListener {
 	public ClientVoteManager getVoteManager();
 	void onVoteRuleSync(VoteRuleSyncS2CPacket packet);
 	void onVoteStart(class_8483 packet);

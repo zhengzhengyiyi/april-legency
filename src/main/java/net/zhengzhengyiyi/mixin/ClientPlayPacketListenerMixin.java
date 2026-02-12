@@ -3,7 +3,7 @@ package net.zhengzhengyiyi.mixin;
 import org.spongepowered.asm.mixin.Mixin;
 
 import net.minecraft.network.listener.ClientPlayPacketListener;
-import net.zhengzhengyiyi.network.VoteClientPlayPacketListener;
+import net.zhengzhengyiyi.network.ModClientPlayPacketListener;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.network.VoteUpdateS2CPacket;
 import net.zhengzhengyiyi.network.VoteCastpacket;
@@ -14,7 +14,7 @@ import net.zhengzhengyiyi.network.class_8483;
 import net.zhengzhengyiyi.network.class_8484;
 
 @Mixin(ClientPlayPacketListener.class)
-public interface ClientPlayPacketListenerMixin extends VoteClientPlayPacketListener {
+public interface ClientPlayPacketListenerMixin extends ModClientPlayPacketListener {
 	void onVoteUpdate(VoteUpdateS2CPacket packet);
 	
     void onVoteRuleSync(VoteRuleSyncS2CPacket packet);

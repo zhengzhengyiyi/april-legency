@@ -34,7 +34,7 @@ public class ModBlocks {
         );
     public static final Block DIMENSION_CONTROL = register(
     	      RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("dimension_control")),
-    	      new DimensionControlBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLUE).instrument(NoteBlockInstrument.BANJO).strength(2.5F).sounds(BlockSoundGroup.WOOD))
+    	      new DimensionControlBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLUE).instrument(NoteBlockInstrument.BANJO).strength(2.5F).sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("dimension_control"))))
     	   );
     public static final RegistryKey<Block> CURSOR_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("cursor"));
     public static final RegistryKey<Block> ANT_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("ant"));

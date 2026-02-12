@@ -12,6 +12,10 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
@@ -36,6 +40,7 @@ import net.zhengzhengyiyi.generator.generation.RainbowBlockStateProvider;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
+import net.zhengzhengyiyi.screen.DimensionControlScreenHandler;
 import net.zhengzhengyiyi.screen.ModScreenHandlerType;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.util.TickScheduler;
@@ -51,6 +56,38 @@ public class AprilsLegacy implements ModInitializer {
 	
 	public static Fantasy fantasy;
 	
+	public static final ScreenHandlerType<DimensionControlScreenHandler> DIMENSION_CONTROL = ScreenHandlerType.register("dimension_control", DimensionControlScreenHandler::new);
+	
+	private static class SoundEventRegister {
+		static RegistryEntry<SoundEvent> register(Identifier id, Identifier soundId, float distanceToTravel) {
+			return Registry.registerReference(Registries.SOUND_EVENT, id, SoundEvent.of(soundId, distanceToTravel));
+		}
+
+		static SoundEvent register(String id) {
+			return register(Identifier.ofVanilla(id));
+		}
+
+		static SoundEvent register(Identifier id) {
+			return register(id, id);
+		}
+
+		static RegistryEntry.Reference<SoundEvent> registerReference(String id) {
+			return registerReference(Identifier.ofVanilla(id));
+		}
+
+		static RegistryEntry.Reference<SoundEvent> registerReference(Identifier id) {
+			return registerReference(id, id);
+		}
+
+		static SoundEvent register(Identifier id, Identifier soundId) {
+			return Registry.register(Registries.SOUND_EVENT, id, SoundEvent.of(soundId));
+		}
+
+		static RegistryEntry.Reference<SoundEvent> registerReference(Identifier id, Identifier soundId) {
+			return Registry.registerReference(Registries.SOUND_EVENT, id, SoundEvent.of(soundId));
+		}
+	}
+	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	
 	public static final RegistryKey<ConfiguredFeature<?, ?>> MEGA_CRATER = registerFeature("mega_crater");
@@ -64,6 +101,9 @@ public class AprilsLegacy implements ModInitializer {
     	);
 	public static final Feature<DefaultFeatureConfig> LUNAR_BASE = ModWorldGenerator.register("lunar_base", new LunarBaseFeature(DefaultFeatureConfig.CODEC));
 	
+	public static final SoundEvent field_58484 = SoundEventRegister.register(Identifier.of("nothingtoseehere", "ui.player_unlock_success"));
+	public static final SoundEvent field_58485 = SoundEventRegister.register(Identifier.of("nothingtoseehere", "ui.player_unlock_fail"));
+	
 	private static void registryNetworkPacket() {
 		PayloadTypeRegistry.playS2C().register(voteResponsepacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), voteResponsepacket::new));
         PayloadTypeRegistry.playS2C().register(class_8481.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8481::new));
@@ -71,11 +111,15 @@ public class AprilsLegacy implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(class_8483.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8483::new));
         PayloadTypeRegistry.playS2C().register(VoteRuleSyncS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteRuleSyncS2CPacket::new));
         PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
+        PayloadTypeRegistry.playS2C().register(ClientPacket0.PAYLOAD_ID, ClientPacket0.CODEC);
 
         PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
         PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
         
         ServerPlayNetworking.registerGlobalReceiver(VoteCastpacket.PAYLOAD_ID, (payload, context) -> {
+        	payload.apply(context.player().networkHandler);
+        });
+        ServerPlayNetworking.registerGlobalReceiver(class_8484.PAYLOAD_ID, (payload, context) -> {
         	payload.apply(context.player().networkHandler);
         });
 	}
