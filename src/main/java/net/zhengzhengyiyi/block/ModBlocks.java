@@ -8,12 +8,14 @@ import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.block.enums.NoteBlockInstrument;
+import net.minecraft.datafixer.TypeReferences;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Util;
 
 public class ModBlocks {
     public static final RegistryKey<Block> CHEESE_BLOCK_KEY = RegistryKey.of(
@@ -67,6 +69,20 @@ public class ModBlocks {
         new CheeseBlock(AbstractBlock.Settings.create().hardness(0.5F).registryKey(CHEESE_BLOCK_KEY))
     );
     
+    public static final BlockEntityType<MineCrafterBlockEntity> MINE_CRAFTER_BLOCKENTITY = createBlockEntityType("mine_crafter", MineCrafterBlockEntity::new, ModBlocks.MINE_CRAFTER);
+    
+    public static final Block MINE_CRAFTER = register(
+    	    RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("mine_crafter")),
+    	    new MineCrafterBlock(
+    	        AbstractBlock.Settings.create()
+    	            .mapColor(MapColor.OAK_TAN)
+    	            .instrument(NoteBlockInstrument.BASS)
+    	            .sounds(BlockSoundGroup.WOOD)
+    	            .strength(2.5F)
+    	            .registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("mine_crafter")))
+    	    )
+    	);
+    
     public static final BlockEntityType<NeitherPortalEntity> NEITHER_PORTAL_ENTITY =
     		register("neither_portal", NeitherPortalEntity::new, ModBlocks.NEITHER_PORTAL);
 
@@ -85,4 +101,9 @@ public class ModBlocks {
 
     public static void init() {
     }
+    
+    private static <T extends BlockEntity> BlockEntityType<T> createBlockEntityType(String id, FabricBlockEntityTypeBuilder.Factory<? extends T> factory, Block... blocks) {
+		Util.getChoiceType(TypeReferences.BLOCK_ENTITY, id);
+		return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, FabricBlockEntityTypeBuilder.<T>create(factory, blocks).build());
+	}
 }

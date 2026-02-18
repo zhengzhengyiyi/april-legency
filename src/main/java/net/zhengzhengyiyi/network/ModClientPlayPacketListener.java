@@ -20,4 +20,6 @@ public interface ModClientPlayPacketListener {
 //    void method_68893(ClientPacket2 arg);
 
     void method_68892(ClientPacket0 arg);
+    
+    void method_68897(ClientPacket6 arg);
 }

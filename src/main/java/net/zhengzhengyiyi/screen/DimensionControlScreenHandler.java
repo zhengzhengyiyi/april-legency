@@ -10,16 +10,14 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.text.Text;
 import net.minecraft.world.attribute.EnvironmentAttributeMap;
 import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.dimension.DimensionType;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
 import net.zhengzhengyiyi.item.ModItems;
-import net.zhengzhengyiyi.mixin.ServerWorldMixin;
 import net.zhengzhengyiyi.render.DimensionEffects;
-import net.zhengzhengyiyi.render.DimensionEffects.SkyType;
+import net.zhengzhengyiyi.render.DimensionEffects.class_11078;
 import net.zhengzhengyiyi.render.DimensionEffects.class_11079;
 
 public class DimensionControlScreenHandler extends ScreenHandler {
@@ -32,6 +30,7 @@ private static final int field_58757 = 28;
 private static final int field_58758 = 28;
    @SuppressWarnings("unused")
 private static final int field_58759 = 37;
+   
    private final Inventory field_58760 = new SimpleInventory(1) {
       @Override
       public void markDirty() {
@@ -61,18 +60,7 @@ private static final int field_58759 = 37;
     	    DimensionEffects currentEffects = new DimensionEffects(
     	        Optional.ofNullable(attributes.apply(EnvironmentAttributes.CLOUD_HEIGHT_VISUAL, null)),
     	        true,
-    	        Optional.of(new DimensionEffects.class_11082() {
-					@Override
-					public SkyType method_69775() {
-						return SkyType.END;
-					}
-
-					@Override
-					public Text method_69776() {
-						return Text.of("null, none");
-					}
-    	        	
-    	        }),
+    	        Optional.of(class_11078.field_58988),
     	        true,
     	        false,
     	        class_11079.OVERWORLD,
@@ -108,7 +96,7 @@ private static final int field_58759 = 37;
       this.field_58761.run((world, blockPos) -> {
          RegistryEntry<DimensionType> registryEntry = world.getDimensionEntry();
          DimensionType dimensionType = registryEntry.value();
-         ((ServerWorldMixin)(Object)world).method_69089(RegistryEntry.of(dimensionType));
+         ((ScreenWorldAccess)(Object)world).method_69089(RegistryEntry.of(dimensionType));
       });
    }
 

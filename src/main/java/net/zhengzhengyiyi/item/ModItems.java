@@ -62,6 +62,7 @@ public class ModItems {
 	
 	// CRAFTMINE 25W14CRAFTMINE ITEMS
 	public static final Item SKY_BOX = register("sky_box", new Item(new Item.Settings().rarity(Rarity.EPIC).maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "sky_box")))));
+	public static final Item field_58841 = register(ModBlocks.MINE_CRAFTER);
 	
 	public static RecipeSerializer<NbtCraftingRecipe> NBT_CRAFTING_RECIPE = RecipeSerializer.register("nbt_crafting_recipe", new SpecialCraftingRecipe.SpecialRecipeSerializer<>(NbtCraftingRecipe::new));
 	

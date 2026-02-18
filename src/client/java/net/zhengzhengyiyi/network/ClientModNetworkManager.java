@@ -27,5 +27,13 @@ public class ClientModNetworkManager {
         ClientPlayNetworking.registerGlobalReceiver(VoteUpdateS2CPacket.PAYLOAD_ID, (payload, context) -> {
             context.client().execute(() -> payload.apply(context.client().getNetworkHandler()));
         });
+        
+        ClientPlayNetworking.registerGlobalReceiver(ClientPacket0.PAYLOAD_ID, (payload, context) -> {
+            context.client().execute(() -> payload.apply((ModClientPlayPacketListener)(Object)context.client().getNetworkHandler()));
+        });
+        
+        ClientPlayNetworking.registerGlobalReceiver(ClientPacket6.ID, (payload, context) -> {
+            context.client().execute(() -> payload.apply((ModClientPlayPacketListener)context.client().getNetworkHandler()));
+        });
     }
 }

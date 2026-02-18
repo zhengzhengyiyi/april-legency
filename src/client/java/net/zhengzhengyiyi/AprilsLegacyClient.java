@@ -6,14 +6,17 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.ColorProviderRegistry;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.client.gui.screen.ingame.HandledScreens;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.network.codec.PacketCodec;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.block.NeitherPortalEntity;
+import net.zhengzhengyiyi.gui.DimensionControlScreen;
 import net.zhengzhengyiyi.gui.PendingVoteScreen;
 import net.zhengzhengyiyi.network.ClientModNetworkManager;
 import net.zhengzhengyiyi.renderer.ModEntityRenderers;
+import net.zhengzhengyiyi.screen.ModScreenHandlerType;
 import net.zhengzhengyiyi.network.*;
 
 public class AprilsLegacyClient implements ClientModInitializer {
@@ -34,6 +37,7 @@ public class AprilsLegacyClient implements ClientModInitializer {
 	    PayloadTypeRegistry.playS2C().register(class_8483.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8483::new));
 	    PayloadTypeRegistry.playS2C().register(VoteRuleSyncS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteRuleSyncS2CPacket::new));
 	    PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
+	    PayloadTypeRegistry.playS2C().register(ClientPacket0.PAYLOAD_ID, ClientPacket0.CODEC);
 
 	    PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
 	    PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
@@ -45,6 +49,8 @@ public class AprilsLegacyClient implements ClientModInitializer {
 		ModEntityRenderers.register();
 		
 //		registerNetworkPacket();
+		
+		HandledScreens.register(ModScreenHandlerType.DIMENSION_CONTROL, DimensionControlScreen::new);
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (pendingVoteKey.wasPressed()) {

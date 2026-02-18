@@ -225,5 +225,13 @@ public class ClientPlayNetworkHandlerMixin implements VoteClientPlayNetworkHandl
 
 	@Override
 	public void method_68892(ClientPacket0 arg) {
+		client.execute(() -> {
+			this.world.method_69089(arg.dimensionType());
+		});
+	}
+
+	@Override
+	public void method_68897(ClientPacket6 arg) {
+		MinecraftClient.getInstance().execute(this.client.world.method_70401(arg.unlockedEffects()));
 	}
 }

@@ -18,7 +18,9 @@
 		"ServerWorldMixin",
 		"CakeBlockMixin",
 		"PortalManagerMixin",
-		"NetherPortalBlockMixin"
+		"NetherPortalBlockMixin",
+		"LevelPropertiesMixin",
+		"ChunkGeneratorSettings"
 	],
 	"injectors": {
 		"defaultRequire": 1

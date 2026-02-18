@@ -3,6 +3,8 @@ package net.zhengzhengyiyi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -13,7 +15,9 @@ import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
@@ -38,6 +42,8 @@ import net.zhengzhengyiyi.feature.CraterFeatureConfig;
 import net.zhengzhengyiyi.feature.LunarBaseFeature;
 import net.zhengzhengyiyi.generator.generation.RainbowBlockStateProvider;
 import net.zhengzhengyiyi.item.ModItems;
+import net.zhengzhengyiyi.mine.MineEffect;
+import net.zhengzhengyiyi.mine.effect.class_11113;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
 import net.zhengzhengyiyi.screen.DimensionControlScreenHandler;
@@ -55,8 +61,10 @@ public class AprilsLegacy implements ModInitializer {
 	public static final String MOD_ID = "aprils-legacy";
 	
 	public static Fantasy fantasy;
+	public static MinecraftServer server;
 	
-	public static final ScreenHandlerType<DimensionControlScreenHandler> DIMENSION_CONTROL = ScreenHandlerType.register("dimension_control", DimensionControlScreenHandler::new);
+	public static final RegistryKey<Registry<MineEffect>> WORLD_EFFECT_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("world_effect"));
+	public static final Registry<MineEffect> MINE_EFFECTS = FabricRegistryBuilder.createSimple(WORLD_EFFECT_KEY).buildAndRegister();
 	
 	private static class SoundEventRegister {
 		static RegistryEntry<SoundEvent> register(Identifier id, Identifier soundId, float distanceToTravel) {
@@ -112,6 +120,7 @@ public class AprilsLegacy implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(VoteRuleSyncS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteRuleSyncS2CPacket::new));
         PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
         PayloadTypeRegistry.playS2C().register(ClientPacket0.PAYLOAD_ID, ClientPacket0.CODEC);
+        PayloadTypeRegistry.playS2C().register(ClientPacket6.ID, ClientPacket6.CODEC);
 
         PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
         PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
@@ -139,10 +148,12 @@ public class AprilsLegacy implements ModInitializer {
 		ModDimensionTypes.init();
 		ModBiomeKeys.init();
 		VoteStats.init();
-		ModScreenHandlerType.init();
 		ModDataComponentTypes.init();
+		ModScreenHandlerType.init();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
+		
+		
 		
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE)
 			.register((itemGroup) -> {
@@ -179,6 +190,7 @@ public class AprilsLegacy implements ModInitializer {
 		
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			fantasy = Fantasy.get(server);
+			AprilsLegacy.server = server;
 		});
 	}
 	
