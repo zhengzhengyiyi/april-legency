@@ -20,7 +20,9 @@
 		"PortalManagerMixin",
 		"NetherPortalBlockMixin",
 		"LevelPropertiesMixin",
-		"ChunkGeneratorSettings"
+		"ChunkGeneratorSettings",
+		"BiomeMixin",
+		"SlotMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

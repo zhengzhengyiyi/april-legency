@@ -9,6 +9,7 @@ import net.minecraft.screen.ScreenHandlerType;
 
 public class ModScreenHandlerType {
 	public static final ScreenHandlerType<DimensionControlScreenHandler> DIMENSION_CONTROL = register("dimension_control", DimensionControlScreenHandler::new);
+	public static final ScreenHandlerType<net.zhengzhengyiyi.mine.MineEffectGenerator> MINE_CRAFTER = register("mine_crafter", (syncId, inv) -> new net.zhengzhengyiyi.mine.MineEffectGenerator(syncId, inv, java.util.List.of(0, 0)));
 	
 	static <T extends ScreenHandler> ScreenHandlerType<T> register(String id, ScreenHandlerType.Factory<T> factory) {
 		return Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory, FeatureFlags.VANILLA_FEATURES));

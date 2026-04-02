@@ -15,7 +15,7 @@ import net.minecraft.util.Uuids;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.PersistentState;
 import net.minecraft.world.PersistentStateType;
-import net.zhengzhengyiyi.*;
+import net.zhengzhengyiyi.AprilsLegacy;
 
 public class MineProgressState extends PersistentState {
    private static final String DATA_KEY = "mine_data";
@@ -138,17 +138,14 @@ public class MineProgressState extends PersistentState {
    }
 
    public void clearKeysToRoll() {
-      this.field_58507 = 0;
+      this.keysToRoll = 0;
       this.markDirty();
    }
 
    public void clearExperienceToDrop() {
-      this.field_58506 = 0;
+      this.experienceToDrop = 0;
       this.markDirty();
    }
-   
-   public int field_58506;
-   public int field_58507;
 
    public Optional<BlockPos> getTravellingBlockPos() {
       return this.travellingBlockActivated;

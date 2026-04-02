@@ -86,6 +86,10 @@ public interface ChunkSettingsAccessor extends ISaltSettings {
 	         return this;
 	      }
 
+	      public int method_69803() {
+	         return this.seaLevel;
+	      }
+
 	      public Builder method_69812(boolean bl) {
 	         this.disableMobGen = bl;
 	         return this;

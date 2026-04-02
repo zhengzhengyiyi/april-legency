@@ -108,8 +108,8 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
                
                if (isActive && isCompleted == null && world.getBlockEntity(blockEntity.travellingBlockPos) instanceof TravellingBlockEntity travellingBlock) {
                   ServerWorld targetWorld = serverWorld.getServer().getWorld(travellingBlock.getDimensionKey());
-                  if (targetWorld != null && ((MineServerWorldAccessor) targetWorld).method_69112() && ((MineServerWorldAccessor) targetWorld).method_69121()) {
-                     coreStack.set(ModDataComponentTypes.MINE_COMPLETED, ((MineServerWorldAccessor) targetWorld).method_69123());
+                  if (targetWorld != null && ((MineServerWorldAccessor) targetWorld).isMineWorld() && ((MineServerWorldAccessor) targetWorld).isMineCompleted()) {
+                     coreStack.set(ModDataComponentTypes.MINE_COMPLETED, ((MineServerWorldAccessor) targetWorld).isMineWon());
                      coreStack.remove(ModDataComponentTypes.MINE_ACTIVE);
                      world.breakBlock(blockEntity.travellingBlockPos, false, null);
                      blockEntity.travellingBlockPos = null;
@@ -170,7 +170,7 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
 
    @Override
    protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-      return new MineCrafterScreenHandler(
+      return new net.zhengzhengyiyi.mine.MineEffectGenerator(
          syncId,
          playerInventory,
          ScreenHandlerContext.create(this.getWorld(), this.getPos()),
@@ -180,6 +180,10 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
       );
    }
 
+   public List<Integer> getMiningStats() {
+      return this.getWorld() instanceof ServerWorld serverWorld ? getServerMiningStats(serverWorld) : List.of(0, 0);
+   }
+
    private void startMining(World world, BlockPos blockPos, RegistryKey<DimensionOptions> dimensionKey) {
       this.travellingBlockPos = blockPos.up();
       MiningPortalBlock.createPortal(world, blockPos.up(), dimensionKey, false);
@@ -187,15 +191,17 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
    }
 
    public static List<Integer> getServerMiningStats(ServerWorld serverWorld) {
-      int progress = serverWorld.method_69127();
-      int total = serverWorld.method_69128();
-      return List.of(progress, total);
+      net.zhengzhengyiyi.accessor.LevelPropertiesAccessor props = (net.zhengzhengyiyi.accessor.LevelPropertiesAccessor)(Object)serverWorld.getServer().getSaveProperties().getMainWorldProperties();
+      int level = props.getMineLevel();
+      int exp = props.getMineExp();
+      return List.of(level, exp);
    }
 
    @Override
    public void onBlockReplaced(BlockPos pos, BlockState oldState) {
       if (this.getWorld() instanceof ServerWorld serverWorld) {
-         int count = getRewardCount(serverWorld.method_69127());
+         net.zhengzhengyiyi.accessor.LevelPropertiesAccessor props = (net.zhengzhengyiyi.accessor.LevelPropertiesAccessor)(Object)serverWorld.getServer().getSaveProperties().getMainWorldProperties();
+         int count = getRewardCount(props.getMineLevel());
          for (int j = 0; j < count + 1; j++) {
             this.inventory.set(j, ItemStack.EMPTY);
          }

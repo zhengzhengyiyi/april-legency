@@ -21,6 +21,7 @@ import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.NoiseChunkGenerator;
+import net.zhengzhengyiyi.accessor.BiomeAccessor;
 import net.zhengzhengyiyi.accessor.ChunkSettingsAccessor;
 import net.zhengzhengyiyi.mine.effect.BiomeModifier;
 
@@ -95,7 +96,8 @@ public class DimensionSettingsBuilder {
       return this;
    }
 
-   public ChunkGenerator createGenerator(String subPath) {
+   @SuppressWarnings("unused")
+public ChunkGenerator createGenerator(String subPath) {
       RegistryWrapper.Impl<Biome> biomeRegistry = this.registryManager.getOrThrow(RegistryKeys.BIOME);
       Stream<RegistryKey<Biome>> biomeStream = this.allowedBiomes.isEmpty() ? biomeRegistry.streamKeys() : this.allowedBiomes.stream();
       List<BiomeMapping> mappings = this.buildBiomeMappings(biomeRegistry, subPath);
@@ -112,7 +114,10 @@ public class DimensionSettingsBuilder {
          )
          .toList();
       
-      MultiNoiseBiomeSourceParameterList parameterList = new MultiNoiseBiomeSourceParameterList(finalBiomes, entryMap, biomeRegistry);
+      MultiNoiseBiomeSourceParameterList parameterList = new MultiNoiseBiomeSourceParameterList(
+    	        MultiNoiseBiomeSourceParameterList.Preset.OVERWORLD, 
+    	        biomeRegistry
+    	    );
       MultiNoiseBiomeSource biomeSource = MultiNoiseBiomeSource.create(RegistryEntry.of(parameterList));
       
       RegistryWrapper.Impl<ChunkGeneratorSettings> settingsRegistry = this.registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
@@ -120,9 +125,10 @@ public class DimensionSettingsBuilder {
       ChunkSettingsAccessor.Builder builder = ((ChunkSettingsAccessor)(Object)settingsRegistry.getOrThrow(this.baseSettingsKey).value()).getBuilder();
       
       this.settingsModifiers.forEach(consumer -> consumer.accept(builder));
-      builder.method_69811(materialRule -> materialRule.method_69822(keyMap)).method_69805(subPath.hashCode());
+//      builder.method_69811(materialRule -> materialRule.method_69822(keyMap)).method_69805(subPath.hashCode());
+      // TODO
       
-      RegistryEntry<ChunkGeneratorSettings> registryEntry = RegistryEntry.of(builder.method_69813());
+      RegistryEntry<ChunkGeneratorSettings> registryEntry = RegistryEntry.of(builder.build());
       
       return (ChunkGenerator)(this.customGeneratorFactory.isPresent()
          ? (ChunkGenerator)this.customGeneratorFactory.get().apply(this.registryManager, biomeSource, registryEntry)
@@ -141,26 +147,28 @@ public class DimensionSettingsBuilder {
       }
    }
 
-   public List<BiomeMapping> buildBiomeMappings(RegistryWrapper<Biome> registryWrapper, String prefix) {
+   @SuppressWarnings("unused")
+public List<BiomeMapping> buildBiomeMappings(RegistryWrapper<Biome> registryWrapper, String prefix) {
       Stream<RegistryEntry.Reference<Biome>> entries = this.allowedBiomes.isEmpty() ? registryWrapper.streamEntries() : this.allowedBiomes.stream().map(registryWrapper::getOrThrow);
 
       return entries.filter(reference -> !reference.registryKey().getValue().getPath().startsWith("level"))
          .map(
             reference -> {
-               class_11058 biomeBuilder = reference.value().method_69664();
+               BiomeBuilder biomeBuilder = ((BiomeAccessor)(Object)reference.value()).getBuilder();
 
                for (Entry<SpawnGroup, List<Weighted<SpawnSettings.SpawnEntry>>> entry : this.extraSpawns.entrySet()) {
                   SpawnGroup spawnGroup = entry.getKey();
                   List<Weighted<SpawnSettings.SpawnEntry>> spawns = entry.getValue();
-                  biomeBuilder.method_69671().method_69697(spawnGroup);
+//                  biomeBuilder.method_69671().method_69697(spawnGroup);
+                  // TODO
 
                   for (Weighted<SpawnSettings.SpawnEntry> weighted : spawns) {
-                     biomeBuilder.method_69671().spawn(spawnGroup, weighted.weight(), weighted.value());
+                     biomeBuilder.method_69671().getSpawnEntries(spawnGroup);
                   }
                }
 
                this.biomeModifiers.forEach(mod -> mod.method_69675(biomeBuilder));
-               Biome biome = biomeBuilder.method_69673();
+               Biome biome = biomeBuilder.build();
                RegistryKey<Biome> registryKey = biome.equals(reference.value())
                   ? reference.registryKey()
                   : RegistryKey.of(RegistryKeys.BIOME, reference.registryKey().getValue().withPrefixedPath(prefix + "/"));

@@ -34,6 +34,17 @@ public class ModDataComponentTypes {
 	public static final ComponentType<Boolean> MINE_COMPLETED = register(
 		"mine_completed", builder -> builder.codec(Codec.BOOL).packetCodec(PacketCodecs.BOOLEAN)
 	);
+	public static final ComponentType<net.minecraft.registry.RegistryKey<net.minecraft.world.dimension.DimensionOptions>> DIMENSION_ID = register(
+		"dimension_id",
+		builder -> builder.codec(net.minecraft.registry.RegistryKey.createCodec(net.minecraft.registry.RegistryKeys.DIMENSION))
+			.packetCodec(net.minecraft.registry.RegistryKey.createPacketCodec(net.minecraft.registry.RegistryKeys.DIMENSION)).cache()
+	);
+	public static final ComponentType<net.zhengzhengyiyi.block.TrophyType> TYPE_TROPHY = register(
+		"trophy/type", builder -> builder.codec(net.zhengzhengyiyi.block.TrophyType.CODEC).packetCodec(net.zhengzhengyiyi.block.TrophyType.PACKET_CODEC)
+	);
+	public static final ComponentType<net.zhengzhengyiyi.component.MobTrophyComponent> TYPE_MOB_TROPHY = register(
+		"mob_trophy/type", builder -> builder.codec(net.zhengzhengyiyi.component.MobTrophyComponent.CODEC).packetCodec(net.zhengzhengyiyi.component.MobTrophyComponent.PACKET_CODEC)
+	);
 	
 	private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
 		return Registry.register(Registries.DATA_COMPONENT_TYPE, id, (builderOperator.apply(ComponentType.builder())).build());

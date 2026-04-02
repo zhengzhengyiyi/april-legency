@@ -14,6 +14,7 @@ import net.minecraft.util.Formatting;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.SaveProperties;
 import net.minecraft.world.level.storage.LevelStorage;
+import net.zhengzhengyiyi.mine.class_11099;
 import net.zhengzhengyiyi.network.VoteRuleSyncS2CPacket;
 import net.zhengzhengyiyi.network.VoterData;
 import net.zhengzhengyiyi.network.class_8481;
@@ -53,7 +54,7 @@ import java.util.function.BooleanSupplier;
  * Mixin into MinecraftServer to handle missing vote-related methods.
  */
 @Mixin(MinecraftServer.class)
-public class MinecraftServerMixin implements VoteServer {
+public class MinecraftServerMixin implements VoteServer, net.zhengzhengyiyi.accessor.MinecraftServerAccessor {
 	@Shadow
 	public void sendMessage(Text msg) {}
 	
@@ -67,6 +68,12 @@ public class MinecraftServerMixin implements VoteServer {
     private int getCurrentPlayerCount() {
     	return 1;
     }
+    
+    @Unique
+    private List<class_11099> field_58292 = new ArrayList<>();
+    
+    @Unique
+    private List<class_11099> field_58293 = new ArrayList<>();
     
     @Shadow
     private Random random;
@@ -172,6 +179,12 @@ public class MinecraftServerMixin implements VoteServer {
             false
         );
     }
+    
+    @Unique
+    public void method_69081(class_11099 arg) {
+        this.field_58292.add(arg);
+        this.field_58293.add(arg);
+     }
     
     @Inject(method="tickWorlds", at = @At("HEAD"))
     private void tickWorlds(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {

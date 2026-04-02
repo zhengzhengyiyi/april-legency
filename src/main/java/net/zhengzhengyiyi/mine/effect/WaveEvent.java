@@ -39,7 +39,7 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.Heightmap;
 import org.jetbrains.annotations.Nullable;
 
-public class WaveEvent implements WorldEvent {
+public class WaveEvent implements net.zhengzhengyiyi.mine.class_11099 {
    private static final int MAX_SPAWN_ATTEMPTS = 500;
    private final Identifier id;
    private final List<Wave> waves;
@@ -47,7 +47,7 @@ public class WaveEvent implements WorldEvent {
    private int currentWaveIndex;
    private long waveCompletedTick;
    private BlockPos lastSpawnPos;
-   private WorldEvent.Status status;
+   private net.zhengzhengyiyi.mine.class_11099.Status status;
 
    public static final MapCodec<WaveEvent> CODEC = RecordCodecBuilder.mapCodec(
       instance -> instance.group(
@@ -57,12 +57,12 @@ public class WaveEvent implements WorldEvent {
             Codec.INT.fieldOf("current_wave").forGetter(event -> event.currentWaveIndex),
             Codec.LONG.fieldOf("wave_completed_tick").forGetter(event -> event.waveCompletedTick),
             BlockPos.CODEC.fieldOf("position").forGetter(event -> event.lastSpawnPos),
-            WorldEvent.Status.CODEC.fieldOf("status").forGetter(event -> event.status)
+            net.zhengzhengyiyi.mine.class_11099.Status.CODEC.fieldOf("status").forGetter(event -> event.status)
          )
          .apply(instance, WaveEvent::new)
    );
 
-   public WaveEvent(Identifier id, List<Wave> waves, List<UUID> spawnedMobs, int currentWaveIndex, long waveCompletedTick, BlockPos lastSpawnPos, WorldEvent.Status status) {
+   public WaveEvent(Identifier id, List<Wave> waves, List<UUID> spawnedMobs, int currentWaveIndex, long waveCompletedTick, BlockPos lastSpawnPos, net.zhengzhengyiyi.mine.class_11099.Status status) {
       this.id = id;
       this.waves = waves;
       this.spawnedMobs = new ArrayList<>(spawnedMobs);
@@ -73,12 +73,12 @@ public class WaveEvent implements WorldEvent {
    }
 
    public WaveEvent(Identifier id, List<Wave> waves) {
-      this(id, waves, List.of(), -1, 0L, BlockPos.ORIGIN, WorldEvent.Status.ACTIVE);
+      this(id, waves, List.of(), -1, 0L, BlockPos.ORIGIN, net.zhengzhengyiyi.mine.class_11099.Status.ACTIVE);
    }
 
    @Override
    public void tick(ServerWorld world) {
-      if (this.getStatus() != WorldEvent.Status.ACTIVE) {
+      if (this.getStatus() != net.zhengzhengyiyi.mine.class_11099.Status.ACTIVE) {
          BossBarManager bossBarManager = world.getServer().getBossBarManager();
          CommandBossBar bossBar = bossBarManager.get(this.id);
          if (bossBar != null) {
@@ -141,13 +141,13 @@ public class WaveEvent implements WorldEvent {
                this.lastSpawnPos = aliveMobs.getFirst().getBlockPos();
             }
          }
-         this.status = this.currentWaveIndex < this.waves.size() ? WorldEvent.Status.ACTIVE : WorldEvent.Status.WON;
+         this.status = this.currentWaveIndex < this.waves.size() ? net.zhengzhengyiyi.mine.class_11099.Status.ACTIVE : net.zhengzhengyiyi.mine.class_11099.Status.WON;
       }
    }
 
    @Override
    public void finish(ServerWorld world, boolean success) {
-      this.status = success ? WorldEvent.Status.WON : WorldEvent.Status.FAILED;
+      this.status = success ? net.zhengzhengyiyi.mine.class_11099.Status.WON : net.zhengzhengyiyi.mine.class_11099.Status.FAILED;
       this.currentWaveIndex = this.waves.size();
       this.waveCompletedTick = -1L;
       BossBarManager bossBarManager = world.getServer().getBossBarManager();
@@ -155,6 +155,11 @@ public class WaveEvent implements WorldEvent {
       if (bossBar != null) {
          bossBarManager.remove(bossBar);
       }
+   }
+
+   @Override
+   public void onRemoved(ServerWorld world, boolean force) {
+      this.finish(world, !force);
    }
 
    @Override
@@ -191,12 +196,12 @@ public class WaveEvent implements WorldEvent {
    }
 
    @Override
-   public WorldEvent.Status getStatus() {
+   public net.zhengzhengyiyi.mine.class_11099.Status getStatus() {
       return this.status;
    }
 
    @Override
-   public MapCodec<? extends WorldEvent> getCodec() {
+   public MapCodec<? extends net.zhengzhengyiyi.mine.class_11099> getCodec() {
       return CODEC;
    }
 
@@ -246,7 +251,8 @@ public class WaveEvent implements WorldEvent {
             return this;
          }
 
-         public WaveMobGroup.Builder type(EntityType<?> type) {
+         @SuppressWarnings("deprecation")
+		public WaveMobGroup.Builder type(EntityType<?> type) {
             return this.types(RegistryEntryList.of(type.getRegistryEntry()));
          }
 

@@ -16,6 +16,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.random.Random;
+import net.zhengzhengyiyi.AprilsLegacy;
+import net.zhengzhengyiyi.mine.effect.MineEffectGroup;
 import net.zhengzhengyiyi.mine.effect.MineUnlockCondition;
 
 public record SpecialMine(
@@ -28,8 +30,8 @@ public record SpecialMine(
    List<SpecialMine> unlockedAfter,
    int extraRandomCount
 ) {
-   public static final Codec<SpecialMine> CODEC = Registries.SPECIAL_MINE.getCodec();
-   public static final PacketCodec<RegistryByteBuf, SpecialMine> PACKET_CODEC = PacketCodecs.registryValue(RegistryKeys.SPECIAL_MINE);
+   public static final Codec<SpecialMine> CODEC = AprilsLegacy.SPECIAL_MINE.getCodec();
+   public static final PacketCodec<RegistryByteBuf, SpecialMine> PACKET_CODEC = PacketCodecs.registryValue(AprilsLegacy.SPECIAL_MINE_KEY);
 
    public static SpecialMine.Builder builder(String id) {
       return new SpecialMine.Builder(id);
@@ -45,7 +47,7 @@ public record SpecialMine(
 
          while (selected == null && !candidates.isEmpty()) {
             selected = Util.getRandom(candidates, random);
-            if (!selected.canApplyWith(result)) {
+            if (!selected.method_69925(result)) {
                candidates.remove(selected);
                selected = null;
             }
@@ -57,7 +59,7 @@ public record SpecialMine(
       }
 
       for (int i = 0; i < this.extraRandomCount; i++) {
-         MineEffectGenerator.pickRandomEffect(world, result, Set.of()).ifPresent(result::add);
+         MineEffectGenerator.method_69525(world, result, Set.of()).ifPresent(result::add);
       }
 
       return result;
@@ -92,7 +94,7 @@ public record SpecialMine(
       }
 
       public SpecialMine.Builder pool(MineEffectGroup group) {
-         this.randomEffectPools.add(group.getEffects());
+         this.randomEffectPools.add(group.method_69965());
          return this;
       }
 
@@ -117,10 +119,10 @@ public record SpecialMine(
             if (!this.parentMines.isEmpty()) {
                throw new IllegalStateException("Missing unlock condition for special mine " + this.id);
             }
-            SpecialMineData.DEFAULT_MINES.add(mine);
+            SpecialMineData.field_59122.add(mine);
          }
 
-         return Registry.register(Registries.SPECIAL_MINE, mine.key(), mine);
+         return Registry.register(AprilsLegacy.SPECIAL_MINE, mine.key(), mine);
       }
 
       private SpecialMine build() {

@@ -23,11 +23,11 @@ import net.zhengzhengyiyi.mine.class_11056;
 import org.jetbrains.annotations.Nullable;
 
 public class MineCrafterBlock extends BlockWithEntity {
-   public static final MapCodec<MineCrafterBlock> field_58921 = createCodec(MineCrafterBlock::new);
+   public static final MapCodec<MineCrafterBlock> CODEC = createCodec(MineCrafterBlock::new);
 
    @Override
    public MapCodec<MineCrafterBlock> getCodec() {
-      return field_58921;
+      return CODEC;
    }
 
    protected MineCrafterBlock(AbstractBlock.Settings settings) {
@@ -50,7 +50,7 @@ public class MineCrafterBlock extends BlockWithEntity {
             class_11056 lv = stack.get(ModDataComponentTypes.WORLD_MODIFIERS);
 
             for (MineEffect lv2 : lv.effects()) {
-               ((MineServerWorldAccessor)serverWorld).method_69083(lv2);
+               ((MineServerWorldAccessor)serverWorld).unlockMineEffect(lv2);
             }
          }
 

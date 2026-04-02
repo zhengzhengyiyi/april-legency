@@ -63,6 +63,21 @@ public class ModItems {
 	// CRAFTMINE 25W14CRAFTMINE ITEMS
 	public static final Item SKY_BOX = register("sky_box", new Item(new Item.Settings().rarity(Rarity.EPIC).maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.of("minecraft", "sky_box")))));
 	public static final Item field_58841 = register(ModBlocks.MINE_CRAFTER);
+	public static final Item MINE_ITEM = register("mine", new Item(new Item.Settings().rarity(Rarity.UNCOMMON).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("mine")))));
+	public static final Item MINE_INGREDIENT = register("mine_ingredient", new Item(new Item.Settings().rarity(Rarity.UNCOMMON).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("mine_ingredient")))));
+
+	// Craftmine blocks as items
+	public static final Item TROPHY = register(ModBlocks.TROPHY_BLOCK);
+	public static final Item MOB_TROPHY = register(ModBlocks.MOB_TROPHY_BLOCK);
+	public static final Item SHIMMERING_DOOR = register(ModBlocks.SHIMMERING_DOOR);
+
+	// Craftmine special items
+	public static final Item SHIMMERING_KEY = register("shimmering_key", new ShimmeringKeyItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("shimmering_key")))));
+	public static final Item ENDER_PEARL_LAUNCHER = register("ender_pearl_launcher", new EnderPearlLauncherItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("ender_pearl_launcher")))));
+	public static final Item WINGS = register("wings", new WingsItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("wings")))));
+	public static final Item ENDER_EYE_ITEM = register("ender_eye_item", new EnderEyeItem(new Item.Settings().maxCount(16).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("ender_eye_item")))));
+	public static final Item FIREBALL_WAND = register("fireball_wand", new FireballWandItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("fireball_wand")))));
+	public static final Item WIND_CHARGE_WAND = register("wind_charge_wand", new WindChargeWandItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("wind_charge_wand")))));
 	
 	public static RecipeSerializer<NbtCraftingRecipe> NBT_CRAFTING_RECIPE = RecipeSerializer.register("nbt_crafting_recipe", new SpecialCraftingRecipe.SpecialRecipeSerializer<>(NbtCraftingRecipe::new));
 	

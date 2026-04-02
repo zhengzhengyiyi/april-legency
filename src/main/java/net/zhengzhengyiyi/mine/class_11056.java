@@ -41,14 +41,11 @@ public record class_11056(List<MineEffect> effects, boolean includeDescription) 
    );
    public static final class_11056 field_58859 = new class_11056(List.of(), false);
    private static final Text field_58860 = Text.literal("???");
-   private static final Text WON = Text.literal("Won").formatted(Formatting.GREEN);
-   private static final Text LOST = Text.literal("Lost").formatted(Formatting.RED);
    private static final Style field_58863 = Style.EMPTY.withColor(Formatting.GRAY);
 
    private Text method_69592(@Nullable PlayerEntity playerEntity, MineEffect arg, boolean bl, boolean bl2) {
-//      boolean bl3 = playerEntity != null && playerEntity.getEntityWorld().method_69104(arg);
-	   boolean bl3 = false;
-	   // TODO
+      boolean bl3 = false;
+      // TODO
       if (!bl3 && bl2) {
          return field_58860;
       } else if (bl) {
@@ -67,28 +64,27 @@ public record class_11056(List<MineEffect> effects, boolean includeDescription) 
    @Override
    public void appendTooltip(TooltipContext context, Consumer<Text> textConsumer, TooltipType type,
          ComponentsAccess components) {
-         Boolean isCompleted = components.get(ModDataComponentTypes.MINE_COMPLETED);
-         if (isCompleted != null) {
-            Text statusText = isCompleted ? Text.translatable("mine.status.completed").formatted(Formatting.GREEN) 
-                                          : Text.translatable("mine.status.failed").formatted(Formatting.RED);
-            textConsumer.accept(Text.literal("Status: ").append(statusText).formatted(Formatting.GRAY));
-            textConsumer.accept(ScreenTexts.EMPTY);
+      Boolean isCompleted = components.get(ModDataComponentTypes.MINE_COMPLETED);
+      if (isCompleted != null) {
+         Text statusText = isCompleted ? Text.translatable("mine.status.completed").formatted(Formatting.GREEN)
+                                       : Text.translatable("mine.status.failed").formatted(Formatting.RED);
+         textConsumer.accept(Text.literal("Status: ").append(statusText).formatted(Formatting.GRAY));
+         textConsumer.accept(ScreenTexts.EMPTY);
+      }
+
+      boolean showHint = components.get(ModDataComponentTypes.WORLD_EFFECT_UHINT) != null;
+      boolean isUnlocked = components.get(ModDataComponentTypes.WORLD_EFFECT_UNLOCK) != null;
+
+      if (this.includeDescription) {
+         for (MineEffect lv : this.effects) {
+            textConsumer.accept(method_69593(lv, this.method_69592(AprilsLegacy.server.getPlayerManager().getPlayerList().get(0), lv, showHint, isUnlocked)));
          }
-
-         boolean showHint = components.get(ModDataComponentTypes.WORLD_EFFECT_UHINT) != null;
-         boolean isUnlocked = components.get(ModDataComponentTypes.WORLD_EFFECT_UNLOCK) != null;
-         
-         if (this.includeDescription) {
-            for (MineEffect lv : this.effects) {
-               textConsumer.accept(method_69593(lv, this.method_69592(AprilsLegacy.server.getPlayerManager().getPlayerList().get(0), lv, showHint, isUnlocked)));
-            }
-         } else {
-            textConsumer.accept(Text.literal("Effects:").formatted(Formatting.GOLD));
-
-            for (MineEffect lv : this.effects) {
-               Text text = method_69593(lv, lv.name());
-               textConsumer.accept(Text.literal("  ").append(text));
-            }
+      } else {
+         textConsumer.accept(Text.literal("Effects:").formatted(Formatting.GOLD));
+         for (MineEffect lv : this.effects) {
+            Text text = method_69593(lv, lv.name());
+            textConsumer.accept(Text.literal("  ").append(text));
          }
       }
+   }
 }

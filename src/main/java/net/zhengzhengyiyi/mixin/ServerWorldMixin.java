@@ -75,34 +75,39 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	private ServerWorldProperties worldProperties;
 	
 	@Override
-	public boolean method_69112() {
+	public boolean isMineWorld() {
 	   return this.minePregress.isMine();
 	}
 	
 	@Override
-	public boolean method_69123() {
+	public boolean isMineCompleted() {
+	   return this.minePregress.getStatus() != MineProgressState.Status.ONGOING;
+	}
+	
+	@Override
+	public boolean isMineWon() {
 	   return this.minePregress.getStatus() == MineProgressState.Status.WON;
 	}
 	
 	@Override
-	public boolean method_69104(MineEffect arg) {
-	   return ((LevelPropertiesAccessor)(Object)worldProperties).method_70223(arg);
+	public boolean hasMineEffect(MineEffect effect) {
+	   return ((LevelPropertiesAccessor)(Object)worldProperties).hasUnlockedMineEffect(effect);
 	}
 
 	@Override
-	public List<MineEffect> method_69126() {
-	   return AprilsLegacy.MINE_EFFECTS.stream().filter(this::method_69104).toList();
+	public List<MineEffect> getUnlockedMineEffects() {
+	   return AprilsLegacy.MINE_EFFECT.stream().filter(this::hasMineEffect).toList();
 	}
 	
-	public void method_69083(MineEffect arg) {
-	      if (!((LevelPropertiesAccessor)(Object)worldProperties).method_70223(arg) && arg.unlockMode() != UnlockMode.NEVER_UNLOCKED) {
-	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", arg.name()), true);
-	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", arg.name()), false);
-	         ((LevelPropertiesAccessor)(Object)worldProperties).method_70220(arg);
+	public void unlockMineEffect(MineEffect effect) {
+	      if (!((LevelPropertiesAccessor)(Object)worldProperties).hasUnlockedMineEffect(effect) && effect.unlockMode() != UnlockMode.NEVER_UNLOCKED) {
+	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", effect.name()), true);
+	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", effect.name()), false);
+	         ((LevelPropertiesAccessor)(Object)worldProperties).setUnlockedMineEffect(effect);
 
 	         for (ServerPlayerEntity serverPlayerEntity : this.server.getPlayerManager().getPlayerList()) {
-	            MineUnlockCondition.method_69629(this, serverPlayerEntity, arg);
-	            ServerPlayNetworking.send(serverPlayerEntity, new ClientPacket6(this.method_69126()));
+	            MineUnlockCondition.method_69629(this, serverPlayerEntity, effect);
+	            ServerPlayNetworking.send(serverPlayerEntity, new ClientPacket6(this.getUnlockedMineEffects()));
 	         }
 	      }
 	   }

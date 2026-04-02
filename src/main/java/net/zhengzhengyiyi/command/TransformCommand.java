@@ -7,7 +7,7 @@ import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 
-// THIS FILE IS INCOMPLITED
+// THIS FILE IS INCOMPLETE
 
 public class TransformCommand {
     public static final SimpleCommandExceptionType NOT_LIVING_ENTITY_EXCEPTION = new SimpleCommandExceptionType(Text.literal("Target is not a living entity"));

@@ -8,13 +8,16 @@ import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.Bootstrap;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.MinecraftServer;
@@ -43,6 +46,9 @@ import net.zhengzhengyiyi.feature.LunarBaseFeature;
 import net.zhengzhengyiyi.generator.generation.RainbowBlockStateProvider;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.mine.MineEffect;
+import net.zhengzhengyiyi.mine.SpecialMine;
+import net.zhengzhengyiyi.mine.class_11099;
+import net.zhengzhengyiyi.mine.effect.MineEffectGroup;
 import net.zhengzhengyiyi.mine.effect.class_11113;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
@@ -54,8 +60,12 @@ import net.zhengzhengyiyi.vote.VoteRegistries;
 import xyz.nucleoid.fantasy.Fantasy;
 import net.zhengzhengyiyi.network.*;
 
+import java.util.function.Supplier;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mojang.serialization.MapCodec;
 
 public class AprilsLegacy implements ModInitializer {
 	public static final String MOD_ID = "aprils-legacy";
@@ -63,8 +73,20 @@ public class AprilsLegacy implements ModInitializer {
 	public static Fantasy fantasy;
 	public static MinecraftServer server;
 	
-	public static final RegistryKey<Registry<MineEffect>> WORLD_EFFECT_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("world_effect"));
-	public static final Registry<MineEffect> MINE_EFFECTS = FabricRegistryBuilder.createSimple(WORLD_EFFECT_KEY).buildAndRegister();
+	public static final RegistryKey<Registry<MineEffect>> WORLD_EFFECT = RegistryKey.ofRegistry(Identifier.ofVanilla("world_effect"));
+	public static final RegistryKey<Registry<MineEffectGroup>> WORLD_EFFECT_SET = RegistryKey.ofRegistry(Identifier.ofVanilla("world_effect_set"));
+	
+	public static final RegistryKey<Registry<MapCodec<? extends class_11099>>> MINE_EVENT_TYPE = RegistryKey.ofRegistry(Identifier.ofVanilla("mine_event_type"));
+	public static final Registry<MapCodec<? extends class_11099>> field_59578 = FabricRegistryBuilder.createSimple(MINE_EVENT_TYPE).buildAndRegister();
+	
+	public static final RegistryKey<Registry<MineEffect>> WORLD_EFFECT_KEY = RegistryKey.ofRegistry(WORLD_EFFECT.getValue());
+	public static final RegistryKey<Registry<MineEffectGroup>> WORLD_EFFECT_SET_KEY = RegistryKey.ofRegistry(WORLD_EFFECT_SET.getValue());
+
+	public static final Registry<MineEffect> MINE_EFFECT = FabricRegistryBuilder.createSimple(WORLD_EFFECT_KEY).buildAndRegister();
+	public static final Registry<MineEffectGroup> MINE_EFFECTS = FabricRegistryBuilder.createSimple(WORLD_EFFECT_SET_KEY).buildAndRegister();
+	
+	public static final RegistryKey<Registry<SpecialMine>> SPECIAL_MINE_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("special_mine"));
+	public static final Registry<SpecialMine> SPECIAL_MINE = FabricRegistryBuilder.createSimple(SPECIAL_MINE_KEY).buildAndRegister();
 	
 	private static class SoundEventRegister {
 		static RegistryEntry<SoundEvent> register(Identifier id, Identifier soundId, float distanceToTravel) {
@@ -97,6 +119,8 @@ public class AprilsLegacy implements ModInitializer {
 	}
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	
+	public static final net.minecraft.datafixer.DataFixTypes SAVED_DATA_MINE_PROGRESS = net.minecraft.datafixer.DataFixTypes.SAVED_DATA_RANDOM_SEQUENCES;
 	
 	public static final RegistryKey<ConfiguredFeature<?, ?>> MEGA_CRATER = registerFeature("mega_crater");
 	public static final RegistryKey<ConfiguredFeature<?, ?>> LARGE_CRATER = registerFeature("large_crater");
@@ -150,6 +174,8 @@ public class AprilsLegacy implements ModInitializer {
 		VoteStats.init();
 		ModDataComponentTypes.init();
 		ModScreenHandlerType.init();
+		class_11099.register(field_59578);
+		class_11113.method_69994();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
 		

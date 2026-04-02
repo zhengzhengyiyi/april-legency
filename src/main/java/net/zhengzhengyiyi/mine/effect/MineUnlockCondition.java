@@ -5,14 +5,12 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.function.BiFunction;
 import net.minecraft.advancement.AdvancementEntry;
-import net.minecraft.advancement.criterion.Criteria;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -355,51 +353,41 @@ public interface MineUnlockCondition {
    private static void method_69630(
       World world, @Nullable ServerPlayerEntity serverPlayerEntity, Vec3d vec3d, BiFunction<ServerWorld, MineUnlockCondition, Boolean> biFunction
    ) {
-      if (world instanceof ServerWorld serverWorld && (serverPlayerEntity == null || !serverPlayerEntity.method_69145())) {
-         for (MineEffect lv : Registries.field_59575) {
+      if (world instanceof ServerWorld serverWorld) {
+         net.zhengzhengyiyi.accessor.MineServerWorldAccessor mineWorld = (net.zhengzhengyiyi.accessor.MineServerWorldAccessor)(Object)serverWorld;
+         for (MineEffect lv : net.zhengzhengyiyi.AprilsLegacy.MINE_EFFECT) {
             for (MineUnlockCondition lv2 : lv.unlockedBy()) {
-               if (!serverWorld.method_69104(lv)) {
+               if (!mineWorld.hasMineEffect(lv)) {
                   boolean bl = true;
 
                   for (MineEffect lv3 : lv.unlockedAfter()) {
-                     if (!serverWorld.method_69104(lv3)) {
+                     if (!mineWorld.hasMineEffect(lv3)) {
                         bl = false;
                         break;
                      }
                   }
 
                   if (bl && biFunction.apply(serverWorld, lv2)) {
-                     serverWorld.method_69085(vec3d, lv, serverPlayerEntity);
+                     mineWorld.unlockMineEffect(lv);
                   }
                }
             }
          }
 
-         for (SpecialMine lv4 : Registries.field_59577) {
+         for (SpecialMine lv4 : net.zhengzhengyiyi.AprilsLegacy.SPECIAL_MINE) {
             for (MineUnlockCondition lv2x : lv4.unlockedBy()) {
-               if (!serverWorld.method_69103(lv4)) {
+               if (!mineWorld.hasSpecialMine(lv4)) {
                   boolean bl = true;
 
                   for (SpecialMine lv5 : lv4.unlockedAfter()) {
-                     if (!serverWorld.method_69103(lv5)) {
+                     if (!mineWorld.hasSpecialMine(lv5)) {
                         bl = false;
                         break;
                      }
                   }
 
                   if (bl && biFunction.apply(serverWorld, lv2x)) {
-                     serverWorld.method_69082(lv4);
-                  }
-               }
-            }
-         }
-
-         if (serverPlayerEntity != null) {
-            for (RegistryEntry<class_10976> registryEntry : Registries.field_59579.streamEntries().toList()) {
-               for (MineUnlockCondition lv2xx : registryEntry.value().madeVisibleBy()) {
-                  if (biFunction.apply(serverWorld, lv2xx)) {
-                     serverPlayerEntity.method_69133(registryEntry);
-                     Criteria.field_58274.trigger(serverPlayerEntity);
+                     mineWorld.unlockSpecialMine(lv4);
                   }
                }
             }

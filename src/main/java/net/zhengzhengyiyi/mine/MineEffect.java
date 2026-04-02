@@ -51,7 +51,7 @@ public record MineEffect(
    Consumer<ServerWorld> onMineLeave,
    Consumer<ServerWorld> onMineTick
 ) {
-   public static final Codec<MineEffect> CODEC = AprilsLegacy.MINE_EFFECTS.getCodec();
+   public static final Codec<MineEffect> CODEC = AprilsLegacy.MINE_EFFECT.getCodec();
    public static final PacketCodec<RegistryByteBuf, MineEffect> field_59138 = PacketCodecs.registryValue(AprilsLegacy.WORLD_EFFECT_KEY);
 
    public boolean method_69925(Collection<MineEffect> collection) {
@@ -66,7 +66,7 @@ public record MineEffect(
       return this.method_69926(world)
          && (
             this.requiredUnlockCount == 0
-               || AprilsLegacy.MINE_EFFECTS.stream().filter(v -> ((MineServerWorldAccessor)(Object)world).method_69104(v)).limit(this.requiredUnlockCount).count() == (long)this.requiredUnlockCount
+               || AprilsLegacy.MINE_EFFECT.stream().filter(v -> ((MineServerWorldAccessor)(Object)world).hasMineEffect(v)).limit(this.requiredUnlockCount).count() == (long)this.requiredUnlockCount
          );
    }
 
@@ -79,7 +79,7 @@ public record MineEffect(
          return false;
       } else if (this.randomizationMode == RandomizationMode.NEVER) {
          return false;
-      } else if (((MineServerWorldAccessor)world).method_69104(this)) {
+      } else if (((MineServerWorldAccessor)world).hasMineEffect(this)) {
          return true;
       } else {
          return this.randomizationMode == RandomizationMode.WHEN_UNLOCKABLE ? this.method_69919(world) : false;
@@ -246,7 +246,7 @@ public record MineEffect(
       }
 
       public MineEffect build() {
-         return Registry.register(AprilsLegacy.MINE_EFFECTS, Identifier.ofVanilla(this.field_59139), this.method_69964());
+         return Registry.register(AprilsLegacy.MINE_EFFECT, Identifier.ofVanilla(this.field_59139), this.method_69964());
       }
 
       private MineEffect method_69964() {

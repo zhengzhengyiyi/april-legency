@@ -7,25 +7,25 @@ import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.SpecialMine;
 
 public interface LevelPropertiesAccessor {
-	void method_70220(MineEffect arg);
+	void setUnlockedMineEffect(MineEffect effect);
 
-	boolean method_70223(MineEffect arg);
+	boolean hasUnlockedMineEffect(MineEffect effect);
 
-	void method_70222(SpecialMine arg);
+	void setSpecialMine(SpecialMine mine);
 
-	boolean method_70219(SpecialMine arg);
+	boolean hasSpecialMine(SpecialMine mine);
 
-	void method_70221(Optional<SpecialMine> optional, boolean bl);
+	void setCurrentSpecialMine(Optional<SpecialMine> optional, boolean bl);
 
-	Optional<SpecialMine> method_70218(Random random);
+	Optional<SpecialMine> getRandomSpecialMine(Random random);
 
-	int method_70227();
+	int getMineLevel();
 
-	int method_70228();
+	int getMineExp();
 
-	void method_70224(int i);
+	void addMineExp(int exp);
 
-	int method_70225();
+	int getTotalMineExp();
 
-	int method_70226();
+	int getLevelCount();
 }

@@ -18,57 +18,57 @@ public abstract class LevelPropertiesMixin implements ServerWorldProperties, Lev
     @Unique private int field_custom_val_b;
 
     @Override
-    public void method_70220(MineEffect arg) {
-        this.field_custom_effect = arg;
+    public void setUnlockedMineEffect(MineEffect effect) {
+        this.field_custom_effect = effect;
     }
 
     @Override
-    public boolean method_70223(MineEffect arg) {
-        return this.field_custom_effect == arg;
+    public boolean hasUnlockedMineEffect(MineEffect effect) {
+        return this.field_custom_effect == effect;
     }
 
     @Override
-    public void method_70222(SpecialMine arg) {
-        this.field_custom_mine = arg;
+    public void setSpecialMine(SpecialMine mine) {
+        this.field_custom_mine = mine;
     }
 
     @Override
-    public boolean method_70219(SpecialMine arg) {
-        return this.field_custom_mine == arg;
+    public boolean hasSpecialMine(SpecialMine mine) {
+        return this.field_custom_mine == mine;
     }
 
     @Override
-    public void method_70221(Optional<SpecialMine> optional, boolean bl) {
+    public void setCurrentSpecialMine(Optional<SpecialMine> optional, boolean bl) {
         this.field_custom_mine = optional.orElse(null);
     }
 
     @Override
-    public Optional<SpecialMine> method_70218(Random random) {
+    public Optional<SpecialMine> getRandomSpecialMine(Random random) {
         return Optional.ofNullable(this.field_custom_mine);
     }
 
     @Override
-    public int method_70227() {
+    public int getMineLevel() {
         return this.field_custom_val_a;
     }
 
     @Override
-    public int method_70228() {
+    public int getMineExp() {
         return this.field_custom_val_b;
     }
 
     @Override
-    public void method_70224(int i) {
-        this.field_custom_val_a = i;
+    public void addMineExp(int exp) {
+        this.field_custom_val_a = exp;
     }
 
     @Override
-    public int method_70225() {
+    public int getTotalMineExp() {
         return this.field_custom_val_b;
     }
 
     @Override
-    public int method_70226() {
+    public int getLevelCount() {
         return 0;
     }
 }
