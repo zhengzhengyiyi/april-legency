@@ -108,8 +108,13 @@ public class MiningPortalBlock extends BlockWithEntity {
    }
 
    @Override
+   protected boolean isTransparent(BlockState state) {
+      return true;
+   }
+
+   @Override
    protected BlockRenderType getRenderType(BlockState state) {
-      return BlockRenderType.INVISIBLE;
+      return BlockRenderType.MODEL;
    }
 
    public static void createPortal(World world, BlockPos pos, RegistryKey<DimensionOptions> dimensionKey, boolean revisit) {

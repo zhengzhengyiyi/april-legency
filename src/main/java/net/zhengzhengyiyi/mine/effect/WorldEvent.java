@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.registry.Registry;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 
@@ -18,8 +19,9 @@ public interface WorldEvent {
 
    MapCodec<? extends WorldEvent> getCodec();
 
+   @SuppressWarnings({"unchecked", "rawtypes"})
    static MapCodec<? extends WorldEvent> register(Registry<MapCodec<? extends WorldEvent>> registry) {
-      return Registry.register(registry, "battle", WaveEvent.CODEC);
+      return Registry.register((Registry)registry, Identifier.of("battle"), WaveEvent.CODEC);
    }
 
    public static enum Status implements StringIdentifiable {

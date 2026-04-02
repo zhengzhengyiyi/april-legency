@@ -65,19 +65,10 @@ public class ModBlocks {
         new RevisitBlock(AbstractBlock.Settings.copy(Blocks.STONE).strength(1.5F).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("mine_revisit"))))
     );
     
-    // April Fools blocks
-    public static final Block LEAF_LITTER = register(
-        RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("leaf_litter")),
-        new LeafLitterBlock(AbstractBlock.Settings.copy(Blocks.MOSS_CARPET).strength(0.1F).sounds(BlockSoundGroup.GRASS).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("leaf_litter"))))
-    );
-    public static final Block FIREFLY_BUSH = register(
-        RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("firefly_bush")),
-        new FireflyBushBlock(AbstractBlock.Settings.create().strength(0.0F).sounds(BlockSoundGroup.GRASS).noCollision().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("firefly_bush"))))
-    );
-    public static final Block CACTUS_FLOWER = register(
-        RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("cactus_flower")),
-        new CactusFlowerBlock(AbstractBlock.Settings.copy(Blocks.POPPY).strength(0.0F).sounds(BlockSoundGroup.GRASS).noCollision().registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("cactus_flower"))))
-    );
+    // April Fools blocks — now vanilla in 1.21.5+, reference existing blocks
+    public static final Block LEAF_LITTER = Blocks.LEAF_LITTER;
+    public static final Block FIREFLY_BUSH = Blocks.FIREFLY_BUSH;
+    public static final Block CACTUS_FLOWER = Blocks.CACTUS_FLOWER;
     public static final Block TROPHY_BLOCK = register(
         RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("trophy")),
         new TrophyBlock(AbstractBlock.Settings.create().strength(1.0F).sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("trophy"))))

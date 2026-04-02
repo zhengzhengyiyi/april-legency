@@ -1,6 +1,0 @@
-access  public  net/minecraft/world/biome/Biome$Weather  <init>(ZFLnet/minecraft/world/biome/Biome$TemperatureModifier;F)V
-access  public  net/minecraft/world/biome/Biome$Weather  *
-accessible  method  net/minecraft/screen/ScreenHandler  internalOnSlotClick  (IILnet/minecraft/screen/slot/SlotActionType;Lnet/minecraft/entity/player/PlayerEntity;)V
-accessible  field  net/minecraft/screen/slot/Slot  x  I
-accessible  field  net/minecraft/screen/slot/Slot  y  I
-accessible  field  net/minecraft/world/World  isClient  Z

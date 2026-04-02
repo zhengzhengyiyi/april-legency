@@ -145,7 +145,6 @@ public class WaveEvent implements net.zhengzhengyiyi.mine.class_11099 {
       }
    }
 
-   @Override
    public void finish(ServerWorld world, boolean success) {
       this.status = success ? net.zhengzhengyiyi.mine.class_11099.Status.WON : net.zhengzhengyiyi.mine.class_11099.Status.FAILED;
       this.currentWaveIndex = this.waves.size();

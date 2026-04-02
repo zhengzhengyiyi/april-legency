@@ -1,11 +1,9 @@
 package net.zhengzhengyiyi.mine;
 
 import java.util.List;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.screen.slot.Slot;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
 import net.zhengzhengyiyi.item.ModItems;
@@ -20,9 +18,13 @@ public class MineGeneratorSlot extends Slot {
       this.generator = generator;
    }
 
+   public void setPos(int newX, int newY) {
+      ((net.zhengzhengyiyi.accessor.SlotPositionAccessor) this).setSlotPos(newX, newY);
+   }
+
    @Override
    public boolean canInsert(ItemStack stack) {
-	   if (this.generator.method_69547() || this.generator.method_69548() || this.generator.method_69541() || this.locked) {
+      if (this.generator.method_69547() || this.generator.method_69548() || this.generator.method_69541() || this.locked) {
          return false;
       } else if (!stack.isOf(ModItems.MINE_INGREDIENT)) {
          return false;
@@ -39,7 +41,7 @@ public class MineGeneratorSlot extends Slot {
 
    @Override
    public boolean canTakeItems(PlayerEntity player) {
-	   return !this.generator.method_69547() && !this.generator.method_69548() && !this.generator.method_69541() && !this.locked
+      return !this.generator.method_69547() && !this.generator.method_69548() && !this.generator.method_69541() && !this.locked
          ? super.canTakeItems(player)
          : false;
    }

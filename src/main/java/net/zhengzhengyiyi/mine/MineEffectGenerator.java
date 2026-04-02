@@ -161,8 +161,7 @@ public class MineEffectGenerator extends ScreenHandler {
             }
 
             lv.locked = bl;
-            lv.x = (int)vec2f3.x;
-            lv.y = (int)vec2f3.y;
+            lv.setPos((int)vec2f3.x, (int)vec2f3.y);
 //            lv.method_69556(true);
             i++;
          }
@@ -241,7 +240,11 @@ public class MineEffectGenerator extends ScreenHandler {
       List<MineEffect> list = new ArrayList<>();
 
       for (MineEffectGroup lv : AprilsLegacy.MINE_EFFECTS) {
-         list.add(this.method_69533(lv.method_69965().stream().filter(arg -> arg.method_69927(serverWorld)).toList(), list, random));
+         List<MineEffect> eligible = lv.method_69965().stream().filter(arg -> arg.method_69927(serverWorld)).toList();
+         if (!eligible.isEmpty()) {
+            MineEffect picked = this.method_69533(eligible, list, random);
+            if (picked != null) list.add(picked);
+         }
       }
 
       Collections.shuffle(list);
@@ -250,7 +253,7 @@ public class MineEffectGenerator extends ScreenHandler {
 
    private MineEffect method_69533(List<MineEffect> list, List<MineEffect> list2, Random random) {
       if (list.isEmpty()) {
-         throw new IllegalArgumentException("Tried to pick random effect from fully incompatible sets");
+         return null;
       } else {
          MineEffect lv = Util.getRandom(list, random);
          return lv.method_69925(list2) ? lv : this.method_69533(list.stream().filter(arg2 -> arg2 != lv).toList(), list2, random);
@@ -329,7 +332,7 @@ public class MineEffectGenerator extends ScreenHandler {
             list = optional.get().generateEffects(serverPlayerEntity.getEntityWorld());
          }
 
-         class_10967.class_10970 lv2 = class_10967.method_69062(serverPlayerEntity.server, list, optional);
+         class_10967.class_10970 lv2 = class_10967.method_69062(serverPlayerEntity.getEntityWorld().getServer(), list, optional);
          RegistryKey<DimensionOptions> registryKey = lv2.id();
          itemStack.set(ModDataComponentTypes.DIMENSION_ID, registryKey);
          itemStack.set(ModDataComponentTypes.MINE_ACTIVE, Unit.INSTANCE);
@@ -425,7 +428,7 @@ public class MineEffectGenerator extends ScreenHandler {
    }
 
    @Override
-   protected void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
+   public void onSlotClick(int slotIndex, int button, SlotActionType actionType, PlayerEntity player) {
       if ((actionType == SlotActionType.PICKUP || actionType == SlotActionType.QUICK_MOVE) && (button == 0 || button == 1) && slotIndex == -999) {
          this.setCursorStack(ItemStack.EMPTY);
       }
