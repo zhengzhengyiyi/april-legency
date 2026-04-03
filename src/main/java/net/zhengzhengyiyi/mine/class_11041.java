@@ -9,6 +9,7 @@ import net.zhengzhengyiyi.mine.class_11056;
 
 public class class_11041 extends Slot {
    final MineEffectGenerator field_58800;
+   private boolean slotEnabled = true;
 
    public class_11041(Inventory inventory, int i, int j, int k, MineEffectGenerator arg) {
       super(inventory, i, j, k);
@@ -56,6 +57,10 @@ public class class_11041 extends Slot {
 
    @Override
    public boolean isEnabled() {
-      return super.isEnabled() && (!this.field_58800.method_69541() || this.field_58800.method_69548());
+      return super.isEnabled() && slotEnabled && (!this.field_58800.method_69541() || this.field_58800.method_69548());
+   }
+
+   public void method_69556(boolean enabled) {
+      this.slotEnabled = enabled;
    }
 }

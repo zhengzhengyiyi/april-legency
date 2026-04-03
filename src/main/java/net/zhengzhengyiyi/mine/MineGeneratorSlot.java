@@ -11,6 +11,9 @@ import net.zhengzhengyiyi.item.ModItems;
 public class MineGeneratorSlot extends Slot {
    public MineEffectGenerator generator;
    public boolean locked;
+   public float field_58825;
+   public float field_58826;
+   private boolean enabled = true;
 
    public MineGeneratorSlot(Inventory inventory, int index, int x, int y, MineEffectGenerator generator, boolean locked) {
       super(inventory, index, x, y);
@@ -20,6 +23,18 @@ public class MineGeneratorSlot extends Slot {
 
    public void setPos(int newX, int newY) {
       ((net.zhengzhengyiyi.accessor.SlotPositionAccessor) this).setSlotPos(newX, newY);
+   }
+
+   public void method_69556(boolean enabled) {
+      this.enabled = enabled;
+   }
+
+   public boolean method_69555() {
+      return this.generator.method_69547();
+   }
+
+   public boolean method_69553() {
+      return this.generator.method_69547();
    }
 
    @Override

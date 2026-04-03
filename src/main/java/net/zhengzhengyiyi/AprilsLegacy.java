@@ -3,28 +3,20 @@ package net.zhengzhengyiyi;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.Bootstrap;
 import net.minecraft.item.ItemGroups;
 import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryInfo;
-import net.minecraft.resource.featuretoggle.FeatureFlags;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
-import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
@@ -52,15 +44,12 @@ import net.zhengzhengyiyi.mine.effect.MineEffectGroup;
 import net.zhengzhengyiyi.mine.effect.class_11113;
 import net.zhengzhengyiyi.network.class_8481;
 import net.zhengzhengyiyi.rules.VoteRules;
-import net.zhengzhengyiyi.screen.DimensionControlScreenHandler;
 import net.zhengzhengyiyi.screen.ModScreenHandlerType;
 import net.zhengzhengyiyi.stat.VoteStats;
 import net.zhengzhengyiyi.util.TickScheduler;
 import net.zhengzhengyiyi.vote.VoteRegistries;
 import xyz.nucleoid.fantasy.Fantasy;
 import net.zhengzhengyiyi.network.*;
-
-import java.util.function.Supplier;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,6 +90,7 @@ public class AprilsLegacy implements ModInitializer {
 			return register(id, id);
 		}
 
+		@SuppressWarnings("unused")
 		static RegistryEntry.Reference<SoundEvent> registerReference(String id) {
 			return registerReference(Identifier.ofVanilla(id));
 		}
@@ -189,19 +179,48 @@ public class AprilsLegacy implements ModInitializer {
 				itemGroup.add(ModItems.BYTE_TAG);
 				itemGroup.add(ModItems.LONG_TAG);
 				itemGroup.add(ModItems.FLOAT_TAG);
+				itemGroup.add(ModItems.SHORT_TAG);
+				itemGroup.add(ModItems.COMPOUND_TAG);
+				itemGroup.add(ModItems.STRING_TAG);
+				itemGroup.add(ModItems.TAG);
+				itemGroup.add(ModItems.LEFT_SQUARE);
+				itemGroup.add(ModItems.RIGHT_SQUARE);
+				itemGroup.add(ModItems.LEFT_CURLY);
+				itemGroup.add(ModItems.RIGHT_CURLY);
+				itemGroup.add(ModItems.SYNTAX_ERROR);
 				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
 				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
 			});
-		
+
 		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL)
 			.register((itemGroup) -> {
-				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
-				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
+				itemGroup.add(ModItems.field_58841);       // mine_crafter block
+				itemGroup.add(ModItems.SHIMMERING_KEY);
+				itemGroup.add(ModItems.SHIMMERING_DOOR);
+				itemGroup.add(ModItems.MINE_ITEM);
+				itemGroup.add(ModItems.MINE_INGREDIENT);
+				itemGroup.add(ModItems.TROPHY);
+				itemGroup.add(ModItems.MOB_TROPHY);
 			});
-		ItemGroupEvents.modifyEntriesEvent(ItemGroups.REDSTONE)
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL)
 			.register((itemGroup) -> {
-				itemGroup.add(ModItems.PICKAXE_BLOCK_ITEM);
-				itemGroup.add(ModItems.PLACE_BLOCK_ITEM);
+				itemGroup.add(ModItems.SKY_BOX);
+			});
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.COMBAT)
+			.register((itemGroup) -> {
+				itemGroup.add(ModItems.LA_BAGUETTE);
+				itemGroup.add(ModItems.ENDER_PEARL_LAUNCHER);
+				itemGroup.add(ModItems.FIREBALL_WAND);
+				itemGroup.add(ModItems.WIND_CHARGE_WAND);
+				itemGroup.add(ModItems.WINGS);
+				itemGroup.add(ModItems.ENDER_EYE_ITEM);
+			});
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.FOOD_AND_DRINK)
+			.register((itemGroup) -> {
+				itemGroup.add(ModItems.CHEESE_ITEM);
 			});
 		
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {

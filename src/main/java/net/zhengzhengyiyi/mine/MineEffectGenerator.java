@@ -137,7 +137,7 @@ public class MineEffectGenerator extends ScreenHandler {
    private void method_69538(Inventory inventory) {
       for (int i = 0; i < 50; i++) {
     	  MineGeneratorSlot lv = (MineGeneratorSlot)this.addSlot(new MineGeneratorSlot(inventory, 1 + i, 0, 0, this, true));
-//         lv.method_69556(false);
+         lv.method_69556(false);
          this.field_58813.add(lv);
       }
    }
@@ -149,7 +149,7 @@ public class MineEffectGenerator extends ScreenHandler {
       for (MineGeneratorSlot lv : this.field_58813) {
          if (i >= this.field_58819) {
             lv.locked = false;
-//            lv.method_69556(false);
+            lv.method_69556(false);
          } else {
             float g = f * i;
             Vec2f vec2f = field_58807.get((int)Math.floor(g));
@@ -162,7 +162,7 @@ public class MineEffectGenerator extends ScreenHandler {
 
             lv.locked = bl;
             lv.setPos((int)vec2f3.x, (int)vec2f3.y);
-//            lv.method_69556(true);
+            lv.method_69556(true);
             i++;
          }
       }
