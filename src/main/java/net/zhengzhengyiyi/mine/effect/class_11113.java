@@ -910,6 +910,7 @@ public class class_11113 {
                .build()
          )
       )
+      .method_69959(p -> p.giveItemStack(new ItemStack(net.zhengzhengyiyi.item.ModItems.FIREBALL_WAND)))
       .method_69953()
       .method_69946()
       .build();
@@ -981,6 +982,7 @@ public class class_11113 {
                .build()
          )
       )
+      .method_69959(p -> p.giveItemStack(new ItemStack(net.zhengzhengyiyi.item.ModItems.WIND_CHARGE_WAND)))
       .method_69953()
       .method_69946()
       .build();
@@ -1000,6 +1002,7 @@ public class class_11113 {
                .build()
          )
       )
+      .method_69959(p -> p.giveItemStack(new ItemStack(net.zhengzhengyiyi.item.ModItems.ENDER_PEARL_LAUNCHER)))
       .method_69953()
       .method_69946()
       .build();

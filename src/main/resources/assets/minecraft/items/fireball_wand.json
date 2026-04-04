@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "minecraft:item/fire_wand"
+    "model": "minecraft:item/fireball_wand"
   }
 }
