@@ -1,14 +1,18 @@
 package net.zhengzhengyiyi.block;
 
 import java.util.List;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.LockableContainerBlockEntity;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventories;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.network.packet.s2c.play.BlockEntityUpdateS2CPacket;
 import net.minecraft.recipe.RecipeFinder;
 import net.minecraft.recipe.RecipeInputProvider;
@@ -16,6 +20,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
@@ -33,7 +38,7 @@ import net.zhengzhengyiyi.component.ModDataComponentTypes;
 
 import org.jetbrains.annotations.Nullable;
 
-public class MineCrafterBlockEntity extends LockableContainerBlockEntity implements RecipeInputProvider {
+public class MineCrafterBlockEntity extends LockableContainerBlockEntity implements RecipeInputProvider, ExtendedScreenHandlerFactory<List<Integer>> {
    protected DefaultedList<ItemStack> inventory = DefaultedList.ofSize(99, ItemStack.EMPTY);
    @Nullable
    private BlockPos travellingBlockPos;
@@ -166,6 +171,11 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
    @Override
    protected Text getContainerName() {
       return Text.translatable("container.mine_crafter");
+   }
+
+   @Override
+   public List<Integer> getScreenOpeningData(ServerPlayerEntity player) {
+      return getMiningStats();
    }
 
    @Override

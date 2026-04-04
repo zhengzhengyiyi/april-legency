@@ -19,6 +19,8 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.TeleportTarget;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.util.shape.VoxelShape;
@@ -83,10 +85,19 @@ public class MiningPortalBlock extends BlockWithEntity {
       if (player instanceof ServerPlayerEntity serverPlayer && world instanceof ServerWorld serverWorld
             && world.getBlockEntity(pos) instanceof TravellingBlockEntity entity) {
          MineServerWorldAccessor mineWorld = (MineServerWorldAccessor)(Object)serverWorld;
-         if (entity.isRevisit() && !mineWorld.isMineWorld()) {
-            serverWorld.breakBlock(pos, true, null);
-         } else if (mineWorld.isMineWorld()) {
-            serverWorld.breakBlock(pos, true, null);
+         if (mineWorld.isMineWorld()) {
+            // inside mine — teleport back to overworld
+            ServerWorld overworld = serverWorld.getServer().getOverworld();
+            Vec3d spawnPos = overworld.getSpawnPoint().getPos().toCenterPos();
+            serverPlayer.teleportTo(new TeleportTarget(overworld, spawnPos, Vec3d.ZERO, serverPlayer.getYaw(), serverPlayer.getPitch(), TeleportTarget.NO_OP));
+         } else {
+            // in overworld — teleport into the mine dimension
+            RegistryKey<World> targetKey = entity.getDimensionKey();
+            ServerWorld targetWorld = serverWorld.getServer().getWorld(targetKey);
+            if (targetWorld != null) {
+               Vec3d spawnPos = targetWorld.getSpawnPoint().getPos().toCenterPos();
+               serverPlayer.teleportTo(new TeleportTarget(targetWorld, spawnPos, Vec3d.ZERO, serverPlayer.getYaw(), serverPlayer.getPitch(), TeleportTarget.ADD_PORTAL_CHUNK_TICKET));
+            }
          }
       }
       return ActionResult.SUCCESS;
