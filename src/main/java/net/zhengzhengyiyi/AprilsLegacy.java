@@ -197,6 +197,7 @@ public class AprilsLegacy implements ModInitializer {
 				itemGroup.add(ModItems.field_58841);       // mine_crafter block
 				itemGroup.add(ModItems.SHIMMERING_KEY);
 				itemGroup.add(ModItems.SHIMMERING_DOOR);
+				itemGroup.add(ModItems.REVISIT_BLOCK);
 				itemGroup.add(ModItems.MINE_ITEM);
 				itemGroup.add(ModItems.MINE_INGREDIENT);
 				itemGroup.add(ModItems.TROPHY);
@@ -215,6 +216,7 @@ public class AprilsLegacy implements ModInitializer {
 				itemGroup.add(ModItems.FIREBALL_WAND);
 				itemGroup.add(ModItems.WIND_CHARGE_WAND);
 				itemGroup.add(ModItems.WINGS);
+				itemGroup.add(ModItems.EXIT_EYE);
 				itemGroup.add(ModItems.ENDER_EYE_ITEM);
 			});
 

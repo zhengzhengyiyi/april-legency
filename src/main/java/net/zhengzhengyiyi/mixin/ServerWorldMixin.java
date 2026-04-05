@@ -44,6 +44,12 @@ import net.zhengzhengyiyi.screen.ScreenWorldAccess;
 
 @Mixin(ServerWorld.class)
 public abstract class ServerWorldMixin extends World implements ScreenWorldAccess, MineServerWorldAccessor {
+	@Unique
+	private MineProgressState minePregress;
+	
+	@Unique
+	private final Set<MineEffect> field_58290;
+	
 	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef,
 			DynamicRegistryManager registryManager, RegistryEntry<DimensionType> dimensionEntry, boolean isClient,
 			boolean debugWorld, long seed, int maxChainedNeighborUpdates) {
@@ -51,13 +57,19 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 		
 		Optional<RegistryEntry.Reference<DimensionOptions>> optional = this.getRegistryManager().getOptionalEntry(RegistryKeys.toDimensionKey(getRegistryKey()));
 		
-//		this.field_58290 = optional.map(RegistryEntry::value).map(option -> option).<Set<MineEffect>>map(option -> new ObjectArraySet<>()).orElseGet(Set::of);
 		this.field_58290 = optional.map(entry -> {
 		    Set<MineEffect> set = new ObjectArraySet<>();
 		    return set;
 		}).orElseGet(Set::of);
-		this.minePregress = this.getPersistentStateManager().getOrCreate(MineProgressState.TYPE);
-	    this.minePregress.setMine(!this.field_58290.isEmpty());
+	}
+	
+	@Unique
+	private MineProgressState getMineProgress() {
+		if (this.minePregress == null) {
+			this.minePregress = this.getPersistentStateManager().getOrCreate(MineProgressState.TYPE);
+			this.minePregress.setMine(!this.field_58290.isEmpty());
+		}
+		return this.minePregress;
 	}
 	
 	@Shadow
@@ -65,28 +77,22 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	      return null;
 	}
 	
-	@Unique
-	protected final MineProgressState minePregress;
-	
-	@Unique
-	private final Set<MineEffect> field_58290;
-	
 	@Shadow
 	private ServerWorldProperties worldProperties;
 	
 	@Override
 	public boolean isMineWorld() {
-	   return this.minePregress.isMine();
+	   return getMineProgress().isMine();
 	}
 	
 	@Override
 	public boolean isMineCompleted() {
-	   return this.minePregress.getStatus() != MineProgressState.Status.ONGOING;
+	   return getMineProgress().getStatus() != MineProgressState.Status.ONGOING;
 	}
 	
 	@Override
 	public boolean isMineWon() {
-	   return this.minePregress.getStatus() == MineProgressState.Status.WON;
+	   return getMineProgress().getStatus() == MineProgressState.Status.WON;
 	}
 	
 	@Override

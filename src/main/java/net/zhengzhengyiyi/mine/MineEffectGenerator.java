@@ -116,6 +116,7 @@ public class MineEffectGenerator extends ScreenHandler {
       this.method_69552();
       this.method_69520();
       this.method_69521();
+      this.addPlayerInventory(playerInventory);
       this.onContentChanged(inventory);
    }
 
@@ -313,6 +314,20 @@ public class MineEffectGenerator extends ScreenHandler {
       }
    }
 
+   private void addPlayerInventory(PlayerInventory playerInventory) {
+      // Player inventory (3 rows of 9)
+      for (int row = 0; row < 3; row++) {
+         for (int col = 0; col < 9; col++) {
+            this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 140 + row * 18));
+         }
+      }
+
+      // Player hotbar
+      for (int col = 0; col < 9; col++) {
+         this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 198));
+      }
+   }
+
    public class_11039 method_69542() {
       return this.field_58810;
    }
@@ -334,6 +349,7 @@ public class MineEffectGenerator extends ScreenHandler {
 
          class_10967.class_10970 lv2 = class_10967.method_69062(serverPlayerEntity.getEntityWorld().getServer(), list, optional);
          RegistryKey<DimensionOptions> registryKey = lv2.id();
+         lv2.synchronize(); // actually create the Fantasy dimension
          itemStack.set(ModDataComponentTypes.DIMENSION_ID, registryKey);
          itemStack.set(ModDataComponentTypes.MINE_ACTIVE, Unit.INSTANCE);
          this.field_58812.accept(registryKey);
@@ -409,18 +425,29 @@ public class MineEffectGenerator extends ScreenHandler {
       if (slot2.hasStack()) {
          ItemStack itemStack2 = slot2.getStack();
          itemStack = itemStack2.copy();
+         
+         // If clicking the output slot
          if (slot == this.field_58814.id) {
             return ItemStack.EMPTY;
          }
 
+         // If clicking ingredient slots
          if (slot > 0 && slot <= this.field_58813.getLast().id) {
             slot2.setStackNoCallbacks(ItemStack.EMPTY);
             return ItemStack.EMPTY;
          }
 
+         // If clicking discovered effects slots
          if (slot >= this.field_58815.getFirst().id && slot <= this.field_58815.getLast().id) {
             this.insertItem(itemStack2.copy(), this.field_58820, this.field_58819 + 1, false);
             return ItemStack.EMPTY;
+         }
+
+         // If clicking player inventory, try to move to ingredient slots
+         if (itemStack2.isOf(ModItems.MINE_INGREDIENT)) {
+            if (!this.insertItem(itemStack2, 1, this.field_58819 + 1, false)) {
+               return ItemStack.EMPTY;
+            }
          }
       }
 

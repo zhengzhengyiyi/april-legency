@@ -70,11 +70,13 @@ public class ModItems {
 	public static final Item TROPHY = register(ModBlocks.TROPHY_BLOCK);
 	public static final Item MOB_TROPHY = register(ModBlocks.MOB_TROPHY_BLOCK);
 	public static final Item SHIMMERING_DOOR = register(ModBlocks.SHIMMERING_DOOR);
+	public static final Item REVISIT_BLOCK = register(ModBlocks.REVISIT_BLOCK);
 
 	// Craftmine special items
 	public static final Item SHIMMERING_KEY = register("shimmering_key", new ShimmeringKeyItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("shimmering_key")))));
 	public static final Item ENDER_PEARL_LAUNCHER = register("ender_pearl_launcher", new EnderPearlLauncherItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("ender_pearl_launcher")))));
 	public static final Item WINGS = register("wings", new WingsItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("wings")))));
+	public static final Item EXIT_EYE = register("exit_eye", new EnderEyeItem(new Item.Settings().maxCount(16).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("exit_eye")))));
 	public static final Item ENDER_EYE_ITEM = register("ender_eye_item", new EnderEyeItem(new Item.Settings().maxCount(16).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("ender_eye_item")))));
 	public static final Item FIREBALL_WAND = register("fireball_wand", new FireballWandItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("fireball_wand")))));
 	public static final Item WIND_CHARGE_WAND = register("wind_charge_wand", new WindChargeWandItem(new Item.Settings().maxCount(1).registryKey(RegistryKey.of(RegistryKeys.ITEM, Identifier.ofVanilla("wind_charge_wand")))));
