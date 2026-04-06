@@ -356,6 +356,16 @@ public class MineEffectGenerator extends ScreenHandler {
          lv2.synchronize(); // actually create the Fantasy dimension
          System.out.println("[MineEffectGenerator] Fantasy dimension created");
          
+         // Verify the world is accessible
+         RegistryKey<World> worldKey = RegistryKeys.toWorldKey(registryKey);
+         ServerWorld createdWorld = serverPlayerEntity.getServer().getWorld(worldKey);
+         System.out.println("[MineEffectGenerator] Verifying world exists: " + (createdWorld != null));
+         if (createdWorld != null) {
+            System.out.println("[MineEffectGenerator] World dimension key: " + createdWorld.getRegistryKey());
+         } else {
+            System.out.println("[MineEffectGenerator] WARNING: World not found immediately after creation!");
+         }
+         
          itemStack.set(ModDataComponentTypes.DIMENSION_ID, registryKey);
          itemStack.set(ModDataComponentTypes.MINE_ACTIVE, Unit.INSTANCE);
          this.field_58812.accept(registryKey);
