@@ -16,7 +16,7 @@ import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.SpawnSettings;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.biome.source.MultiNoiseBiomeSource;
-import net.minecraft.world.biome.source.MultiNoiseBiomeSourceParameterList;
+import net.minecraft.world.biome.source.MultiNoiseBiomeSourceParameterLists;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
@@ -96,40 +96,52 @@ public class DimensionSettingsBuilder {
       return this;
    }
 
-   @SuppressWarnings("unused")
-public ChunkGenerator createGenerator(String subPath) {
+   public boolean hasCustomGeneratorFactory() {
+      return this.customGeneratorFactory.isPresent();
+   }
+
+   public ChunkGenerator createGenerator(String subPath) {
       RegistryWrapper.Impl<Biome> biomeRegistry = this.registryManager.getOrThrow(RegistryKeys.BIOME);
-      Stream<RegistryKey<Biome>> biomeStream = this.allowedBiomes.isEmpty() ? biomeRegistry.streamKeys() : this.allowedBiomes.stream();
       List<BiomeMapping> mappings = this.buildBiomeMappings(biomeRegistry, subPath);
-      
+
       Map<RegistryKey<Biome>, RegistryKey<Biome>> keyMap = mappings.stream()
          .collect(Collectors.toMap(BiomeMapping::original, BiomeMapping::modified));
-      
+
       Map<RegistryEntry<Biome>, RegistryEntry<Biome>> entryMap = keyMap.entrySet()
          .stream()
          .collect(Collectors.toMap(entry -> biomeRegistry.getOrThrow(entry.getKey()), entry -> biomeRegistry.getOrThrow(entry.getValue())));
-      
-      List<RegistryEntry<Biome>> finalBiomes = biomeStream.map(
-            registryKey -> entryMap.getOrDefault(biomeRegistry.getOrThrow((RegistryKey<Biome>)registryKey), biomeRegistry.getOrThrow((RegistryKey<Biome>)registryKey))
-         )
-         .toList();
-      
-      MultiNoiseBiomeSourceParameterList parameterList = new MultiNoiseBiomeSourceParameterList(
-    	        MultiNoiseBiomeSourceParameterList.Preset.OVERWORLD, 
-    	        biomeRegistry
-    	    );
-      MultiNoiseBiomeSource biomeSource = MultiNoiseBiomeSource.create(RegistryEntry.of(parameterList));
-      
+
+      // If specific biomes were requested by effects, use them; otherwise fall back to full overworld noise
+      final BiomeSource biomeSource;
+      if (!this.allowedBiomes.isEmpty()) {
+         // Pick the first allowed biome (remapped if modified), use FixedBiomeSource so the world
+         // actually reflects the selected biome rather than defaulting to overworld noise
+         RegistryEntry<Biome> selectedBiome = this.allowedBiomes.stream()
+            .map(key -> {
+               RegistryEntry<Biome> entry = biomeRegistry.getOrThrow(key);
+               return entryMap.getOrDefault(entry, entry);
+            })
+            .findFirst()
+            .orElseGet(() -> biomeRegistry.getOrThrow(this.allowedBiomes.iterator().next()));
+         biomeSource = new net.minecraft.world.biome.source.FixedBiomeSource(selectedBiome);
+      } else {
+         // No biome filter — use the full overworld multi-noise source via registry
+         var paramList = this.registryManager
+            .getOrThrow(RegistryKeys.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+            .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
+         biomeSource = MultiNoiseBiomeSource.create(paramList);
+      }
+
       RegistryWrapper.Impl<ChunkGeneratorSettings> settingsRegistry = this.registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
-      
+
       ChunkSettingsAccessor.Builder builder = ((ChunkSettingsAccessor)(Object)settingsRegistry.getOrThrow(this.baseSettingsKey).value()).getBuilder();
-      
+
       this.settingsModifiers.forEach(consumer -> consumer.accept(builder));
-//      builder.method_69811(materialRule -> materialRule.method_69822(keyMap)).method_69805(subPath.hashCode());
-      // TODO
-      
+      // Apply a unique salt per dimension so each mine has different terrain
+      builder.method_69805(subPath.hashCode());
+
       RegistryEntry<ChunkGeneratorSettings> registryEntry = RegistryEntry.of(builder.build());
-      
+
       return (ChunkGenerator)(this.customGeneratorFactory.isPresent()
          ? (ChunkGenerator)this.customGeneratorFactory.get().apply(this.registryManager, biomeSource, registryEntry)
          : new NoiseChunkGenerator(biomeSource, registryEntry));

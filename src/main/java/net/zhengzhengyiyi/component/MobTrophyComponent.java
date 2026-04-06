@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 import net.minecraft.component.ComponentsAccess;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.item.tooltip.TooltipAppender;
 import net.minecraft.item.tooltip.TooltipType;
 import net.minecraft.network.RegistryByteBuf;

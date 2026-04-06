@@ -1165,7 +1165,10 @@ public class class_11113 {
       if (bl) {
          itemStack.set(ModDataComponentTypes.WORLD_EFFECT_UNLOCK, Unit.INSTANCE);
       }
-
+      // Set the item icon from the effect's itemModel so the slot shows e.g. a sheep spawn egg
+      if (list.size() == 1 && list.get(0).itemModel() != null) {
+         itemStack.set(DataComponentTypes.ITEM_MODEL, list.get(0).itemModel());
+      }
       return itemStack;
    }
 

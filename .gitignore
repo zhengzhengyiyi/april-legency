@@ -40,4 +40,4 @@ replay_*.log
 *.jfr
 
 # minecraft reference code
-/craftmine
+/mc-20w14craftmine-main

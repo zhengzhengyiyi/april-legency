@@ -11,6 +11,12 @@ public class ModDimensionTypes {
    public static final Identifier THE_MOON_IDENTIFIER = Identifier.of("the_moon");
    public static final RegistryKey<World> THE_MOON_KEY = RegistryKey.of(RegistryKeys.WORLD, Identifier.of("zhengzhengyiyi", "the_moon"));
    
+   /** The "generated" dimension type used for mine worlds — matches minecraft:generated from the reference. */
+   public static final RegistryKey<DimensionType> GENERATED = RegistryKey.of(
+      RegistryKeys.DIMENSION_TYPE,
+      Identifier.ofVanilla("generated")
+   );
+
    public static final RegistryKey<DimensionType> INFINITE_DIM_TYPE_KEY = RegistryKey.of(
 		    RegistryKeys.DIMENSION_TYPE, 
 		    Identifier.of(AprilsLegacy.MOD_ID, "infinite_type")

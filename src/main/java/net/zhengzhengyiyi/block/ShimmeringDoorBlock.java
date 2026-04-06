@@ -16,7 +16,6 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.zhengzhengyiyi.item.ModItems;
 
 public class ShimmeringDoorBlock extends DoorBlock {
    public static final MapCodec<ShimmeringDoorBlock> CODEC = RecordCodecBuilder.mapCodec(

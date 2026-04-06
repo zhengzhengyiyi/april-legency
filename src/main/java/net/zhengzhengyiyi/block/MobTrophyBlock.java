@@ -1,7 +1,6 @@
 package net.zhengzhengyiyi.block;
 
 import com.mojang.serialization.MapCodec;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
@@ -28,7 +27,6 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.StringIdentifiable;
-import net.minecraft.util.Util;
 import net.minecraft.util.collection.Pool;
 import net.minecraft.util.collection.Weighted;
 import net.minecraft.util.hit.BlockHitResult;
@@ -40,7 +38,6 @@ import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldView;
-import net.zhengzhengyiyi.component.MobTrophyComponent;
 import org.jetbrains.annotations.Nullable;
 
 public class MobTrophyBlock extends BlockWithEntity {

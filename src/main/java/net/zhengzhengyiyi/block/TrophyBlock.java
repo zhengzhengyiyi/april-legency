@@ -5,7 +5,6 @@ import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.HorizontalFacingBlock;
-import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.ItemPlacementContext;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
 import net.minecraft.item.ItemStack;

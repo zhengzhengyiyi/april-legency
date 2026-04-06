@@ -14,8 +14,10 @@ import java.util.Optional;
 public abstract class LevelPropertiesMixin implements ServerWorldProperties, LevelPropertiesAccessor {
     @Unique private MineEffect field_custom_effect;
     @Unique private SpecialMine field_custom_mine;
-    @Unique private int field_custom_val_a;
-    @Unique private int field_custom_val_b;
+    @Unique private int field_custom_val_a;  // mine level
+    @Unique private int field_custom_val_b;  // mine exp
+    @Unique private int field_custom_val_c;  // total mine exp
+    @Unique private int field_custom_level_count;  // number of mines created
 
     @Override
     public void setUnlockedMineEffect(MineEffect effect) {
@@ -59,16 +61,19 @@ public abstract class LevelPropertiesMixin implements ServerWorldProperties, Lev
 
     @Override
     public void addMineExp(int exp) {
-        this.field_custom_val_a = exp;
+        this.field_custom_val_b += exp;
+        this.field_custom_val_c += exp;
+        // Level up every 100 exp
+        this.field_custom_val_a = this.field_custom_val_c / 100;
     }
 
     @Override
     public int getTotalMineExp() {
-        return this.field_custom_val_b;
+        return this.field_custom_val_c;
     }
 
     @Override
     public int getLevelCount() {
-        return 0;
+        return this.field_custom_level_count++;
     }
 }
