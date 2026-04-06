@@ -6,6 +6,7 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
@@ -25,10 +26,6 @@ public class class_10967 {
       int mineIndex = props.getLevelCount();
       Identifier id = Identifier.of(AprilsLegacy.MOD_ID, "level" + mineIndex);
       RegistryKey<DimensionOptions> dimensionKey = RegistryKey.of(RegistryKeys.DIMENSION, id);
-
-      System.out.println("[class_10967] Creating dimension with ID: " + id);
-      System.out.println("[class_10967] Mine index: " + mineIndex);
-      System.out.println("[class_10967] Dimension key: " + dimensionKey);
 
       RegistryWrapper.WrapperLookup registryManager = server.getRegistryManager();
       DimensionSettingsBuilder builder = new DimensionSettingsBuilder(registryManager);
@@ -50,15 +47,25 @@ public class class_10967 {
          config.setDimensionType(entry);
       });
 
-      return new class_10967.class_10970(dimensionKey, () -> {
-         System.out.println("[class_10967] Synchronize called - creating Fantasy world...");
+      // Create the dimension synchronously and store the world
+      try {
          RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
-         System.out.println("[class_10967] Fantasy world handle created: " + handle);
-         handle.asWorld();
-         System.out.println("[class_10967] Fantasy world created successfully");
-      });
+         ServerWorld world = handle.asWorld();
+         
+         if (world == null) {
+            System.err.println("[ERROR] Fantasy dimension creation returned null world for: " + id);
+         } else {
+            System.out.println("[SUCCESS] Fantasy dimension created: " + id + " (World: " + world.getRegistryKey().getValue() + ")");
+         }
+         
+         return new class_10970(dimensionKey, world);
+      } catch (Exception e) {
+         System.err.println("[ERROR] Failed to create Fantasy dimension: " + e.getMessage());
+         e.printStackTrace();
+         return new class_10970(dimensionKey, null);
+      }
    }
 
-   public record class_10970(RegistryKey<DimensionOptions> id, Runnable synchronize) {
+   public record class_10970(RegistryKey<DimensionOptions> id, ServerWorld world) {
    }
 }

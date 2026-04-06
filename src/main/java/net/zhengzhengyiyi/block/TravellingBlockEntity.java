@@ -48,7 +48,6 @@ public class TravellingBlockEntity extends BlockEntity {
    }
 
    public void setDimensionKey(RegistryKey<DimensionOptions> key) {
-      System.out.println("[TravellingBlockEntity] Setting dimension key: " + key);
       this.dimensionKey = key;
       this.markDirty();
    }
@@ -104,11 +103,7 @@ public class TravellingBlockEntity extends BlockEntity {
    }
 
    public RegistryKey<World> getDimensionKey() {
-      RegistryKey<World> worldKey = RegistryKeys.toWorldKey(this.dimensionKey);
-      System.out.println("[TravellingBlockEntity] getDimensionKey() called");
-      System.out.println("[TravellingBlockEntity] Stored dimension key (DimensionOptions): " + this.dimensionKey);
-      System.out.println("[TravellingBlockEntity] Converted world key: " + worldKey);
-      return worldKey;
+      return RegistryKeys.toWorldKey(this.dimensionKey);
    }
 
    public boolean isRevisit() {

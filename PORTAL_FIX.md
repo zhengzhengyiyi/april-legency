@@ -24,7 +24,11 @@ When you take the Mine Item from output:
 [MineEffectGenerator] Dimension key: ResourceKey[minecraft:dimension / zhengzhengyiyi:level0]
 [MineEffectGenerator] Calling synchronize to create Fantasy dimension...
 [MineEffectGenerator] Fantasy dimension created
+[MineEffectGenerator] Verifying world exists: true/false
+[MineEffectGenerator] World dimension key: ResourceKey[minecraft:level / zhengzhengyiyi:level0]
 ```
+
+**IMPORTANT**: If "Verifying world exists: false", the Fantasy dimension was not created properly!
 
 ### 3. Mine Crafter Block Entity (`MineCrafterBlockEntity.java`)
 When the portal is spawned:
@@ -108,6 +112,7 @@ When you click the portal:
 [class_10967] Creating dimension with ID: zhengzhengyiyi:level0
 [class_10967] Synchronize called - creating Fantasy world...
 [class_10967] Fantasy world created successfully
+[MineEffectGenerator] Verifying world exists: true
 ```
 
 **Portal Creation:**
@@ -131,6 +136,8 @@ Then you should be teleported!
 [class_10967] Creating dimension with ID: zhengzhengyiyi:level0
 [class_10967] Synchronize called - creating Fantasy world...
 (no "Fantasy world created successfully" message)
+[MineEffectGenerator] Verifying world exists: false
+[MineEffectGenerator] WARNING: World not found immediately after creation!
 ```
 
 **Cause**: Fantasy mod failed to create the dimension

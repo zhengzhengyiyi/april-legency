@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.slot.Slot;
@@ -36,6 +37,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.random.Random;
+import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.zhengzhengyiyi.AprilsLegacy;
@@ -116,7 +118,6 @@ public class MineEffectGenerator extends ScreenHandler {
       this.method_69552();
       this.method_69520();
       this.method_69521();
-      this.addPlayerInventory(playerInventory);
       this.onContentChanged(inventory);
    }
 
@@ -314,20 +315,6 @@ public class MineEffectGenerator extends ScreenHandler {
       }
    }
 
-   private void addPlayerInventory(PlayerInventory playerInventory) {
-      // Player inventory (3 rows of 9)
-      for (int row = 0; row < 3; row++) {
-         for (int col = 0; col < 9; col++) {
-            this.addSlot(new Slot(playerInventory, col + row * 9 + 9, 8 + col * 18, 140 + row * 18));
-         }
-      }
-
-      // Player hotbar
-      for (int col = 0; col < 9; col++) {
-         this.addSlot(new Slot(playerInventory, col, 8 + col * 18, 198));
-      }
-   }
-
    public class_11039 method_69542() {
       return this.field_58810;
    }
@@ -347,24 +334,18 @@ public class MineEffectGenerator extends ScreenHandler {
             list = optional.get().generateEffects(serverPlayerEntity.getEntityWorld());
          }
 
-         System.out.println("[MineEffectGenerator] Creating mine dimension...");
          class_10967.class_10970 lv2 = class_10967.method_69062(serverPlayerEntity.getEntityWorld().getServer(), list, optional);
          RegistryKey<DimensionOptions> registryKey = lv2.id();
-         System.out.println("[MineEffectGenerator] Dimension key: " + registryKey);
+         ServerWorld createdWorld = lv2.world();
          
-         System.out.println("[MineEffectGenerator] Calling synchronize to create Fantasy dimension...");
-         lv2.synchronize(); // actually create the Fantasy dimension
-         System.out.println("[MineEffectGenerator] Fantasy dimension created");
-         
-         // Verify the world is accessible
-         RegistryKey<World> worldKey = RegistryKeys.toWorldKey(registryKey);
-         ServerWorld createdWorld = serverPlayerEntity.getServer().getWorld(worldKey);
-         System.out.println("[MineEffectGenerator] Verifying world exists: " + (createdWorld != null));
-         if (createdWorld != null) {
-            System.out.println("[MineEffectGenerator] World dimension key: " + createdWorld.getRegistryKey());
-         } else {
-            System.out.println("[MineEffectGenerator] WARNING: World not found immediately after creation!");
+         // Verify the world was created successfully
+         if (createdWorld == null) {
+            System.err.println("[ERROR] Fantasy dimension creation failed! World is null.");
+            serverPlayerEntity.sendMessage(Text.literal("§cError: Failed to create mine dimension!"), false);
+            return;
          }
+         
+         System.out.println("[SUCCESS] Mine dimension created and verified: " + registryKey.getValue());
          
          itemStack.set(ModDataComponentTypes.DIMENSION_ID, registryKey);
          itemStack.set(ModDataComponentTypes.MINE_ACTIVE, Unit.INSTANCE);
@@ -457,13 +438,6 @@ public class MineEffectGenerator extends ScreenHandler {
          if (slot >= this.field_58815.getFirst().id && slot <= this.field_58815.getLast().id) {
             this.insertItem(itemStack2.copy(), this.field_58820, this.field_58819 + 1, false);
             return ItemStack.EMPTY;
-         }
-
-         // If clicking player inventory, try to move to ingredient slots
-         if (itemStack2.isOf(ModItems.MINE_INGREDIENT)) {
-            if (!this.insertItem(itemStack2, 1, this.field_58819 + 1, false)) {
-               return ItemStack.EMPTY;
-            }
          }
       }
 
