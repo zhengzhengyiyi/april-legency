@@ -175,7 +175,9 @@ public class MineEffectGenerator extends ScreenHandler {
          if (!this.method_69541()) {
             boolean bl = this.method_69543().findAny().isEmpty();
             if (bl && this.field_58814.getStack().isEmpty()) {
-               Optional<SpecialMine> optional = ((net.zhengzhengyiyi.accessor.MineServerWorldAccessor)(Object)this.field_58804.get()).getCurrentSpecialMine();
+               // Get the current special mine from the overworld's save properties
+               Optional<SpecialMine> optional = ((net.zhengzhengyiyi.accessor.MineServerWorldAccessor)(Object)
+                  this.field_58804.get().getServer().getOverworld()).getCurrentSpecialMine();
                if (optional.isPresent()) {
                   ItemStack itemStack = new ItemStack(ModItems.MINE_ITEM);
                   itemStack.set(ModDataComponentTypes.WORLD_MODIFIERS, new class_11056(new ArrayList<>(), false));

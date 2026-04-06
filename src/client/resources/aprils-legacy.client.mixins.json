@@ -6,7 +6,9 @@
 		"ClientPlayNetworkHandlerMixin",
 		"SkyRendererMixin",
 		"LanguageManagerMixin",
-		"EntityRendererMixin"
+		"EntityRendererMixin",
+		"ItemModelTypesMixin",
+		"ItemModelTypesAccessorMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

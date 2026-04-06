@@ -26,7 +26,6 @@ import net.minecraft.text.Text;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.zhengzhengyiyi.AprilsLegacy;
@@ -35,6 +34,7 @@ import net.zhengzhengyiyi.accessor.MineServerWorldAccessor;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.MineProgressState;
+import net.zhengzhengyiyi.mine.MineWorldEffectsState;
 import net.zhengzhengyiyi.mine.effect.MineUnlockCondition;
 import net.zhengzhengyiyi.mine.effect.UnlockMode;
 import net.zhengzhengyiyi.network.ClientPacket0;
@@ -59,11 +59,11 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	@Unique
 	private Set<MineEffect> getEffectSet() {
 		if (this.field_58290 == null) {
-			Optional<RegistryEntry.Reference<DimensionOptions>> optional = this.getRegistryManager().getOptionalEntry(RegistryKeys.toDimensionKey(getRegistryKey()));
-			this.field_58290 = optional.map(entry -> {
-			    Set<MineEffect> set = new ObjectArraySet<>();
-			    return set;
-			}).orElseGet(Set::of);
+			// Try to load effects from persistent state (works for both normal and Fantasy worlds)
+			MineWorldEffectsState effectsState = this.getPersistentStateManager()
+				.getOrCreate(MineWorldEffectsState.TYPE);
+			List<MineEffect> effects = effectsState.getEffects();
+			this.field_58290 = effects.isEmpty() ? Set.of() : new ObjectArraySet<>(effects);
 		}
 		return this.field_58290;
 	}
@@ -102,7 +102,43 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	
 	@Override
 	public boolean hasMineEffect(MineEffect effect) {
-	   return ((LevelPropertiesAccessor)(Object)worldProperties).hasUnlockedMineEffect(effect);
+	   // Use the overworld's save properties — not the current world's properties,
+	   // which may be Fantasy's RuntimeWorldProperties and not castable.
+	   LevelPropertiesAccessor overworldProps = (LevelPropertiesAccessor)(Object)
+	      this.server.getSaveProperties().getMainWorldProperties();
+	   return overworldProps.hasUnlockedMineEffect(effect);
+	}
+
+	@Override
+	public boolean isMineWorldEffect(MineEffect effect) {
+	   // Checks if this specific mine world was created with this effect (field_58290 equivalent)
+	   return getEffectSet().contains(effect);
+	}
+
+	@Override
+	public void dropOrUnlockMineEffect(net.minecraft.util.math.Vec3d pos, MineEffect effect, @org.jetbrains.annotations.Nullable ServerPlayerEntity player) {
+	   // If mine is completed, unlock globally. Otherwise drop a mine ingredient item.
+	   if (getMineProgress().getStatus() != MineProgressState.Status.ONGOING) {
+	      unlockMineEffect(effect);
+	   } else if (player == null
+	      || !player.getInventory().getMainStacks().stream().anyMatch(
+	            stack -> stack.isOf(net.zhengzhengyiyi.item.ModItems.MINE_INGREDIENT)
+	               && stack.getOrDefault(net.zhengzhengyiyi.component.ModDataComponentTypes.WORLD_MODIFIERS,
+	                     net.zhengzhengyiyi.mine.class_11056.field_58859).effects().contains(effect)
+	         )) {
+	      net.minecraft.entity.ItemEntity itemEntity = new net.minecraft.entity.ItemEntity(
+	         (ServerWorld)(Object)this, pos.x, pos.y, pos.z,
+	         net.zhengzhengyiyi.mine.effect.class_11113.method_70013(effect, true)
+	      );
+	      ((ServerWorld)(Object)this).spawnEntity(itemEntity);
+	   }
+	}
+
+	@Override
+	public Optional<net.zhengzhengyiyi.mine.SpecialMine> getCurrentSpecialMine() {
+	   LevelPropertiesAccessor overworldProps = (LevelPropertiesAccessor)(Object)
+	      this.server.getSaveProperties().getMainWorldProperties();
+	   return overworldProps.getRandomSpecialMine(this.getRandom());
 	}
 
 	@Override
@@ -111,10 +147,12 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	}
 	
 	public void unlockMineEffect(MineEffect effect) {
-	      if (!((LevelPropertiesAccessor)(Object)worldProperties).hasUnlockedMineEffect(effect) && effect.unlockMode() != UnlockMode.NEVER_UNLOCKED) {
+	      LevelPropertiesAccessor overworldProps = (LevelPropertiesAccessor)(Object)
+	         this.server.getSaveProperties().getMainWorldProperties();
+	      if (!overworldProps.hasUnlockedMineEffect(effect) && effect.unlockMode() != UnlockMode.NEVER_UNLOCKED) {
 	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", effect.name()), true);
 	         this.server.getPlayerManager().broadcast(Text.translatable("world.effect.unlocked", effect.name()), false);
-	         ((LevelPropertiesAccessor)(Object)worldProperties).setUnlockedMineEffect(effect);
+	         overworldProps.setUnlockedMineEffect(effect);
 
 	         for (ServerPlayerEntity serverPlayerEntity : this.server.getPlayerManager().getPlayerList()) {
 	            MineUnlockCondition.method_69629(this, serverPlayerEntity, effect);

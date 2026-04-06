@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Mixin(LevelProperties.class)
 public abstract class LevelPropertiesMixin implements ServerWorldProperties, LevelPropertiesAccessor {
-    @Unique private MineEffect field_custom_effect;
+    @Unique private final java.util.Set<MineEffect> field_custom_unlocked_effects = new java.util.HashSet<>();
     @Unique private SpecialMine field_custom_mine;
     @Unique private int field_custom_val_a;  // mine level
     @Unique private int field_custom_val_b;  // mine exp
@@ -21,12 +21,12 @@ public abstract class LevelPropertiesMixin implements ServerWorldProperties, Lev
 
     @Override
     public void setUnlockedMineEffect(MineEffect effect) {
-        this.field_custom_effect = effect;
+        this.field_custom_unlocked_effects.add(effect);
     }
 
     @Override
     public boolean hasUnlockedMineEffect(MineEffect effect) {
-        return this.field_custom_effect == effect;
+        return this.field_custom_unlocked_effects.contains(effect);
     }
 
     @Override

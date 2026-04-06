@@ -368,7 +368,7 @@ public interface MineUnlockCondition {
                   }
 
                   if (bl && biFunction.apply(serverWorld, lv2)) {
-                     mineWorld.unlockMineEffect(lv);
+                     mineWorld.dropOrUnlockMineEffect(vec3d, lv, serverPlayerEntity);
                   }
                }
             }

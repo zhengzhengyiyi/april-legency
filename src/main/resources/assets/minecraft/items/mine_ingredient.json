@@ -1,6 +1,5 @@
 {
   "model": {
-    "type": "minecraft:model",
-    "model": "minecraft:item/mine_ingredient"
+    "type": "aprils-legacy:mine_ingredient"
   }
 }

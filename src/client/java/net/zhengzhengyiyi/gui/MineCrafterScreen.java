@@ -141,15 +141,10 @@ public class MineCrafterScreen extends HandledScreen<MineEffectGenerator> {
    protected void handledScreenTick() {
       super.handledScreenTick();
       this.tick = (this.tick + 1) % 240;
-      float delta = this.client.getRenderTickCounter().getDynamicDeltaTicks();
       long activeCount = this.handler.method_69545().stream().filter(Slot::hasStack).count();
       for (Slot slot : this.handler.slots) {
          if (slot instanceof MineGeneratorSlot ms && ms.method_69555()) {
             tickSlotAnimation(ms, activeCount);
-            ((net.zhengzhengyiyi.accessor.SlotPositionAccessor) ms).setSlotPos(
-               (int)MathHelper.lerp(delta, ms.x, ms.field_58825),
-               (int)MathHelper.lerp(delta, ms.y, ms.field_58826)
-            );
          }
       }
       this.donateButton.setFocused(false);
@@ -162,6 +157,19 @@ public class MineCrafterScreen extends HandledScreen<MineEffectGenerator> {
       Vec2f target = curve.method_69513((float)(t + offset));
       slot.field_58825 = target.x;
       slot.field_58826 = target.y;
+   }
+
+   @Override
+   protected void drawSlot(DrawContext context, Slot slot, int x, int y) {
+      // Lerp animated slot positions using dynamic delta ticks for smooth rendering
+      float delta = this.client.getRenderTickCounter().getDynamicDeltaTicks();
+      if (slot instanceof MineGeneratorSlot ms && ms.method_69555()) {
+         ((net.zhengzhengyiyi.accessor.SlotPositionAccessor) ms).setSlotPos(
+            (int)MathHelper.lerp(delta, ms.x, ms.field_58825),
+            (int)MathHelper.lerp(delta, ms.y, ms.field_58826)
+         );
+      }
+      super.drawSlot(context, slot, x, y);
    }
 
    @Override

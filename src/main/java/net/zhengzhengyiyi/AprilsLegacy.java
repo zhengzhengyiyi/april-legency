@@ -166,6 +166,8 @@ public class AprilsLegacy implements ModInitializer {
 		ModScreenHandlerType.init();
 		class_11099.register(field_59578);
 		class_11113.method_69994();
+		// Initialize SpecialMine registry — triggers all static field registrations
+		net.zhengzhengyiyi.mine.SpecialMineData.init();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
 		

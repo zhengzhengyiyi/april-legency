@@ -61,4 +61,10 @@ public interface SpecialMineData {
    static SpecialMine method_69917(Registry<SpecialMine> registry) {
       return field_59129;
    }
+
+   /** Called during mod init to trigger static field initialization and register all SpecialMines. */
+   static void init() {
+      // Accessing any field forces class loading and registers all SpecialMine instances
+      int size = field_59122.size();
+   }
 }

@@ -63,6 +63,10 @@ public class class_10967 {
             System.err.println("[ERROR] Fantasy dimension creation returned null world for: " + id);
          } else {
             System.out.println("[SUCCESS] Mine dimension created: " + id);
+            // Persist the effects list so ServerWorldMixin.getEffectSet() can load them
+            MineWorldEffectsState effectsState = world.getPersistentStateManager()
+               .getOrCreate(MineWorldEffectsState.TYPE);
+            effectsState.setEffects(effects);
             placeSpawnPlatform(world);
          }
 
