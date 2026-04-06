@@ -1,80 +1,83 @@
 package net.zhengzhengyiyi.entity.pet;
 
+import net.minecraft.entity.AnimationState;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.data.DataTracker;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.data.TrackedDataHandlerRegistry;
 import net.minecraft.entity.passive.ArmadilloEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.StringIdentifiable;
 import net.minecraft.world.World;
-
 import org.jetbrains.annotations.Nullable;
 
-/**
- * class_10996 - Pet Armadillo
- */
+/** class_10996 - Pet Armadillo */
 public class PetArmadilloEntity extends BasePetEntity {
-
-    private State armadilloState = State.IDLE;
+    private static final TrackedData<ArmadilloEntity.State> field_58586 =
+        DataTracker.registerData(PetArmadilloEntity.class, TrackedDataHandlerRegistry.ARMADILLO_STATE);
+    private long field_58587 = 0L;
+    public final AnimationState field_58583 = new AnimationState(); // unrolling
+    public final AnimationState field_58584 = new AnimationState(); // rolling
+    public final AnimationState field_58585 = new AnimationState(); // scared
 
     public PetArmadilloEntity(EntityType<? extends PetArmadilloEntity> entityType, World world) {
         super(entityType, world);
+        this.getNavigation().setCanSwim(true);
     }
 
-    /** method_69344 - Creates attributes */
     public static DefaultAttributeContainer.Builder createAttributes() {
-        return MobEntity.createMobAttributes()
+        return AnimalEntity.createAnimalAttributes()
             .add(EntityAttributes.MAX_HEALTH, 12.0)
             .add(EntityAttributes.MOVEMENT_SPEED, 0.14);
     }
 
-    /** method_69345 - Checks if moving */
-    public boolean isMoving() {
-        return this.getVelocity().horizontalLengthSquared() > 0.01;
+    @Override
+    protected void initDataTracker(DataTracker.Builder builder) {
+        super.initDataTracker(builder);
+        builder.add(field_58586, ArmadilloEntity.State.IDLE);
     }
+
+    public boolean isMoving() { return this.getVelocity().horizontalLengthSquared() > 0.01; }
 
     /** method_69346 - Checks if rolled up */
-    public boolean isRolledUp() {
-        return this.armadilloState == State.ROLLED;
-    }
+    public boolean isRolledUp() { return method_69347().isRolledUp(this.field_58587); }
 
     /** method_69347 - Gets state */
-    public State getArmadilloState() {
-        return this.armadilloState;
-    }
+    public ArmadilloEntity.State method_69347() { return this.dataTracker.get(field_58586); }
 
     /** method_69342 - Sets state */
-    public void setArmadilloState(State state) {
-        this.armadilloState = state;
-    }
+    public void method_69342(ArmadilloEntity.State state) { this.dataTracker.set(field_58586, state); }
 
-    /** method_69349 - Updates animations */
     @Override
-    public void tickMovement() {
-        super.tickMovement();
-        // Update roll animation based on state
-    }
-
-    /** method_69348 - Checks if can roll */
-    public boolean canRoll() {
-        return !this.isSitting() && !this.isMoving();
+    public void onTrackedDataSet(TrackedData<?> data) {
+        if (field_58586.equals(data)) this.field_58587 = 0L;
+        super.onTrackedDataSet(data);
     }
 
     @Override
-    @Nullable
-    public PetArmadilloEntity createChild(ServerWorld serverWorld, PassiveEntity passiveEntity) {
-        return null;
+    public void tick() {
+        super.tick();
+        if (this.getEntityWorld().isClient()) method_69349();
+        if (method_69347() != ArmadilloEntity.State.IDLE) this.clampHeadYaw();
+        this.field_58587++;
     }
 
-    public enum State implements StringIdentifiable {
-        IDLE("idle"), ROLLING("rolling"), ROLLED("rolled"), UNROLLING("unrolling");
-
-        private final String id;
-        State(String id) { this.id = id; }
-
-        @Override
-        public String asString() { return this.id; }
+    private void method_69349() {
+        switch (method_69347()) {
+            case IDLE -> { field_58583.stop(); field_58584.stop(); field_58585.stop(); }
+            case UNROLLING -> { field_58583.startIfNotRunning(this.age); field_58584.stop(); field_58585.stop(); }
+            case ROLLING -> { field_58583.stop(); field_58584.startIfNotRunning(this.age); field_58585.stop(); }
+            default -> { field_58583.stop(); field_58584.stop(); field_58585.startIfNotRunning(this.age); }
+        }
     }
+
+    public boolean method_69348() {
+        return !this.isPanicking() && !this.isInFluid() && !this.isLeashed() && !this.hasVehicle() && !this.hasPassengers();
+    }
+
+    @Override @Nullable
+    public PetArmadilloEntity createChild(ServerWorld world, PassiveEntity entity) { return null; }
 }

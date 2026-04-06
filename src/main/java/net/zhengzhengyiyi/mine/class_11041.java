@@ -5,7 +5,6 @@ import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
-import net.zhengzhengyiyi.mine.class_11056;
 
 public class class_11041 extends Slot {
    final MineEffectGenerator field_58800;

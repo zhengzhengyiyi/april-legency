@@ -52,6 +52,8 @@ public class AprilsLegacyClient implements ClientModInitializer {
 		
 		HandledScreens.register(ModScreenHandlerType.DIMENSION_CONTROL, DimensionControlScreen::new);
 		HandledScreens.register(ModScreenHandlerType.MINE_CRAFTER, net.zhengzhengyiyi.gui.MineCrafterScreen::new);
+		HandledScreens.register(ModScreenHandlerType.SHIMMERING_DOOR, (handler, inv, title) ->
+			new net.zhengzhengyiyi.gui.ShimmeringDoorScreen(handler, inv));
 		
 		ClientTickEvents.END_CLIENT_TICK.register(client -> {
 			if (pendingVoteKey.wasPressed()) {

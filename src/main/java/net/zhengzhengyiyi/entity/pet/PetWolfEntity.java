@@ -21,9 +21,12 @@ public class PetWolfEntity extends BasePetEntity {
     private RegistryEntry<WolfSoundVariant> soundVariant;
     private DyeColor collarColor = DyeColor.RED;
     private boolean interested = false;
-    private float shakeProgress = 0.0f;
-    private float prevShakeProgress = 0.0f;
-    private float tailAngle = 0.0f;
+    private float field_58724;
+    private float field_58725;
+    private boolean field_58726;
+    private boolean field_58727;
+    private float field_58728;
+    private float field_58729;
 
     public PetWolfEntity(EntityType<? extends PetWolfEntity> entityType, World world) {
         super(entityType, world);
@@ -87,24 +90,25 @@ public class PetWolfEntity extends BasePetEntity {
         return !this.getBodyArmor().isEmpty();
     }
 
-    /** method_69440 - Stops shaking */
-    public void stopShaking() {
-        this.shakeProgress = 0.0f;
-        this.prevShakeProgress = 0.0f;
-    }
-
-    /** method_69424 - Gets shake scale */
-    public float getShakeScale(float tickDelta) {
-        return (this.prevShakeProgress + (this.shakeProgress - this.prevShakeProgress) * tickDelta) / 1.8f;
+    /** method_69424 - Gets fur wet brightness multiplier */
+    public float method_69424(float f) {
+        return !this.field_58726 ? 1.0F : Math.min(0.75F + net.minecraft.util.math.MathHelper.lerp(f, this.field_58729, this.field_58728) / 2.0F * 0.25F, 1.0F);
     }
 
     /** method_69425 - Gets shake progress */
-    public float getShakeProgress(float tickDelta) {
-        return this.prevShakeProgress + (this.shakeProgress - this.prevShakeProgress) * tickDelta;
+    public float method_69425(float f) {
+        return net.minecraft.util.math.MathHelper.lerp(f, this.field_58729, this.field_58728);
     }
 
     /** method_69426 - Gets tail angle */
-    public float getTailAngle() {
-        return this.tailAngle;
+    public float method_69426(float f) {
+        return net.minecraft.util.math.MathHelper.lerp(f, this.field_58725, this.field_58724) * 0.15F * (float) Math.PI;
+    }
+
+    /** method_69440 - Stops shaking */
+    public void stopShaking() {
+        this.field_58727 = false;
+        this.field_58728 = 0.0F;
+        this.field_58729 = 0.0F;
     }
 }
