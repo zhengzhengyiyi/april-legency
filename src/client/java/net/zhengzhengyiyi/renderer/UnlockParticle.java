@@ -2,27 +2,30 @@ package net.zhengzhengyiyi.renderer;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.ParticleTextureSheet;
-import net.minecraft.client.particle.SpriteBillboardParticle;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
+import net.minecraft.util.math.random.Random;
 
 /**
  * class_11141 - Unlock particle (enchantment-style blue/green sparkle).
  */
 @Environment(EnvType.CLIENT)
-public class UnlockParticle extends SpriteBillboardParticle {
+public class UnlockParticle extends BillboardParticle {
     private final double originX, originY, originZ;
+    private final SpriteProvider spriteProvider;
 
-    protected UnlockParticle(ClientWorld world, double x, double y, double z, double vx, double vy, double vz) {
-        super(world, x, y, z);
+    protected UnlockParticle(ClientWorld world, double x, double y, double z,
+                              double vx, double vy, double vz, SpriteProvider sprites) {
+        super(world, x, y, z, sprites.getFirst());
+        this.spriteProvider = sprites;
         this.velocityX = vx;
         this.velocityY = vy;
         this.velocityZ = vz;
-        this.x = x; this.y = y; this.z = z;
         this.originX = x; this.originY = y; this.originZ = z;
         this.scale = 0.1F * (this.random.nextFloat() * 0.4F + 0.2F);
         float j = this.random.nextFloat() * 0.6F + 0.4F;
@@ -32,10 +35,11 @@ public class UnlockParticle extends SpriteBillboardParticle {
             this.red = j * 0.2F; this.green = j; this.blue = j * 0.2F;
         }
         this.maxAge = (int)(Math.random() * 20.0) + 50;
+        this.updateSprite(sprites);
     }
 
     @Override
-    public ParticleTextureSheet getType() { return ParticleTextureSheet.PARTICLE_SHEET_OPAQUE; }
+    public ParticleTextureSheet textureSheet() { return ParticleTextureSheet.SINGLE_QUADS; }
 
     @Override
     public void move(double dx, double dy, double dz) {
@@ -51,7 +55,7 @@ public class UnlockParticle extends SpriteBillboardParticle {
     }
 
     @Override
-    public int getBrightness(float tint) {
+    protected int getBrightness(float tint) {
         int i = super.getBrightness(tint);
         float f = (float) this.age / this.maxAge;
         f *= f; f *= f;
@@ -66,6 +70,7 @@ public class UnlockParticle extends SpriteBillboardParticle {
     public void tick() {
         this.lastX = this.x; this.lastY = this.y; this.lastZ = this.z;
         if (this.age++ >= this.maxAge) { this.markDead(); return; }
+        this.updateSprite(this.spriteProvider);
         float f = (float) this.age / this.maxAge;
         float var3 = -f + f * f * 2.0F;
         float var4 = 1.0F - var3;
@@ -81,10 +86,14 @@ public class UnlockParticle extends SpriteBillboardParticle {
 
         @Override
         public Particle createParticle(SimpleParticleType type, ClientWorld world,
-                                       double x, double y, double z, double vx, double vy, double vz) {
-            UnlockParticle p = new UnlockParticle(world, x, y, z, vx, vy, vz);
-            p.setSprite(this.sprites);
-            return p;
+                                       double x, double y, double z,
+                                       double vx, double vy, double vz, Random random) {
+            return new UnlockParticle(world, x, y, z, vx, vy, vz, this.sprites);
         }
+    }
+
+    @Override
+    protected RenderType getRenderType() {
+        return RenderType.ITEM_ATLAS_TRANSLUCENT;
     }
 }

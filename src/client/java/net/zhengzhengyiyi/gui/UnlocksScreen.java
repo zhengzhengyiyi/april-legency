@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.screen.ScreenTexts;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
@@ -58,7 +57,7 @@ public class UnlocksScreen extends Screen {
         int x = (this.width - w) / 2;
         int y = (this.height - h) / 2;
 
-        context.drawGuiTexture(RenderLayer::getGuiTextured, WINDOW_TEX, x, y, w, h);
+        context.drawGuiTexture(net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED, WINDOW_TEX, x, y, w, h);
         context.drawText(this.textRenderer, TITLE, x + 8, y + 6, 4210752, false);
 
         int level = this.client.player != null ? this.client.player.experienceLevel : 0;
@@ -71,12 +70,12 @@ public class UnlocksScreen extends Screen {
     public boolean shouldPause() { return false; }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (this.client.options.field_59292.matchesKey(keyCode, scanCode)) {
+    public boolean keyPressed(net.minecraft.client.input.KeyInput input) {
+        if (this.client.options.inventoryKey.matchesKey(input)) {
             this.client.setScreen(null);
             this.client.mouse.lockCursor();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(input);
     }
 }

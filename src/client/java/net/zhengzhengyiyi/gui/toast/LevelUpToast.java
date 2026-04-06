@@ -53,7 +53,7 @@ public class LevelUpToast implements Toast {
 
     @Override
     public void draw(DrawContext context, TextRenderer textRenderer, long startTime) {
-        context.drawGuiTexture(RenderLayer::getGuiTextured, TEXTURE, 0, 0, this.getWidth(), this.getHeight());
+        context.drawGuiTexture(net.minecraft.client.gl.RenderPipelines.GUI_TEXTURED, TEXTURE, 0, 0, this.getWidth(), this.getHeight());
         context.drawText(textRenderer, Text.stringifiedTranslatable("level.gained", this.level), 30, 7, -256, false);
         context.drawText(textRenderer, Text.translatable("level.unlock_hint", Text.keybind("key.unlocks")), 30, 18, -1, false);
         context.drawItemWithoutEntity(Items.EXPERIENCE_BOTTLE.getDefaultStack(), 8, 8);
