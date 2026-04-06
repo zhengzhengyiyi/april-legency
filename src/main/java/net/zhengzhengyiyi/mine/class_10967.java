@@ -26,6 +26,10 @@ public class class_10967 {
       Identifier id = Identifier.of(AprilsLegacy.MOD_ID, "level" + mineIndex);
       RegistryKey<DimensionOptions> dimensionKey = RegistryKey.of(RegistryKeys.DIMENSION, id);
 
+      System.out.println("[class_10967] Creating dimension with ID: " + id);
+      System.out.println("[class_10967] Mine index: " + mineIndex);
+      System.out.println("[class_10967] Dimension key: " + dimensionKey);
+
       RegistryWrapper.WrapperLookup registryManager = server.getRegistryManager();
       DimensionSettingsBuilder builder = new DimensionSettingsBuilder(registryManager);
       class_11113.method_70020(effects, BiomeMineComponent.class).forEach(c -> c.apply(builder));
@@ -47,8 +51,11 @@ public class class_10967 {
       });
 
       return new class_10967.class_10970(dimensionKey, () -> {
+         System.out.println("[class_10967] Synchronize called - creating Fantasy world...");
          RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);
+         System.out.println("[class_10967] Fantasy world handle created: " + handle);
          handle.asWorld();
+         System.out.println("[class_10967] Fantasy world created successfully");
       });
    }
 

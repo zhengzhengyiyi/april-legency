@@ -48,26 +48,31 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	private MineProgressState minePregress;
 	
 	@Unique
-	private final Set<MineEffect> field_58290;
+	private Set<MineEffect> field_58290;
 	
 	protected ServerWorldMixin(MutableWorldProperties properties, RegistryKey<World> registryRef,
 			DynamicRegistryManager registryManager, RegistryEntry<DimensionType> dimensionEntry, boolean isClient,
 			boolean debugWorld, long seed, int maxChainedNeighborUpdates) {
 		super(properties, registryRef, registryManager, dimensionEntry, isClient, debugWorld, seed, maxChainedNeighborUpdates);
-		
-		Optional<RegistryEntry.Reference<DimensionOptions>> optional = this.getRegistryManager().getOptionalEntry(RegistryKeys.toDimensionKey(getRegistryKey()));
-		
-		this.field_58290 = optional.map(entry -> {
-		    Set<MineEffect> set = new ObjectArraySet<>();
-		    return set;
-		}).orElseGet(Set::of);
+	}
+	
+	@Unique
+	private Set<MineEffect> getEffectSet() {
+		if (this.field_58290 == null) {
+			Optional<RegistryEntry.Reference<DimensionOptions>> optional = this.getRegistryManager().getOptionalEntry(RegistryKeys.toDimensionKey(getRegistryKey()));
+			this.field_58290 = optional.map(entry -> {
+			    Set<MineEffect> set = new ObjectArraySet<>();
+			    return set;
+			}).orElseGet(Set::of);
+		}
+		return this.field_58290;
 	}
 	
 	@Unique
 	private MineProgressState getMineProgress() {
 		if (this.minePregress == null) {
 			this.minePregress = this.getPersistentStateManager().getOrCreate(MineProgressState.TYPE);
-			this.minePregress.setMine(!this.field_58290.isEmpty());
+			this.minePregress.setMine(!getEffectSet().isEmpty());
 		}
 		return this.minePregress;
 	}

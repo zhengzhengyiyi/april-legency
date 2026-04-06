@@ -193,6 +193,10 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
    }
 
    private void startMining(World world, BlockPos blockPos, RegistryKey<DimensionOptions> dimensionKey) {
+      System.out.println("[MineCrafterBlockEntity] Starting mining...");
+      System.out.println("[MineCrafterBlockEntity] Dimension key: " + dimensionKey);
+      System.out.println("[MineCrafterBlockEntity] Portal position: " + blockPos.up());
+      
       this.travellingBlockPos = blockPos.up();
       MiningPortalBlock.createPortal(world, blockPos.up(), dimensionKey, false);
       this.markDirty();

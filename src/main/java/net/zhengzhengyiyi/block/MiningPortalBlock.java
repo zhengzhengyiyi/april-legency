@@ -17,6 +17,7 @@ import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
@@ -84,19 +85,36 @@ public class MiningPortalBlock extends BlockWithEntity {
    protected ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, BlockHitResult hit) {
       if (player instanceof ServerPlayerEntity serverPlayer && world instanceof ServerWorld serverWorld
             && world.getBlockEntity(pos) instanceof TravellingBlockEntity entity) {
+         
+         // Debug logging
+         System.out.println("[MiningPortal] Player clicked portal at " + pos);
+         System.out.println("[MiningPortal] Dimension key: " + entity.getDimensionKey());
+         
          MineServerWorldAccessor mineWorld = (MineServerWorldAccessor)(Object)serverWorld;
-         if (mineWorld.isMineWorld()) {
+         boolean isMine = mineWorld.isMineWorld();
+         System.out.println("[MiningPortal] Is mine world: " + isMine);
+         
+         if (isMine) {
             // inside mine — teleport back to overworld
+            System.out.println("[MiningPortal] Teleporting back to overworld");
             ServerWorld overworld = serverWorld.getServer().getOverworld();
             Vec3d spawnPos = overworld.getSpawnPoint().getPos().toCenterPos();
             serverPlayer.teleportTo(new TeleportTarget(overworld, spawnPos, Vec3d.ZERO, serverPlayer.getYaw(), serverPlayer.getPitch(), TeleportTarget.NO_OP));
          } else {
             // in overworld — teleport into the mine dimension
             RegistryKey<World> targetKey = entity.getDimensionKey();
+            System.out.println("[MiningPortal] Target dimension: " + targetKey);
+            
             ServerWorld targetWorld = serverWorld.getServer().getWorld(targetKey);
+            System.out.println("[MiningPortal] Target world exists: " + (targetWorld != null));
+            
             if (targetWorld != null) {
                Vec3d spawnPos = targetWorld.getSpawnPoint().getPos().toCenterPos();
+               System.out.println("[MiningPortal] Teleporting to: " + spawnPos);
                serverPlayer.teleportTo(new TeleportTarget(targetWorld, spawnPos, Vec3d.ZERO, serverPlayer.getYaw(), serverPlayer.getPitch(), TeleportTarget.ADD_PORTAL_CHUNK_TICKET));
+            } else {
+               System.out.println("[MiningPortal] ERROR: Target world is null!");
+               player.sendMessage(Text.literal("§cError: Mine dimension not found! Try crafting the mine again."), false);
             }
          }
       }
@@ -129,11 +147,20 @@ public class MiningPortalBlock extends BlockWithEntity {
    }
 
    public static void createPortal(World world, BlockPos pos, RegistryKey<DimensionOptions> dimensionKey, boolean revisit) {
+      System.out.println("[MiningPortal] Creating portal at " + pos);
+      System.out.println("[MiningPortal] Dimension key (DimensionOptions): " + dimensionKey);
+      
       world.breakBlock(pos, true, null);
       if (world.setBlockState(pos, ModBlocks.MINING_PORTAL.getDefaultState(), 2)
             && world.getBlockEntity(pos) instanceof TravellingBlockEntity entity) {
          entity.setDimensionKey(dimensionKey);
          entity.setRevisit(revisit);
+         entity.markDirty();
+         
+         System.out.println("[MiningPortal] Portal created successfully");
+         System.out.println("[MiningPortal] Stored dimension key: " + entity.getDimensionKey());
+      } else {
+         System.out.println("[MiningPortal] ERROR: Failed to create portal block entity!");
       }
       world.syncGlobalEvent(1038, pos, 0);
    }

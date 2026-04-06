@@ -347,9 +347,15 @@ public class MineEffectGenerator extends ScreenHandler {
             list = optional.get().generateEffects(serverPlayerEntity.getEntityWorld());
          }
 
+         System.out.println("[MineEffectGenerator] Creating mine dimension...");
          class_10967.class_10970 lv2 = class_10967.method_69062(serverPlayerEntity.getEntityWorld().getServer(), list, optional);
          RegistryKey<DimensionOptions> registryKey = lv2.id();
+         System.out.println("[MineEffectGenerator] Dimension key: " + registryKey);
+         
+         System.out.println("[MineEffectGenerator] Calling synchronize to create Fantasy dimension...");
          lv2.synchronize(); // actually create the Fantasy dimension
+         System.out.println("[MineEffectGenerator] Fantasy dimension created");
+         
          itemStack.set(ModDataComponentTypes.DIMENSION_ID, registryKey);
          itemStack.set(ModDataComponentTypes.MINE_ACTIVE, Unit.INSTANCE);
          this.field_58812.accept(registryKey);
