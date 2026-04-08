@@ -26,6 +26,7 @@ import net.zhengzhengyiyi.biome.ModBiomeKeys;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.command.DebugDimensionCommand;
 import net.zhengzhengyiyi.command.DebugdimCommand;
+import net.zhengzhengyiyi.command.LevelCommand;
 import net.zhengzhengyiyi.command.TransformCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.command.WarpCommand;
@@ -166,6 +167,7 @@ public class AprilsLegacy implements ModInitializer {
 		VoteStats.init();
 		ModDataComponentTypes.init();
 		ModScreenHandlerType.init();
+		net.zhengzhengyiyi.feature.ModConfiguredFeatures.init();
 		class_11099.register(field_59578);
 		class_11113.method_69994();
 		// Initialize SpecialMine registry — triggers all static field registrations
@@ -235,6 +237,7 @@ public class AprilsLegacy implements ModInitializer {
 		    WarpCommand.register(dispatcher);
 		    TransformCommand.register(dispatcher, registryAccess);
 		    DebugdimCommand.register(dispatcher);
+		    LevelCommand.register(dispatcher, registryAccess);
 		});
 		
 		LOGGER.info(MOD_ID + " init, please enjoy april fools");

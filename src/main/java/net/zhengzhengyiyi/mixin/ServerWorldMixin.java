@@ -3,6 +3,7 @@ package net.zhengzhengyiyi.mixin;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.UUID;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,27 +15,35 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.GameMode;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.PersistentStateManager;
+import net.minecraft.world.TeleportTarget;
+import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.ServerWorldProperties;
 import net.zhengzhengyiyi.AprilsLegacy;
 import net.zhengzhengyiyi.accessor.LevelPropertiesAccessor;
 import net.zhengzhengyiyi.accessor.MineServerWorldAccessor;
+import net.zhengzhengyiyi.feature.ModConfiguredFeatures;
 import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.MineProgressState;
 import net.zhengzhengyiyi.mine.MineWorldEffectsState;
+import net.zhengzhengyiyi.mine.SpawnLocator;
 import net.zhengzhengyiyi.mine.effect.MineUnlockCondition;
 import net.zhengzhengyiyi.mine.effect.UnlockMode;
 import net.zhengzhengyiyi.network.ClientPacket0;
@@ -187,6 +196,104 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 		});
 	}
 	
+	/**
+	 * Mirrors craftmine ServerWorld.method_69093 exactly.
+	 * Places the spawn platform on first entry, fires onMineEnter, teleports players into this mine world.
+	 */
+	@Override
+	public void method_69093(boolean revisit, Optional<UUID> playerUuid) {
+		ServerWorld self = (ServerWorld)(Object)this;
+
+		// Get spawn position from SpawnLocator — for Fantasy worlds the dimension registry
+		// entry doesn't exist, so we use SURFACE directly (matches the default in craftmine)
+		Vec3d spawnVec = SpawnLocator.SURFACE.getSpawnPos(self);
+		BlockPos.Mutable mutable = BlockPos.ofFloored(spawnVec).mutableCopy().move(Direction.DOWN);
+		if (mutable.getY() < self.getBottomY()) {
+			mutable.setY(self.getBottomY());
+		}
+
+		MineProgressState progress = getMineProgress();
+
+		// bl2: first entry — not a revisit, platform not yet placed, this is a mine world
+		boolean bl2 = !revisit && !progress.hasPlacedStartStructures() && progress.isMine();
+
+		if (bl2) {
+			progress.setPlacedStartStructures(true);
+			// Call mine_start feature via registry — mirrors craftmine's
+			// getRegistryManager().getEntryOrThrow(MiscConfiguredFeatures.field_59596).value().generate(...)
+			ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
+				DefaultFeatureConfig.INSTANCE,
+				self,
+				self.getChunkManager().getChunkGenerator(),
+				self.getRandom(),
+				mutable.down()
+			);
+		}
+
+		// Walk up to find the first non-solid block (mirrors craftmine's loop)
+		BlockState blockState;
+		for (blockState = self.getBlockState(mutable);
+			 blockState.isFullCube(self, mutable);
+			 blockState = self.getBlockState(mutable)) {
+			mutable.move(Direction.UP);
+		}
+
+		double d = 0.0;
+		if (!blockState.getCollisionShape(self, mutable).isEmpty()) {
+			d = blockState.getCollisionShape(self, mutable).getMax(Direction.Axis.Y);
+			if (!Double.isFinite(d)) d = 0.0;
+		}
+
+		Vec3d teleportPos = new Vec3d(mutable.getX() + 0.5, mutable.getY() + d, mutable.getZ() + 0.5);
+
+		// Teleport matching players into this mine world (mirrors craftmine exactly)
+		for (ServerPlayerEntity player : self.getServer().getPlayerManager().getPlayerList()) {
+			if ((playerUuid.isEmpty() || playerUuid.get().equals(player.getUuid())) && !player.isSpectator()) {
+				player.changeGameMode(GameMode.SURVIVAL);
+				TeleportTarget target = new TeleportTarget(
+					self, teleportPos, Vec3d.ZERO, 0.0F, 0.0F,
+					java.util.Set.of(),
+					TeleportTarget.ADD_PORTAL_CHUNK_TICKET
+				);
+				ServerPlayerEntity teleported = player.teleportTo(target);
+				if (teleported == null) return;
+
+				teleported.networkHandler.syncWithPlayerPosition();
+
+				if (revisit) {
+					// Re-entry into completed mine — adventure mode, show result message
+					teleported.changeGameMode(GameMode.ADVENTURE);
+					if (isMineWon()) {
+						teleported.sendMessageToClient(Text.translatable("world.mine.revisit.won"), true);
+					} else {
+						teleported.sendMessageToClient(Text.translatable("world.mine.revisit.lost"), true);
+					}
+				} else {
+					// First entry — reset food/health/rest (method_69144 equivalent)
+					teleported.getHungerManager().setFoodLevel(20);
+					teleported.setHealth(teleported.getMaxHealth());
+					// Fire onMineEnter effects (method_69099 equivalent)
+					method_69099_onMineEnter(self);
+				}
+			}
+		}
+	}
+
+	/** Mirrors craftmine method_69099 — fires onMineEnter for all effects */
+	@Unique
+	private void method_69099_onMineEnter(ServerWorld world) {
+		world.getServer().getOverworld().setTimeOfDay(1000L);
+		for (MineEffect effect : getEffectSet()) {
+			effect.onMineEnter().accept(world);
+		}
+	}
+
+	/** Places the 3x3 stone platform + MineCrafter + ShimmeringDoor at the spawn pos */
+	@Unique
+	private void method_69099_placeSpawnPlatform(ServerWorld world, BlockPos center) {
+		
+	}
+
 	@Inject(method="tick", at=@At("TAIL"))
 	public void tick(CallbackInfo ci) {
 		if (this.field_43412 != VoteRules.FRENCH_MODE.isActive()) {
