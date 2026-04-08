@@ -30,6 +30,8 @@ public class VotingToast implements Toast {
     private final List<OrderedText> lines;
     private final int width;
     private long startTime;
+    private long elapsed;
+    private boolean started = false;
 
     public static Optional<VotingToast> create(MinecraftClient client, Random random, Priority priority) {
         TextRenderer textRenderer = client.textRenderer;
@@ -78,8 +80,6 @@ public class VotingToast implements Toast {
         for (int j = 0; j < this.lines.size(); j++) {
             context.drawText(MinecraftClient.getInstance().textRenderer, this.lines.get(j), 18, 18 + j * 12, -1, false);
         }
-        
-        this.startTime = startTime;
 
 //        return (startTime > (50L * this.priority.delayFactor)) ? Visibility.HIDE : Visibility.SHOW;
     }
@@ -162,11 +162,15 @@ public class VotingToast implements Toast {
 
 	@Override
 	public Visibility getVisibility() {
-		return (startTime > (50L * this.priority.delayFactor)) ? Visibility.HIDE : Visibility.SHOW;
+		return (started && elapsed > (50L * this.priority.delayFactor)) ? Visibility.HIDE : Visibility.SHOW;
 	}
 
 	@Override
 	public void update(ToastManager manager, long time) {
-		
+		if (!started) {
+			this.startTime = time;
+			this.started = true;
+		}
+		this.elapsed = time - this.startTime;
 	}
 }

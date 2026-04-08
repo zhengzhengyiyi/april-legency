@@ -58,4 +58,14 @@ public class PetBeeEntity extends BasePetEntity {
     public void updateFlapping() {
         this.setFlapping(shouldFlap());
     }
+
+    /** method_69371 - Pet bees never carry nectar */
+    public boolean hasNectar() {
+        return false;
+    }
+
+    /** method_69372 - Body pitch for flight animation */
+    public float getBodyPitch(float tickDelta) {
+        return 0.0F;
+    }
 }

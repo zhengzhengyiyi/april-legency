@@ -5,12 +5,9 @@ import it.unimi.dsi.fastutil.objects.Object2BooleanOpenHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.zhengzhengyiyi.mine.effect.class_10976;
 import org.jetbrains.annotations.Nullable;
 
 /**

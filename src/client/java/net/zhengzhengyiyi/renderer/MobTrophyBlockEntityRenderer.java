@@ -7,8 +7,7 @@ import net.minecraft.client.render.block.entity.BlockEntityRendererFactory;
 import net.minecraft.client.render.block.entity.state.BlockEntityRenderState;
 import net.minecraft.client.render.command.ModelCommandRenderer;
 import net.minecraft.client.render.command.OrderedRenderCommandQueue;
-import net.minecraft.client.render.entity.EntityRenderManager;
-import net.minecraft.client.render.state.CameraRenderState;
+import net.minecraft.client.render.entity.EntityRenderManager;import net.minecraft.client.render.state.CameraRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -22,10 +21,7 @@ import org.jetbrains.annotations.Nullable;
  */
 @Environment(EnvType.CLIENT)
 public class MobTrophyBlockEntityRenderer implements BlockEntityRenderer<MobTrophyBlockEntity, MobTrophyBlockEntityRenderer.State> {
-    private final EntityRenderManager entityRenderManager;
-
     public MobTrophyBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        this.entityRenderManager = context.entityRenderDispatcher();
     }
 
     public static class State extends BlockEntityRenderState {
@@ -46,6 +42,8 @@ public class MobTrophyBlockEntityRenderer implements BlockEntityRenderer<MobTrop
 
     @Override
     public void render(State state, MatrixStack matrices, OrderedRenderCommandQueue queue, CameraRenderState camera) {
-        // Trophy entity rendering requires the new render pipeline; currently a no-op stub.
+        // TODO: state.trophy and state.facing are populated but rendering requires
+        // entity-based render pipeline support not yet available here.
+        // Implement once EntityRenderManager integration is available.
     }
 }

@@ -24,10 +24,7 @@ import net.zhengzhengyiyi.block.TravellingBlockEntity;
 @Environment(EnvType.CLIENT)
 public class TravellingBlockEntityRenderer implements BlockEntityRenderer<TravellingBlockEntity, TravellingBlockEntityRenderer.State> {
     private static final Identifier BEAM_TEXTURE = Identifier.ofVanilla("textures/entity/end_gateway_beam.png");
-    private final BlockRenderManager blockRenderManager;
-
     public TravellingBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
-        this.blockRenderManager = context.renderManager();
     }
 
     public static class State extends BlockEntityRenderState {

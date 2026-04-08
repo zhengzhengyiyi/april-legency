@@ -25,7 +25,9 @@ public class PetTurtleRenderer extends MobEntityRenderer<PetTurtleEntity, Turtle
     @Override
     public void updateRenderState(PetTurtleEntity entity, TurtleEntityRenderState state, float tickDelta) {
         super.updateRenderState(entity, state, tickDelta);
-        state.onLand = !entity.isTouchingWater() && entity.isOnGround();
+        state.onLand      = !entity.isTouchingWater() && entity.isOnGround();
+        state.diggingSand = false;  // PetTurtleEntity never lays eggs
+        state.hasEgg      = false;  // PetTurtleEntity never carries eggs
     }
 
     @Override

@@ -1,10 +1,12 @@
 {
 	"required": true,
+	"refmap": "aprils-legacy.client.refmap.json",
 	"package": "net.zhengzhengyiyi.mixin.client",
 	"compatibilityLevel": "JAVA_21",
 	"client": [
 		"ClientPlayNetworkHandlerMixin",
 		"SkyRendererMixin",
+		"WorldRendererMixin",
 		"LanguageManagerMixin",
 		"EntityRendererMixin",
 		"ItemModelTypesMixin",

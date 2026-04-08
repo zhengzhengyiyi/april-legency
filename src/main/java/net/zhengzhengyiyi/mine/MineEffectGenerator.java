@@ -204,6 +204,9 @@ public class MineEffectGenerator extends ScreenHandler {
                   }
                }
             }
+            // Trigger output slot update after intelligent slot filling
+            this.onContentChanged(this.field_58813.isEmpty() ? null : this.field_58813.get(0).inventory);
+            this.sendContentUpdates();
          }
       }
    }

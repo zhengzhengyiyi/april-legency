@@ -18,9 +18,9 @@ import net.zhengzhengyiyi.entity.pet.PetFoxEntity;
 /** class_11155 - Pet Fox renderer */
 @Environment(EnvType.CLIENT)
 public class PetFoxRenderer extends AgeableMobEntityRenderer<PetFoxEntity, FoxEntityRenderState, FoxEntityModel> {
-    private static final Identifier TEX_RED       = Identifier.ofVanilla("textures/entity/fox/fox.png");
-    private static final Identifier TEX_RED_SLEEP = Identifier.ofVanilla("textures/entity/fox/fox_sleep.png");
-    private static final Identifier TEX_SNOW      = Identifier.ofVanilla("textures/entity/fox/snow_fox.png");
+    private static final Identifier TEX_RED        = Identifier.ofVanilla("textures/entity/fox/fox.png");
+    private static final Identifier TEX_RED_SLEEP  = Identifier.ofVanilla("textures/entity/fox/fox_sleep.png");
+    private static final Identifier TEX_SNOW       = Identifier.ofVanilla("textures/entity/fox/snow_fox.png");
     private static final Identifier TEX_SNOW_SLEEP = Identifier.ofVanilla("textures/entity/fox/snow_fox_sleep.png");
 
     public PetFoxRenderer(EntityRendererFactory.Context context) {
@@ -52,8 +52,13 @@ public class PetFoxRenderer extends AgeableMobEntityRenderer<PetFoxEntity, FoxEn
     public void updateRenderState(PetFoxEntity entity, FoxEntityRenderState state, float tickDelta) {
         super.updateRenderState(entity, state, tickDelta);
         ItemHolderEntityRenderState.update(entity, state, this.itemModelResolver);
-        state.inSneakingPose = entity.isInSneakingPose();
-        state.sleeping = entity.isSleeping();
-        state.type = entity.method_69389();
+        state.headRoll                 = 0.0F;   // PetFoxEntity has no headRoll
+        state.bodyRotationHeightOffset = 0.0F;   // PetFoxEntity has no bodyRotationHeightOffset
+        state.inSneakingPose           = entity.isSneaking();
+        state.sleeping                 = entity.isSleeping();
+        state.sitting                  = entity.isSitting();
+        state.walking                  = entity.getVelocity().horizontalLengthSquared() > 1.0E-6;
+        state.chasing                  = false;  // PetFoxEntity does not chase
+        state.type                     = entity.method_69389();
     }
 }

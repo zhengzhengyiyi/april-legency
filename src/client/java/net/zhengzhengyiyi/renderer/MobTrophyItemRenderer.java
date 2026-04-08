@@ -24,7 +24,8 @@ public class MobTrophyItemRenderer implements SpecialModelRenderer<MobTrophyComp
     public void render(@Nullable MobTrophyComponent trophy, ItemDisplayContext displayContext,
                        MatrixStack matrices, OrderedRenderCommandQueue queue,
                        int light, int overlay, boolean leftHanded, int seed) {
-        // Trophy entity rendering requires the new render pipeline; currently a no-op stub.
+        // TODO: trophy data is available but rendering requires entity-based pipeline.
+        // Implement once EntityRenderManager integration is available.
     }
 
     @Override

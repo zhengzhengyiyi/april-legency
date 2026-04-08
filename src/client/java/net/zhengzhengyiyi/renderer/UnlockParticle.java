@@ -5,7 +5,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.BillboardParticle;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
-import net.minecraft.client.particle.ParticleTextureSheet;
 import net.minecraft.client.particle.SpriteProvider;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.SimpleParticleType;
@@ -21,11 +20,8 @@ public class UnlockParticle extends BillboardParticle {
 
     protected UnlockParticle(ClientWorld world, double x, double y, double z,
                               double vx, double vy, double vz, SpriteProvider sprites) {
-        super(world, x, y, z, sprites.getFirst());
+        super(world, x, y, z, vx, vy, vz, sprites.getSprite(world.random));
         this.spriteProvider = sprites;
-        this.velocityX = vx;
-        this.velocityY = vy;
-        this.velocityZ = vz;
         this.originX = x; this.originY = y; this.originZ = z;
         this.scale = 0.1F * (this.random.nextFloat() * 0.4F + 0.2F);
         float j = this.random.nextFloat() * 0.6F + 0.4F;
@@ -35,11 +31,10 @@ public class UnlockParticle extends BillboardParticle {
             this.red = j * 0.2F; this.green = j; this.blue = j * 0.2F;
         }
         this.maxAge = (int)(Math.random() * 20.0) + 50;
-        this.updateSprite(sprites);
     }
 
     @Override
-    public ParticleTextureSheet textureSheet() { return ParticleTextureSheet.SINGLE_QUADS; }
+    protected RenderType getRenderType() { return RenderType.PARTICLE_ATLAS_OPAQUE; }
 
     @Override
     public void move(double dx, double dy, double dz) {
@@ -90,10 +85,5 @@ public class UnlockParticle extends BillboardParticle {
                                        double vx, double vy, double vz, Random random) {
             return new UnlockParticle(world, x, y, z, vx, vy, vz, this.sprites);
         }
-    }
-
-    @Override
-    protected RenderType getRenderType() {
-        return RenderType.ITEM_ATLAS_TRANSLUCENT;
     }
 }
