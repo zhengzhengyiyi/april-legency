@@ -45,6 +45,7 @@ public class AprilsLegacyClient implements ClientModInitializer {
 	
 	@Override
 	public void onInitializeClient() {
+		CodeSkyPipeline.init();
 		ClientModNetworkManager.registerReceivers();
 		ModEntityRenderers.register();
 		
