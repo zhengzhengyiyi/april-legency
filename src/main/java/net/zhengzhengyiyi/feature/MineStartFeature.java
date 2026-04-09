@@ -12,10 +12,11 @@ import net.minecraft.world.gen.feature.util.FeatureContext;
 import net.zhengzhengyiyi.block.ModBlocks;
 
 /**
- * Mirrors craftmine's MiscConfiguredFeatures.field_59596 ("mine_start").
- * Places the mine spawn platform: 3x3 stone floor, MineCrafter at center,
- * ShimmeringDoor one block south.
+ * Mirrors craftmine's MiscConfiguredFeatures.field_59596 ("mine_start") / "mines/start_platform".
+ * This is the structure placed inside a MINE WORLD on first entry (via method_69093).
+ * It places a DimensionControlBlock — the in-mine control interface — on a stone platform.
  *
+ * The MineCrafter block belongs in the mine CONTROL dimension (overworld), placed by initHub.
  * Called by ServerWorldMixin.method_69093 on first entry, exactly like
  * craftmine calls MiscConfiguredFeatures.field_59596.generate().
  */
@@ -46,10 +47,10 @@ public class MineStartFeature extends Feature<DefaultFeatureConfig> {
             }
         }
 
-        // MineCrafter at center
-        world.setBlockState(floor.up(), ModBlocks.MINE_CRAFTER.getDefaultState(), 3);
+        // DimensionControlBlock at center — the in-mine control interface (mirrors mines/start_platform)
+        world.setBlockState(floor.up(), ModBlocks.DIMENSION_CONTROL.getDefaultState(), 3);
 
-        // ShimmeringDoor one block south, facing north
+        // ShimmeringDoor one block south, facing north (exit portal)
         BlockPos doorBase = floor.add(0, 1, 1);
         BlockState doorLower = ModBlocks.SHIMMERING_DOOR.getDefaultState()
             .with(net.minecraft.block.DoorBlock.FACING, Direction.NORTH)

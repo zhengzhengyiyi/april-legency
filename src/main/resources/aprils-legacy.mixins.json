@@ -24,7 +24,8 @@
 		"ChunkGeneratorSettingsMixin",
 		"BiomeMixin",
 		"SlotMixin",
-		"BiomeWeatherMixin"
+		"BiomeWeatherMixin",
+		"ChunkGeneratorsMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

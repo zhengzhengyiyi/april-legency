@@ -24,6 +24,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
@@ -31,7 +32,6 @@ import net.minecraft.world.GameMode;
 import net.minecraft.world.MutableWorldProperties;
 import net.minecraft.world.PersistentStateManager;
 import net.minecraft.world.TeleportTarget;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.level.ServerWorldProperties;
@@ -219,10 +219,11 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 
 		if (bl2) {
 			progress.setPlacedStartStructures(true);
-			// Call mine_start feature via registry — mirrors craftmine's
-			// getRegistryManager().getEntryOrThrow(MiscConfiguredFeatures.field_59596).value().generate(...)
+			// Mirrors craftmine: getRegistryManager().getEntryOrThrow(MiscConfiguredFeatures.field_59596).value().generate(...)
+			// field_59596 = Feature.PLACE_TEMPLATE with class_11086(List.of("mines/start_platform"))
+			// We use StructureFeature (class_11085) + StructureFeatureConfig (class_11086) directly.
 			ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
-				DefaultFeatureConfig.INSTANCE,
+				new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/start_platform")),
 				self,
 				self.getChunkManager().getChunkGenerator(),
 				self.getRandom(),

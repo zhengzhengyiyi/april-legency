@@ -194,6 +194,35 @@ public class MinecraftServerMixin implements VoteServer, net.zhengzhengyiyi.acce
     	        convertToContext(VoteDefinition.VoteSettings.create(this.random)), arg -> method_51109(arg, true), this::startVote);
     }
     
+    /**
+     * Mirrors craftmine GameInstance.initHub.
+     * On first tick after world load, places the MineCrafter block at HUB_SPAWN_POS (13, 2, 8)
+     * in the overworld (the mine control dimension) and sets the spawn point.
+     * HUB_SPAWN_POS = (13, 2, 8), angle = 90.0F — matches craftmine GameInstance constants.
+     * Uses a one-time flag so it only runs once per server lifetime.
+     */
+    @Unique
+    private boolean hubInitialized = false;
+
+    @Inject(method="tick", at=@At("HEAD"))
+    private void onFirstTick(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {
+        if (hubInitialized) return;
+        hubInitialized = true;
+
+        MinecraftServer self = (MinecraftServer)(Object)this;
+        net.minecraft.server.world.ServerWorld overworld = self.getOverworld();
+        if (overworld == null) return;
+
+        // HUB_SPAWN_POS = (13, 2, 8) — mirrors GameInstance.HUB_SPAWN_POS in craftmine
+        net.minecraft.util.math.BlockPos hubSpawn = new net.minecraft.util.math.BlockPos(13, 2, 8);
+
+        // Place MineCrafter block at hub spawn only if not already there
+        // Mirrors craftmine initHub which places the hub structure at HUB_SPAWN_POS
+        if (!overworld.getBlockState(hubSpawn).isOf(net.zhengzhengyiyi.block.ModBlocks.MINE_CRAFTER)) {
+            overworld.setBlockState(hubSpawn, net.zhengzhengyiyi.block.ModBlocks.MINE_CRAFTER.getDefaultState());
+        }
+    }
+    
     public VoteResults method_51113(UUID uUID, boolean bl) {
       VoteResults lv = this.voteManager.forceFinish(uUID);
       if (lv != null)

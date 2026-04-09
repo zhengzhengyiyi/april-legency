@@ -6,12 +6,12 @@ import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.gen.feature.ConfiguredFeature;
-import net.minecraft.world.gen.feature.DefaultFeatureConfig;
-import net.minecraft.world.gen.feature.Feature;
 import net.zhengzhengyiyi.AprilsLegacy;
 
 /**
  * Mirrors craftmine's MiscConfiguredFeatures.
+ * field_59596 = "mine_start" uses Feature.PLACE_TEMPLATE with class_11086(List.of("mines/start_platform"))
+ * We mirror this exactly: StructureFeature (class_11085) + StructureFeatureConfig (class_11086).
  */
 public class ModConfiguredFeatures {
 
@@ -20,8 +20,9 @@ public class ModConfiguredFeatures {
         RegistryKey.of(RegistryKeys.CONFIGURED_FEATURE,
             Identifier.of(AprilsLegacy.MOD_ID, "mine_start"));
 
-    public static final Feature<DefaultFeatureConfig> MINE_START_FEATURE =
-        new MineStartFeature(DefaultFeatureConfig.CODEC);
+    /** Mirrors Feature.PLACE_TEMPLATE (class_11085) */
+    public static final StructureFeature MINE_START_FEATURE =
+        new StructureFeature(StructureFeatureConfig.CODEC);
 
     public static void init() {
         Registry.register(Registries.FEATURE,
