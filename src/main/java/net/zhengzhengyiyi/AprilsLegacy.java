@@ -245,6 +245,15 @@ public class AprilsLegacy implements ModInitializer {
 		ServerLifecycleEvents.SERVER_STARTED.register(server -> {
 			fantasy = Fantasy.get(server);
 			AprilsLegacy.server = server;
+
+			// Mirrors craftmine GameInstance.initHub — set overworld spawn to hub spawn position.
+			// Craftmine uses BlockPos(13, 2, 8) / angle 90.0F; this mod uses BlockPos(8, 8, 4).
+			((net.minecraft.world.MutableWorldProperties) server.getSaveProperties().getMainWorldProperties())
+				.setSpawnPoint(net.minecraft.world.WorldProperties.SpawnPoint.create(
+					net.minecraft.world.World.OVERWORLD,
+					new net.minecraft.util.math.BlockPos(8, 8, 4),
+					90.0F, 0.0F
+				));
 		});
 	}
 	

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:jigsaw",
+  "biomes": "#minecraft:is_overworld",
+  "max_distance_from_center": 80,
+  "project_start_to_heightmap": "OCEAN_FLOOR_WG",
+  "project_start_to_surface": true,
+  "size": 7,
+  "spawn_overrides": {},
+  "start_height": {
+    "type": "minecraft:uniform",
+    "max_inclusive": {
+      "above_bottom": 120
+    },
+    "min_inclusive": {
+      "above_bottom": 0
+    }
+  },
+  "start_pool": "minecraft:mine_exits/root",
+  "step": "underground_structures",
+  "use_expansion_hack": false
+}

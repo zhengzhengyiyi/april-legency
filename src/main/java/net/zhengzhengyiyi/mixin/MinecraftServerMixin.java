@@ -184,7 +184,12 @@ public class MinecraftServerMixin implements VoteServer, net.zhengzhengyiyi.acce
     public void method_69081(class_11099 arg) {
         this.field_58292.add(arg);
         this.field_58293.add(arg);
-     }
+    }
+
+    @Override
+    public java.util.List<class_11099> method_69107() {
+        return this.field_58293;
+    }
     
     @Inject(method="tickWorlds", at = @At("HEAD"))
     private void tickWorlds(BooleanSupplier shouldKeepTicking, CallbackInfo ci) {

@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.minecraft.block.BlockState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.RegistryKey;
@@ -23,10 +22,12 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.MutableWorldProperties;
@@ -43,7 +44,6 @@ import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.MineProgressState;
 import net.zhengzhengyiyi.mine.MineWorldEffectsState;
-import net.zhengzhengyiyi.mine.SpawnLocator;
 import net.zhengzhengyiyi.mine.effect.MineUnlockCondition;
 import net.zhengzhengyiyi.mine.effect.UnlockMode;
 import net.zhengzhengyiyi.network.ClientPacket0;
@@ -197,20 +197,23 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	}
 	
 	/**
-	 * Mirrors craftmine ServerWorld.method_69093 exactly.
-	 * Places the spawn platform on first entry, fires onMineEnter, teleports players into this mine world.
+	 * Mirrors craftmine ServerWorld.method_69093.
+	 * Places the spawn platform and optional structures on first entry,
+	 * fires onMineEnter, teleports players into this mine world.
+	 *
+	 * Structure placement mirrors craftmine exactly:
+	 *   field_59596 (start_platform)  — always on first entry
+	 *   field_59597 (warden_arena)    — when warden_boss_fight effect active, at (spawnX+40, spawnY, spawnZ)
+	 *   field_59598/599/600 (ice balls) — when kuiper_world effect active, 150× random in a box
+	 *   field_59601 (space_igloo)     — when kuiper_world effect active, at spawn, CLOCKWISE_90
 	 */
 	@Override
 	public void method_69093(boolean revisit, Optional<UUID> playerUuid) {
 		ServerWorld self = (ServerWorld)(Object)this;
 
-		// Get spawn position from SpawnLocator — for Fantasy worlds the dimension registry
-		// entry doesn't exist, so we use SURFACE directly (matches the default in craftmine)
-		Vec3d spawnVec = SpawnLocator.SURFACE.getSpawnPos(self);
-		BlockPos.Mutable mutable = BlockPos.ofFloored(spawnVec).mutableCopy().move(Direction.DOWN);
-		if (mutable.getY() < self.getBottomY()) {
-			mutable.setY(self.getBottomY());
-		}
+		// Fixed spawn position for mine worlds: x=8, y=4, z=8
+		// The start platform is placed at y=3 (mutable.down()), player stands on top at y=4.
+		BlockPos.Mutable mutable = new BlockPos.Mutable(8, 4, 8);
 
 		MineProgressState progress = getMineProgress();
 
@@ -219,38 +222,28 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 
 		if (bl2) {
 			progress.setPlacedStartStructures(true);
-			// Mirrors craftmine: getRegistryManager().getEntryOrThrow(MiscConfiguredFeatures.field_59596).value().generate(...)
-			// field_59596 = Feature.PLACE_TEMPLATE with class_11086(List.of("mines/start_platform"))
-			// We use StructureFeature (class_11085) + StructureFeatureConfig (class_11086) directly.
+
+			// field_59597: warden_arena — placed at (spawnX+40, spawnY, spawnZ) when warden effect active
+			if (isMineWorldEffect(net.zhengzhengyiyi.mine.effect.class_11113.field_59244)) {
+				BlockPos wardenPos = new BlockPos(mutable.getX() + 40, mutable.getY(), mutable.getZ());
+				ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
+					new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/warden_arena")),
+					self, self.getChunkManager().getChunkGenerator(), self.getRandom(), wardenPos
+				);
+			}
+
+			// field_59596: start_platform — always placed at mutable.down()
 			ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
 				new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/start_platform")),
-				self,
-				self.getChunkManager().getChunkGenerator(),
-				self.getRandom(),
-				mutable.down()
+				self, self.getChunkManager().getChunkGenerator(), self.getRandom(), mutable.down()
 			);
 		}
 
-		// Walk up to find the first non-solid block (mirrors craftmine's loop)
-		BlockState blockState;
-		for (blockState = self.getBlockState(mutable);
-			 blockState.isFullCube(self, mutable);
-			 blockState = self.getBlockState(mutable)) {
-			mutable.move(Direction.UP);
-		}
+		Vec3d teleportPos = new Vec3d(8.5, 4.0, 8.5);
 
-		double d = 0.0;
-		if (!blockState.getCollisionShape(self, mutable).isEmpty()) {
-			d = blockState.getCollisionShape(self, mutable).getMax(Direction.Axis.Y);
-			if (!Double.isFinite(d)) d = 0.0;
-		}
-
-		Vec3d teleportPos = new Vec3d(mutable.getX() + 0.5, mutable.getY() + d, mutable.getZ() + 0.5);
-
-		// Teleport matching players into this mine world (mirrors craftmine exactly)
+		// Teleport matching players into this mine world
 		for (ServerPlayerEntity player : self.getServer().getPlayerManager().getPlayerList()) {
 			if ((playerUuid.isEmpty() || playerUuid.get().equals(player.getUuid())) && !player.isSpectator()) {
-				player.changeGameMode(GameMode.SURVIVAL);
 				TeleportTarget target = new TeleportTarget(
 					self, teleportPos, Vec3d.ZERO, 0.0F, 0.0F,
 					java.util.Set.of(),
@@ -270,10 +263,9 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 						teleported.sendMessageToClient(Text.translatable("world.mine.revisit.lost"), true);
 					}
 				} else {
-					// First entry — reset food/health/rest (method_69144 equivalent)
+					// First entry — reset food/health, fire onMineEnter
 					teleported.getHungerManager().setFoodLevel(20);
 					teleported.setHealth(teleported.getMaxHealth());
-					// Fire onMineEnter effects (method_69099 equivalent)
 					method_69099_onMineEnter(self);
 				}
 			}
@@ -297,6 +289,7 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 
 	@Inject(method="tick", at=@At("TAIL"))
 	public void tick(CallbackInfo ci) {
+		// French mode item handling
 		if (this.field_43412 != VoteRules.FRENCH_MODE.isActive()) {
 	         this.field_43412 = VoteRules.FRENCH_MODE.isActive();
 	         if (this.field_43412) {
@@ -310,11 +303,132 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	            });
 	         } else {
 	            getPlayers().forEach(serverPlayerEntity -> {
-//	               serverPlayerEntity.getInventory().method_50711(ModItems.LE_TRICOLORE, Items.AIR);
 	            	serverPlayerEntity.getInventory().removeOne(new ItemStack(ModItems.LE_TRICOLORE));
 	               serverPlayerEntity.currentScreenHandler.sendContentUpdates();
 	            });
 	         }
 	      }
+
+		// Mine world tick logic — mirrors craftmine ServerWorld.method_69095
+		if (!getPlayers().isEmpty() && isMineWorld()) {
+			tickMineMechanics();
+		}
+	}
+
+	/**
+	 * Mirrors craftmine ServerWorld.method_69095.
+	 * Handles onMineTick callbacks, leave countdown with broadcasts/sounds, and onMineLeave.
+	 * Also mirrors method_69094: when event_exit effect is active and all wave events are won,
+	 * generates the mine exit structure via StructurePoolBasedGenerator.
+	 */
+	@Unique
+	private void tickMineMechanics() {
+		ServerWorld self = (ServerWorld)(Object)this;
+		MineProgressState progress = getMineProgress();
+
+		if (!isMineCompleted()) {
+			// Mine still ongoing — fire onMineTick for all active effects
+			for (MineEffect effect : getEffectSet()) {
+				effect.onMineTick().accept(self);
+			}
+
+			// Mirrors method_69094: if event_exit effect is active, tick wave events and
+			// generate exit structure when all in-progress events are won.
+			if (isMineWorldEffect(net.zhengzhengyiyi.mine.effect.class_11113.field_59257)) {
+				net.zhengzhengyiyi.accessor.MinecraftServerAccessor serverAccessor =
+					(net.zhengzhengyiyi.accessor.MinecraftServerAccessor)(Object) self.getServer();
+				java.util.List<net.zhengzhengyiyi.mine.class_11099> inProgress = serverAccessor.method_69107();
+				if (!inProgress.isEmpty()) {
+					inProgress.forEach(event -> event.tick(self));
+					// Check if any failed → complete mine as failed
+					if (inProgress.stream().anyMatch(e -> e.getStatus() == net.zhengzhengyiyi.mine.class_11099.Status.FAILED)) {
+						// mine failed — handled by the event system
+					} else if (inProgress.stream().allMatch(e -> e.getStatus() == net.zhengzhengyiyi.mine.class_11099.Status.WON)) {
+						// All events won — generate exit structure at the first event's spawn pos
+						BlockPos exitPos = inProgress.get(0).getPos();
+						try {
+							net.minecraft.structure.pool.StructurePoolBasedGenerator.generate(
+								self,
+								self.getRegistryManager().getEntryOrThrow(
+									net.minecraft.registry.RegistryKey.of(
+										net.minecraft.registry.RegistryKeys.TEMPLATE_POOL,
+										net.minecraft.util.Identifier.ofVanilla("mine_exits/starts")
+									)
+								),
+								net.minecraft.util.Identifier.ofVanilla("start"),
+								7,
+								exitPos,
+								false
+							);
+						} catch (Exception e) {
+							AprilsLegacy.LOGGER.warn("Failed to generate mine exit structure: {}", e.getMessage());
+						}
+					}
+					inProgress.removeIf(e -> e.getStatus() == net.zhengzhengyiyi.mine.class_11099.Status.WON);
+				}
+			}
+		} else {
+			// Mine completed — run leave countdown
+			java.util.Optional<BlockPos> travellingBlockPos = progress.getTravellingBlockPos();
+			if (travellingBlockPos.isPresent()) {
+				int countdown = progress.getLeaveCountdown();
+				if (progress.tickLeaveCountdown()) {
+					// Countdown hit zero — fire onMineLeave and teleport everyone out
+					onMineLeave(self);
+					teleportAllToOverworld(self);
+				} else if (countdown % 20 == 0) {
+					// Broadcast countdown every second with portal sound
+					int secondsLeft = countdown / 20;
+					float f = 1.0F - countdown / 200.0F;
+					float pitch = 0.75F + 6.0F * f * f;
+					if (isMineWon()) {
+						self.getServer().getPlayerManager()
+							.broadcast(Text.translatable("mine.leave", secondsLeft)
+								.setStyle(Style.EMPTY.withBold(true)), true);
+					} else {
+						self.getServer().getPlayerManager()
+							.broadcast(Text.translatable("mine.leave", secondsLeft), true);
+					}
+					self.playSound(null, travellingBlockPos.get(),
+						SoundEvents.BLOCK_END_PORTAL_SPAWN, SoundCategory.AMBIENT,
+						(float)(0.15 + 0.04 * pitch), (float)(0.3 + 0.08 * pitch));
+				}
+			} else if (progress.getLeaveCountdown() != MineProgressState.DEFAULT_COUNTDOWN) {
+				progress.resetLeaveCountdown();
+			}
+		}
+	}
+
+	/** Mirrors craftmine method_69100 — fires onMineLeave for all effects, resets overworld time */
+	@Unique
+	private void onMineLeave(ServerWorld world) {
+		for (MineEffect effect : getEffectSet()) {
+			effect.onMineLeave().accept(world);
+		}
+		world.getServer().getOverworld().setTimeOfDay(1000L);
+	}
+
+	/** Teleports all players in this mine world back to the overworld spawn */
+	@Unique
+	private void teleportAllToOverworld(ServerWorld self) {
+		ServerWorld overworld = self.getServer().getOverworld();
+		Vec3d spawnPos = overworld.getSpawnPoint().getPos().toCenterPos();
+		TeleportTarget target = new TeleportTarget(overworld, spawnPos, Vec3d.ZERO,
+			0.0F, 0.0F, TeleportTarget.NO_OP);
+
+		for (ServerPlayerEntity player : new java.util.ArrayList<>(self.getPlayers())) {
+			if (!player.isSpectator()) {
+				Text result = isMineWon()
+					? Text.translatable("mine.won").setStyle(Style.EMPTY.withBold(true).withColor(0xFF55FF))
+					: Text.translatable("mine.lost").setStyle(Style.EMPTY.withBold(true).withColor(0xFF0000));
+				ServerPlayerEntity teleported = player.teleportTo(target);
+				if (teleported != null) {
+					teleported.sendMessage(result, true);
+					teleported.getHungerManager().setFoodLevel(20);
+					teleported.setHealth(teleported.getMaxHealth());
+					teleported.networkHandler.syncWithPlayerPosition();
+				}
+			}
+		}
 	}
 }
