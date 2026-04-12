@@ -4,7 +4,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import net.minecraft.entity.SpawnGroup;
 import net.minecraft.registry.RegistryKey;
@@ -101,36 +100,13 @@ public class DimensionSettingsBuilder {
    }
 
    public ChunkGenerator createGenerator(String subPath) {
-      RegistryWrapper.Impl<Biome> biomeRegistry = this.registryManager.getOrThrow(RegistryKeys.BIOME);
-      List<BiomeMapping> mappings = this.buildBiomeMappings(biomeRegistry, subPath);
-
-      Map<RegistryKey<Biome>, RegistryKey<Biome>> keyMap = mappings.stream()
-         .collect(Collectors.toMap(BiomeMapping::original, BiomeMapping::modified));
-
-      Map<RegistryEntry<Biome>, RegistryEntry<Biome>> entryMap = keyMap.entrySet()
-         .stream()
-         .collect(Collectors.toMap(entry -> biomeRegistry.getOrThrow(entry.getKey()), entry -> biomeRegistry.getOrThrow(entry.getValue())));
-
-      // If specific biomes were requested by effects, use them; otherwise fall back to full overworld noise
-      final BiomeSource biomeSource;
-      if (!this.allowedBiomes.isEmpty()) {
-         // Pick the first allowed biome (remapped if modified), use FixedBiomeSource so the world
-         // actually reflects the selected biome rather than defaulting to overworld noise
-         RegistryEntry<Biome> selectedBiome = this.allowedBiomes.stream()
-            .map(key -> {
-               RegistryEntry<Biome> entry = biomeRegistry.getOrThrow(key);
-               return entryMap.getOrDefault(entry, entry);
-            })
-            .findFirst()
-            .orElseGet(() -> biomeRegistry.getOrThrow(this.allowedBiomes.iterator().next()));
-         biomeSource = new net.minecraft.world.biome.source.FixedBiomeSource(selectedBiome);
-      } else {
-         // No biome filter — use the full overworld multi-noise source via registry
-         var paramList = this.registryManager
-            .getOrThrow(RegistryKeys.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
-            .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
-         biomeSource = MultiNoiseBiomeSource.create(paramList);
-      }
+      // Mirrors craftmine class_11114.method_70204:
+      // Always use MultiNoiseBiomeSource — filter to allowed biomes if specified.
+      // FixedBiomeSource breaks terrain generation for noise-based chunk generators.
+      var paramListRegistry = this.registryManager
+         .getOrThrow(RegistryKeys.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
+         .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
+      final BiomeSource biomeSource = MultiNoiseBiomeSource.create(paramListRegistry);
 
       RegistryWrapper.Impl<ChunkGeneratorSettings> settingsRegistry = this.registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
 

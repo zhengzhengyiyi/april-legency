@@ -18,7 +18,6 @@ import net.minecraft.entity.passive.FrogEntity;
 import net.minecraft.entity.passive.PigEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryEntryLookup;
 import net.minecraft.registry.RegistryKeys;
@@ -28,30 +27,24 @@ import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.EntityTypeTags;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Unit;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.random.Random;
 import net.minecraft.world.biome.Biome;
-import net.minecraft.world.biome.BiomeEffects;
 import net.minecraft.world.biome.BiomeKeys;
 import net.minecraft.world.biome.SpawnSettings;
-import net.minecraft.world.dimension.DimensionType;
-import net.minecraft.world.gen.GenerationStep;
 import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 import net.minecraft.world.gen.chunk.FlatChunkGenerator;
 import net.minecraft.world.gen.chunk.FlatChunkGeneratorConfig;
 import net.minecraft.world.gen.chunk.FlatChunkGeneratorLayer;
-import net.minecraft.world.gen.densityfunction.DensityFunctions;
-import net.minecraft.world.gen.feature.EndPlacedFeatures;
 import net.minecraft.world.rule.GameRules;
 import net.zhengzhengyiyi.AprilsLegacy;
 import net.zhengzhengyiyi.component.MineEffectComponent;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
+import net.zhengzhengyiyi.generator.generation.class_11075;
 import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.SpawnLocator;
 import net.zhengzhengyiyi.mine.class_11056;
@@ -78,49 +71,43 @@ public class class_11113 {
       .method_69944(field_59247)
       .condition(MineUnlockCondition.itemUse((serverWorld, blockState, blockPos) -> blockPos.getY() >= 100))
       .build();
-//   public static final MineEffect field_59249 = MineEffect.builder("cave_world")
-//      .method_69939(arg -> arg.setBaseSettings(ChunkGeneratorSettings.CAVES).method_70200(SpawnLocator.CAVE).method_70203(DimensionType::method_69790))
-//      .method_69937("cave_world")
-//      .group(WORLD_TYPE)
-//      .method_69944(field_59247)
-//      .condition(MineUnlockCondition.method_69656((serverWorld, blockState, blockPos) -> blockPos.getY() < 0))
-//      .build();
-//   public static final MineEffect field_59250 = MineEffect.builder("shattered_blocks_world")
-//      .method_69939(
-//         arg -> arg.modifySettings(
-//            arg2 -> arg2.method_69807(
-//               DensityFunctions.createSurfaceNoiseRouter(
-//                  arg.method_70191().getOrThrow(RegistryKeys.DENSITY_FUNCTION), arg.method_70191().getOrThrow(RegistryKeys.NOISE_PARAMETERS), false, true
-//               )
-//            )
-//         )
-//      )
-//		    TODO
-//      .method_69937("shattered_blocks")
-//      .group(WORLD_TYPE)
-//      .method_69944(field_59248, field_59249)
-//      .condition(MineUnlockCondition.method_69640(true))
-//      .build();
-//   public static final MineEffect field_59251 = MineEffect.builder("grid_world")
-//      .method_69939(arg -> arg.method_70201((wrapperLookup, biomeSource, registryEntry) -> {
-//         Random random = ((ChunkGeneratorSettings)registryEntry.value()).getRandomProvider().create(((ChunkGeneratorSettings)registryEntry.value()).salt());
-//         int i = 2 << random.nextInt(3);
-//         int j = random.nextBetween(1, Math.min(i - 1, 3));
-//         int k = random.nextBetween(0, 64);
-//         return new class_11075(biomeSource, registryEntry, i, j, k, true);
-//      }))
-//      .method_69937("grid_world")
-//      .group(WORLD_TYPE)
-//      .method_69944(field_59250)
-//      .condition(MineUnlockCondition.method_69640(true))
-//      .build();
-//   public static final MineEffect field_59252 = MineEffect.builder("dark_cave_world")
-//      .method_69939(arg -> arg.setBaseSettings(ChunkGeneratorSettings.CAVES).method_70200(SpawnLocator.CAVE))
-//      .method_69937("dark_cave_world")
-//      .group(WORLD_TYPE)
-//      .method_69944(field_59251)
-//      .condition(MineUnlockCondition.method_69640(true))
-//      .build();
+   public static final MineEffect field_59249 = MineEffect.builder("cave_world")
+      .method_69939(arg -> arg
+         .setBaseSettings(ChunkGeneratorSettings.CAVES)
+         .setSpawnLocator(SpawnLocator.CAVE)
+         // DimensionType::method_69790 (cave-specific dim type) is April Fools-only and is not
+         // available in the mod's Minecraft version — dimension type modification skipped.
+      )
+      .method_69937("cave_world")
+      .group(WORLD_TYPE)
+      .method_69944(field_59247)
+      .condition(MineUnlockCondition.method_69656((serverWorld, blockState, blockPos) -> blockPos.getY() < 0))
+      .build();
+   // field_59250 (shattered_blocks_world): DensityFunctions.createSurfaceNoiseRouter is protected in
+   // this Minecraft version and cannot be called from outside the package without a mixin accessor.
+   // TODO: add an @Accessor mixin for DensityFunctions.createSurfaceNoiseRouter to enable this effect.
+   public static final MineEffect field_59251 = MineEffect.builder("grid_world")
+      .method_69939(arg -> arg.setGeneratorFactory((wrapperLookup, biomeSource, registryEntry) -> {
+         // Note: ChunkGeneratorSettings.salt() doesn't exist in this Minecraft version.
+         // Using a fixed seed (0L) as a workaround. The grid world will have consistent patterns.
+         Random random = ((ChunkGeneratorSettings) registryEntry.value()).getRandomProvider().create(0L);
+         int i = 2 << random.nextInt(3);
+         int j = random.nextBetween(1, Math.min(i - 1, 3));
+         int k = random.nextBetween(0, 64);
+         return new class_11075(biomeSource, registryEntry, i, j, k, true);
+      }))
+      .method_69937("grid_world")
+      .group(WORLD_TYPE)
+      .method_69944(field_59248, field_59249)
+      .condition(MineUnlockCondition.method_69640(true))
+      .build();
+   public static final MineEffect field_59252 = MineEffect.builder("dark_cave_world")
+      .method_69939(arg -> arg.setBaseSettings(ChunkGeneratorSettings.CAVES).setSpawnLocator(SpawnLocator.CAVE))
+      .method_69937("dark_cave_world")
+      .group(WORLD_TYPE)
+      .method_69944(field_59251)
+      .condition(MineUnlockCondition.method_69640(true))
+      .build();
    public static final MineEffectGroup EXITS = method_70055("exits");
 //   public static final MineEffect field_59254 = MineEffect.builder("surface_exits")
 //      .method_69937("surface_exits")
@@ -624,7 +611,7 @@ public class class_11113 {
       .item(Items.PIGLIN_SPAWN_EGG)
       .condition(
          MineUnlockCondition.method_69646(
-            (serverWorld, serverPlayerEntity, animalEntity, itemStack) -> animalEntity instanceof PigEntity pigEntity && itemStack.isOf(Items.GOLDEN_CARROT)
+            (serverWorld, serverPlayerEntity, animalEntity, itemStack) -> animalEntity instanceof PigEntity && itemStack.isOf(Items.GOLDEN_CARROT)
          )
       )
       .method_69939(
@@ -765,50 +752,56 @@ public class class_11113 {
       .method_69929(2.0F)
       .method_69958()
       .build();
+   // field_59202 (eternal_night): GameRules.DO_DAYLIGHT_CYCLE doesn't exist in this Minecraft version.
+   // The game rule for controlling the daylight cycle is not available in the mod's target version.
+   // TODO: Find an alternative approach or use a mixin to control the daylight cycle if needed.
 //   public static final MineEffect field_59202 = MineEffect.builder("eternal_night")
 //      .item(Items.BLUE_DYE)
 //      .style(field_59197)
 //      .method_69951(serverWorld -> {
-//         serverWorld.method_69071().getOverworld().setTimeOfDay(18000L);
-//         serverWorld.method_69071().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, serverWorld.method_69071());
+//         serverWorld.getServer().getOverworld().setTimeOfDay(18000L);
+//         serverWorld.getServer().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, serverWorld.getServer());
 //      })
-//      .method_69957(serverWorld -> serverWorld.method_69071().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, serverWorld.method_69071()))
+//      .method_69957(serverWorld -> serverWorld.getServer().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, serverWorld.getServer()))
 //      .method_69952(field_59249, field_59252)
 //      .method_69929(5.0F)
 //      .method_69947(20)
 //      .build();
+// field_59203 (eternal_rain): depends on field_59202 (eternal_night) which is commented out.
 //   public static final MineEffect field_59203 = MineEffect.builder("eternal_rain")
 //      .item(Items.BLACK_DYE)
 //      .style(field_59197)
 //      .method_69951(serverWorld -> {
 //         serverWorld.setRainGradient(1.0F);
-//         serverWorld.method_69071().getGameRules().get(GameRules.ADVANCE_WEATHER).set(false, serverWorld.method_69071());
+//         serverWorld.getGameRules().setValue(GameRules.ADVANCE_WEATHER, false, serverWorld.getServer());
 //      })
 //      .method_69957(serverWorld -> {
 //         serverWorld.setRainGradient(0.0F);
-//         serverWorld.method_69071().getGameRules().get(GameRules.ADVANCE_WEATHER).set(true, serverWorld.method_69071());
+//         serverWorld.getGameRules().setValue(GameRules.ADVANCE_WEATHER, true, serverWorld.getServer());
 //      })
 //      .condition(MineUnlockCondition.method_69642(true, field_59202))
 //      .method_69952(field_59249, field_59252)
 //      .method_69929(2.0F)
 //      .build();
+// field_59204 (eternal_lightning): depends on field_59203 (eternal_rain) which is commented out.
 //   public static final MineEffect field_59204 = MineEffect.builder("eternal_lightning")
 //      .item(Items.YELLOW_DYE)
 //      .style(field_59197)
 //      .method_69951(serverWorld -> {
 //         serverWorld.setThunderGradient(1.0F);
 //         serverWorld.setRainGradient(1.0F);
-//         serverWorld.method_69071().getGameRules().get(GameRules.ADVANCE_WEATHER).set(false, serverWorld.method_69071());
+//         serverWorld.getGameRules().setValue(GameRules.ADVANCE_WEATHER, false, serverWorld.getServer());
 //      })
 //      .method_69957(serverWorld -> {
 //         serverWorld.setThunderGradient(0.0F);
 //         serverWorld.setRainGradient(0.0F);
-//         serverWorld.method_69071().getGameRules().get(GameRules.ADVANCE_WEATHER).set(true, serverWorld.method_69071());
+//         serverWorld.getGameRules().setValue(GameRules.ADVANCE_WEATHER, true, serverWorld.getServer());
 //      })
 //      .condition(MineUnlockCondition.method_69642(true, field_59203))
 //      .method_69952(field_59249, field_59252)
 //      .method_69929(5.0F)
 //      .build();
+// field_59205 (insomniacs): depends on field_59202 (eternal_night) which is commented out.
 //   public static final MineEffect field_59205 = MineEffect.builder("insomniacs")
 //      .item(Items.PHANTOM_SPAWN_EGG)
 //      .style(field_59211)
@@ -825,14 +818,22 @@ public class class_11113 {
       .method_69947(20)
       .method_69929(5.0F)
       .build();
+// field_59207 (ultrawarm): method_69693() doesn't exist on Float (temperature value), and
+   // skyColor() doesn't exist on BiomeEffects in this Minecraft version.
 //   public static final MineEffect field_59207 = MineEffect.builder("ultrawarm")
 //      .style(field_59197)
 //      .item(Items.LAVA_BUCKET)
 //      .method_69939(
-//         arg -> arg.method_70203(DimensionType::method_69789)
-//            .method_70208(
-//               argx -> argx.method_69677(builder -> builder.temperature(builder.method_69693() + 1.0F))
-//                  .method_69680(builder -> builder.skyColor(ColorHelper.getArgb(234, 178, 255)))
+//         arg -> arg.addDimensionModifier(dt -> new DimensionType(
+//            dt.hasFixedTime(), dt.hasSkyLight(), dt.hasCeiling(),
+//            dt.coordinateScale(), dt.minY(), dt.height(),
+//            dt.logicalHeight(), dt.infiniburn(),
+//            dt.ambientLight(), dt.monsterSettings(),
+//            dt.skybox(), dt.cardinalLightType(), dt.attributes(), dt.timelines()
+//         ))
+//            .addGlobalBiomeModifier(
+//               argx -> argx.method_69677(builder -> builder.temperature(builder + 1.0F))
+//                  .method_69680(builder -> builder.withSkyColor(ColorHelper.getArgb(234, 178, 255)))
 //            )
 //            .modifySettings(argx -> argx.method_69814(Blocks.LAVA.getDefaultState()))
 //      )
@@ -840,12 +841,13 @@ public class class_11113 {
 //      .method_69960()
 //      .method_69947(20)
 //      .build();
+// field_59208 (explosive_traps): getWorlds() returns Iterable<ServerWorld> which has no size() method.
 //   public static final MineEffect field_59208 = MineEffect.builder("explosive_traps")
 //      .style(field_59197)
 //      .item(Items.TNT)
 //      .method_69929(1.5F)
 //      .method_69952(field_59164, field_59249, field_59252)
-//      .condition(MineUnlockCondition.method_69659((serverWorld, serverPlayerEntity) -> serverWorld.method_69071().getWorlds().size() > 10))
+//      .condition(MineUnlockCondition.method_69659((serverWorld, serverPlayerEntity) -> serverWorld.getServer().getWorlds().size() > 10))
 //      .build();
    public static final MineEffect field_59209 = MineEffect.builder("fish_out_of_water")
       .item(Items.TROPICAL_FISH)
@@ -855,42 +857,37 @@ public class class_11113 {
       .method_69929(5.0F)
       .method_69946()
       .build();
-//   public static final MineEffect field_59210 = MineEffect.builder("kuiper_world")
-//      .method_69951(serverWorld -> {
-//         serverWorld.method_69071().getOverworld().setTimeOfDay(18000L);
-//         serverWorld.method_69071().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(false, serverWorld.method_69071());
-//      })
-//      .method_69957(serverWorld -> serverWorld.method_69071().getGameRules().get(GameRules.DO_DAYLIGHT_CYCLE).set(true, serverWorld.method_69071()))
-//      .method_69939(
-//         arg -> arg.method_70201(
-//            (wrapperLookup, biomeSource, registryEntry) -> {
-//               RegistryEntryLookup<Biome> registryEntryLookup = wrapperLookup.getOrThrow(RegistryKeys.BIOME);
-//               FlatChunkGeneratorConfig flatChunkGeneratorConfig = new FlatChunkGeneratorConfig(
-//                  Optional.of(RegistryEntryList.of()), registryEntryLookup.getOrThrow(BiomeKeys.THE_VOID), List.of()
-//               );
-//               flatChunkGeneratorConfig.getLayers().add(new FlatChunkGeneratorLayer(1, Blocks.AIR));
-//               flatChunkGeneratorConfig.updateLayerBlocks();
-//               return new FlatChunkGenerator(flatChunkGeneratorConfig);
-//            }
-//         )
-//      )
-//      .method_69953()
-//      .method_69937("kuiper_world")
-//      .build();
-//   public static final MineEffect field_59238 = MineEffect.builder("ender_dragon_boss_fight")
-//      .item(Items.ENDER_DRAGON_SPAWN_EGG)
-//      .method_69951(serverWorld -> serverWorld.method_69081(new class_11098()))
-//      .method_69939(
-//         arg -> arg.method_70208(
-//            arg2 -> arg2.method_69684(
-//               builder -> builder.feature(GenerationStep.Feature.TOP_LAYER_MODIFICATION, arg.method_70192(EndPlacedFeatures.END_PLATFORM))
-//            )
-//         )
-//      )
-//      .method_69953()
-//      .method_69946()
-//      .method_69952(field_59249, field_59252)
-//      .build();
+   public static final MineEffect field_59210 = MineEffect.builder("kuiper_world")
+      .method_69951(serverWorld -> {
+         serverWorld.getServer().getOverworld().setTimeOfDay(18000L);
+         serverWorld.getGameRules().setValue(GameRules.ADVANCE_TIME, false, serverWorld.getServer());
+      })
+      .method_69957(serverWorld -> serverWorld.getGameRules().setValue(GameRules.ADVANCE_TIME, true, serverWorld.getServer()))
+      .method_69939(
+         arg -> arg.setGeneratorFactory(
+            (wrapperLookup, biomeSource, registryEntry) -> {
+               RegistryEntryLookup<Biome> registryEntryLookup = wrapperLookup.getOrThrow(RegistryKeys.BIOME);
+               FlatChunkGeneratorConfig flatChunkGeneratorConfig = new FlatChunkGeneratorConfig(
+                  Optional.of(RegistryEntryList.of()), registryEntryLookup.getOrThrow(BiomeKeys.THE_VOID), List.of()
+               );
+               flatChunkGeneratorConfig.getLayers().add(new FlatChunkGeneratorLayer(1, Blocks.AIR));
+               flatChunkGeneratorConfig.updateLayerBlocks();
+               return new FlatChunkGenerator(flatChunkGeneratorConfig);
+            }
+         )
+      )
+      .method_69953()
+      .method_69937("kuiper_world")
+      .build();
+   public static final MineEffect field_59238 = MineEffect.builder("ender_dragon_boss_fight")
+      .item(Items.ENDER_DRAGON_SPAWN_EGG)
+      .method_69951(serverWorld -> ((net.zhengzhengyiyi.accessor.MinecraftServerAccessor) serverWorld.getServer()).method_69081(new EndDragonBattleEvent()))
+      // TODO: add END_PLATFORM feature via addGlobalBiomeModifier once GenerationSettings supports
+      // mutable feature addition (requires a mixin accessor for GenerationSettings).
+      .method_69953()
+      .method_69946()
+      .method_69952(field_59249, field_59252)
+      .build();
    public static final MineEffect field_59239 = MineEffect.builder("angry_ghast_boss_fight")
       .item(Items.GHAST_TEAR)
       .method_69951(
@@ -1074,59 +1071,59 @@ public class class_11113 {
       )
       .method_69946()
       .build();
-//   public static final MineEffect field_59245 = MineEffect.builder("small_but_deadly_boss_fight")
-//      .item(Items.SILVERFISH_SPAWN_EGG)
-//      .method_69942(BiomeKeys.WINDSWEPT_GRAVELLY_HILLS)
-//      .method_69951(
-//         serverWorld -> serverWorld.method_69081(
-//            WaveEvent.builder(serverWorld, "small_but_deadly")
-//            .addWave(
-//                    wave -> wave.addGroup(
-//                          group -> group.type(EntityType.SILVERFISH)
-//                             .count(25)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .delay(300)
-//                 )
-//                 .addWave(
-//                    wave -> wave.addGroup(
-//                          group -> group.type(EntityType.SILVERFISH)
-//                             .count(25)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .addGroup(
-//                          group -> group.type(EntityType.ZOMBIE)
-//                             .baby(true)
-//                             .count(3)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .delay(600)
-//                 )
-//                 .addWave(
-//                    wave -> wave.addGroup(
-//                          group -> group.type(EntityType.SILVERFISH)
-//                             .count(30)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .addGroup(
-//                          group -> group.type(EntityType.ZOMBIE)
-//                             .baby(true)
-//                             .count(4)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .addGroup(
-//                          group -> group.type(EntityType.VEX)
-//                             .count(3)
-//                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
-//                       )
-//                       .delay(1200)
-//                 )
-//                 .build()
-//         )
-//      )
-//      .method_69953()
-//      .method_69946()
-//      .build();
+   public static final MineEffect field_59245 = MineEffect.builder("small_but_deadly_boss_fight")
+      .item(Items.SILVERFISH_SPAWN_EGG)
+      .method_69942(BiomeKeys.WINDSWEPT_GRAVELLY_HILLS)
+      .method_69951(
+         serverWorld -> ((net.zhengzhengyiyi.accessor.MinecraftServerAccessor) serverWorld.getServer()).method_69081(
+            WaveEvent.builder(serverWorld, "small_but_deadly")
+            .addWave(
+                    wave -> wave.addGroup(
+                          group -> group.type(EntityType.SILVERFISH)
+                             .count(25)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .delay(300)
+                 )
+                 .addWave(
+                    wave -> wave.addGroup(
+                          group -> group.type(EntityType.SILVERFISH)
+                             .count(25)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .addGroup(
+                          group -> group.type(EntityType.ZOMBIE)
+                             .baby(true)
+                             .count(3)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .delay(600)
+                 )
+                 .addWave(
+                    wave -> wave.addGroup(
+                          group -> group.type(EntityType.SILVERFISH)
+                             .count(30)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .addGroup(
+                          group -> group.type(EntityType.ZOMBIE)
+                             .baby(true)
+                             .count(4)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .addGroup(
+                          group -> group.type(EntityType.VEX)
+                             .count(3)
+                             .spawnStrategy(strategy -> strategy.type(WaveEvent.SpawnType.NEAR_PLAYER).range(40).offset(new BlockPos(0, 3, 0)))
+                       )
+                       .delay(1200)
+                 )
+                 .build()
+         )
+      )
+      .method_69953()
+      .method_69946()
+      .build();
 
    public static boolean method_70003(ServerWorld serverWorld, BlockPos blockPos) {
       for (BlockPos blockPos2 : BlockPos.iterate(blockPos.add(-1, -1, -1), blockPos.add(1, 1, 1))) {
@@ -1165,7 +1162,7 @@ public class class_11113 {
       if (bl) {
          itemStack.set(ModDataComponentTypes.WORLD_EFFECT_UNLOCK, Unit.INSTANCE);
       }
-      // Set the item icon from the effect's itemModel so the slot shows e.g. a sheep spawn egg
+      // Set the item icon from the effect's itemModel so the slot shows e.g. a sheep spawn egg.
       if (list.size() == 1 && list.get(0).itemModel() != null) {
          itemStack.set(DataComponentTypes.ITEM_MODEL, list.get(0).itemModel());
       }

@@ -25,7 +25,8 @@
 		"BiomeMixin",
 		"SlotMixin",
 		"BiomeWeatherMixin",
-		"ChunkGeneratorsMixin"
+		"ChunkGeneratorsMixin",
+		"AbstractFireBlockMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

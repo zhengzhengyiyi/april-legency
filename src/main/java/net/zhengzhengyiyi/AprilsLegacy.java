@@ -254,6 +254,36 @@ public class AprilsLegacy implements ModInitializer {
 					new net.minecraft.util.math.BlockPos(8, 8, 4),
 					90.0F, 0.0F
 				));
+
+			// Re-open all previously created mine dimensions so they are accessible after
+			// a world reload. getLevelCount() pre-increments, so peekLevelCount() gives the
+			// number of mines already created (IDs are level1 … levelN).
+			net.zhengzhengyiyi.accessor.LevelPropertiesAccessor props =
+				(net.zhengzhengyiyi.accessor.LevelPropertiesAccessor)(Object)
+					server.getSaveProperties().getMainWorldProperties();
+			int count = props.peekLevelCount();
+			for (int i = 1; i <= count; i++) {
+				net.minecraft.util.Identifier id = net.minecraft.util.Identifier.ofVanilla("level" + i);
+				try {
+					// getOrOpenPersistentWorld will load the existing world from disk when it
+					// already exists, ignoring the placeholder config we pass here.
+					xyz.nucleoid.fantasy.RuntimeWorldConfig placeholder =
+						new xyz.nucleoid.fantasy.RuntimeWorldConfig()
+							.setGenerator(server.getOverworld().getChunkManager().getChunkGenerator())
+							.setDimensionType(server.getRegistryManager()
+								.getEntryOrThrow(net.zhengzhengyiyi.ModDimensionTypes.GENERATED))
+							.setSeed(id.hashCode());
+					xyz.nucleoid.fantasy.RuntimeWorldHandle handle =
+						fantasy.getOrOpenPersistentWorld(id, placeholder);
+					if (handle.asWorld() != null) {
+						LOGGER.info("[AprilsLegacy] Restored mine dimension: {}", id);
+					} else {
+						LOGGER.warn("[AprilsLegacy] Failed to restore mine dimension: {}", id);
+					}
+				} catch (Exception e) {
+					LOGGER.error("[AprilsLegacy] Error restoring mine dimension {}: {}", id, e.getMessage());
+				}
+			}
 		});
 	}
 	

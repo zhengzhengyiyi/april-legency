@@ -44,6 +44,7 @@ import net.zhengzhengyiyi.item.ModItems;
 import net.zhengzhengyiyi.mine.MineEffect;
 import net.zhengzhengyiyi.mine.MineProgressState;
 import net.zhengzhengyiyi.mine.MineWorldEffectsState;
+import net.zhengzhengyiyi.mine.SpawnLocator;
 import net.zhengzhengyiyi.mine.effect.MineUnlockCondition;
 import net.zhengzhengyiyi.mine.effect.UnlockMode;
 import net.zhengzhengyiyi.network.ClientPacket0;
@@ -202,18 +203,46 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 	 * fires onMineEnter, teleports players into this mine world.
 	 *
 	 * Structure placement mirrors craftmine exactly:
-	 *   field_59596 (start_platform)  — always on first entry
-	 *   field_59597 (warden_arena)    — when warden_boss_fight effect active, at (spawnX+40, spawnY, spawnZ)
-	 *   field_59598/599/600 (ice balls) — when kuiper_world effect active, 150× random in a box
-	 *   field_59601 (space_igloo)     — when kuiper_world effect active, at spawn, CLOCKWISE_90
+	 *   field_59596 (start_platform)  — always on first entry, at terrain surface
+	 *   field_59597 (warden_arena)    — when warden_boss_fight effect active, at (spawnX+40, surfaceY, spawnZ)
 	 */
 	@Override
 	public void method_69093(boolean revisit, Optional<UUID> playerUuid) {
 		ServerWorld self = (ServerWorld)(Object)this;
 
-		// Fixed spawn position for mine worlds: x=8, y=4, z=8
-		// The start platform is placed at y=3 (mutable.down()), player stands on top at y=4.
-		BlockPos.Mutable mutable = new BlockPos.Mutable(8, 4, 8);
+		// Read the SpawnLocator from persisted state — mirrors craftmine reading it from DimensionOptions.
+		MineWorldEffectsState effectsState = self.getPersistentStateManager()
+			.getOrCreate(MineWorldEffectsState.TYPE);
+		SpawnLocator spawnLocator = effectsState.getSpawnLocator();
+
+		// Get the initial spawn Vec3d from the locator, then find the mutable block pos.
+		Vec3d spawnVec = spawnLocator.getSpawnPos(self);
+		BlockPos.Mutable mutable = BlockPos.ofFloored(spawnVec).mutableCopy().move(net.minecraft.util.math.Direction.DOWN);
+		if (mutable.getY() < self.getBottomY()) {
+			mutable.setY(self.getBottomY());
+		}
+
+		// bl3: whether to do the surface heightmap walk (only for SURFACE locator)
+		boolean bl3 = spawnLocator == SpawnLocator.SURFACE;
+
+		// Walk up past any solid blocks (mirrors craftmine's loop)
+		net.minecraft.block.BlockState blockState;
+
+		// For SURFACE: walk the heightmap to find the first non-full-cube block
+		while (bl3 && self.getTopY(net.minecraft.world.Heightmap.Type.WORLD_SURFACE, mutable) <= self.getBottomY()) {
+			mutable.move(net.minecraft.util.math.Direction.NORTH);
+			self.getBlockState(mutable);
+		}
+
+		if (bl3) {
+			mutable.setY(self.getTopY(net.minecraft.world.Heightmap.Type.WORLD_SURFACE, mutable));
+		}
+
+		for (blockState = self.getBlockState(mutable);
+			 blockState.isFullCube(self, mutable);
+			 blockState = self.getBlockState(mutable)) {
+			mutable.move(net.minecraft.util.math.Direction.UP);
+		}
 
 		MineProgressState progress = getMineProgress();
 
@@ -223,23 +252,33 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 		if (bl2) {
 			progress.setPlacedStartStructures(true);
 
-			// field_59597: warden_arena — placed at (spawnX+40, spawnY, spawnZ) when warden effect active
+			// field_59597: warden_arena — placed at (spawnX+40, surfaceY, spawnZ) when warden effect active
 			if (isMineWorldEffect(net.zhengzhengyiyi.mine.effect.class_11113.field_59244)) {
-				BlockPos wardenPos = new BlockPos(mutable.getX() + 40, mutable.getY(), mutable.getZ());
+				int arenaY = self.getTopY(net.minecraft.world.Heightmap.Type.WORLD_SURFACE, mutable.getX() + 40, mutable.getZ());
+				BlockPos wardenPos = new BlockPos(mutable.getX() + 40, arenaY, mutable.getZ());
 				ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
 					new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/warden_arena")),
 					self, self.getChunkManager().getChunkGenerator(), self.getRandom(), wardenPos
 				);
+				bl3 = false;
 			}
 
-			// field_59596: start_platform — always placed at mutable.down()
-			ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
-				new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/start_platform")),
-				self, self.getChunkManager().getChunkGenerator(), self.getRandom(), mutable.down()
-			);
+			// field_59596: start_platform — placed at mutable.down() (one below the first air block)
+			if (bl2) {
+				ModConfiguredFeatures.MINE_START_FEATURE.generateIfValid(
+					new net.zhengzhengyiyi.feature.StructureFeatureConfig(Identifier.ofVanilla("mines/start_platform")),
+					self, self.getChunkManager().getChunkGenerator(), self.getRandom(), mutable.down()
+				);
+			}
 		}
 
-		Vec3d teleportPos = new Vec3d(8.5, 4.0, 8.5);
+		// Player spawns at the first air block above the platform
+		double collisionHeight = 0.0;
+		if (!blockState.getCollisionShape(self, mutable).isEmpty()) {
+			collisionHeight = blockState.getCollisionShape(self, mutable).getMax(net.minecraft.util.math.Direction.Axis.Y);
+			if (!Double.isFinite(collisionHeight)) collisionHeight = 0.0;
+		}
+		Vec3d teleportPos = new Vec3d(mutable.getX() + 0.5, mutable.getY() + collisionHeight, mutable.getZ() + 0.5);
 
 		// Teleport matching players into this mine world
 		for (ServerPlayerEntity player : self.getServer().getPlayerManager().getPlayerList()) {

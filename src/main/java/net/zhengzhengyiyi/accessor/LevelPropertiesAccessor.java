@@ -30,9 +30,12 @@ public interface LevelPropertiesAccessor {
 
 	int getTotalMineExp();
 
-	/** method_70226 — total number of mines created (used for level IDs) */
+	/** method_70226 — total number of mines created (used for level IDs). Pre-increments the counter. */
 	int getLevelCount();
 
+	/** Returns the current level count without incrementing it. Used to restore existing dimensions on world load. */
+	int peekLevelCount();
+
 	/** method_70225 — current mine index (for display) */
-	default int getCurrentMineIndex() { return getLevelCount(); }
+	default int getCurrentMineIndex() { return peekLevelCount(); }
 }

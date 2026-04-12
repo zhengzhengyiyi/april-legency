@@ -25,9 +25,7 @@ public interface class_11099 {
 
    @SuppressWarnings({ "unchecked", "rawtypes" })
 static MapCodec<? extends class_11099> register(Registry<MapCodec<? extends class_11099>> registry) {
-//      Registry.register(registry, "end_dragon_battle", EndDragonBattleEvent.CODEC);
-      // TODO
-//      Registry.register(registry, "raid", class_11103.field_59106);
+      Registry.register(registry, "raid", class_11103.field_59106);
       return Registry.register((Registry)registry, "battle", WaveEvent.CODEC);
    }
 

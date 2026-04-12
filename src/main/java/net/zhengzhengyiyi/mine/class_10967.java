@@ -67,10 +67,12 @@ public class class_10967 {
             System.err.println("[ERROR] Fantasy returned null world for: " + id);
          } else {
             System.out.println("[SUCCESS] Mine dimension created: " + id);
-            // Persist effects for ServerWorldMixin
+            // Persist effects and spawn locator for ServerWorldMixin — mirrors craftmine's
+            // class_10969 which stores effects, mine, and spawn in the dimension JSON.
             MineWorldEffectsState effectsState = world.getPersistentStateManager()
                .getOrCreate(MineWorldEffectsState.TYPE);
             effectsState.setEffects(effects);
+            effectsState.setSpawnLocator(worldModifier.getSpawnLocator());
             // Trigger first-entry: places platform and teleports all players (method_69093)
             ((net.zhengzhengyiyi.accessor.MineServerWorldAccessor) world)
                .method_69093(false, Optional.empty());
