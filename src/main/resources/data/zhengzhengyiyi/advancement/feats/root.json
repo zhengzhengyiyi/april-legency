@@ -1,0 +1,19 @@
+{
+  "criteria": {
+    "entered_mine": {
+      "trigger": "aprils-legacy:entered_mine"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": { "translate": "advancements.feats.root.description" },
+    "frame": "task",
+    "hidden": false,
+    "background": "minecraft:textures/gui/advancements/backgrounds/adventure.png",
+    "icon": { "id": "minecraft:netherite_sword" },
+    "show_toast": false,
+    "title": { "translate": "advancements.feats.root.title" }
+  },
+  "requirements": [["entered_mine"]],
+  "sends_telemetry_event": false
+}

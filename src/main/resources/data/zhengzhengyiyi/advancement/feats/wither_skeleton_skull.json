@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "has_skull": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "minecraft:wither_skeleton_skull" }]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.wither_skeleton_skull.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:wither_skeleton_skull" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.wither_skeleton_skull.title" }
+  },
+  "requirements": [["has_skull"]],
+  "sends_telemetry_event": false
+}

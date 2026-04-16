@@ -1,0 +1,18 @@
+{
+  "criteria": {
+    "entered_a_mine": {
+      "trigger": "aprils-legacy:entered_mine"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.mines.enter_a_mine.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:mine_crafter" },
+    "show_toast": true,
+    "title": { "translate": "advancements.mines.enter_a_mine.title" }
+  },
+  "requirements": [["entered_a_mine"]],
+  "sends_telemetry_event": false
+}

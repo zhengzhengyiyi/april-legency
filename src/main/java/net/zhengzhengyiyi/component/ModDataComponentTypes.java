@@ -45,6 +45,11 @@ public class ModDataComponentTypes {
 	public static final ComponentType<net.zhengzhengyiyi.component.MobTrophyComponent> TYPE_MOB_TROPHY = register(
 		"mob_trophy/type", builder -> builder.codec(net.zhengzhengyiyi.component.MobTrophyComponent.CODEC).packetCodec(net.zhengzhengyiyi.component.MobTrophyComponent.PACKET_CODEC)
 	);
+
+	/** Mirrors craftmine DataComponentTypes.INSTANT_ROOM — identifies which hub room a Shimmering Key unlocks. */
+	public static final ComponentType<net.zhengzhengyiyi.component.RoomComponent> INSTANT_ROOM = register(
+		"instant_room", builder -> builder.codec(net.zhengzhengyiyi.component.RoomComponent.CODEC).packetCodec(net.zhengzhengyiyi.component.RoomComponent.PACKET_CODEC).cache()
+	);
 	
 	private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
 		return Registry.register(Registries.DATA_COMPONENT_TYPE, id, (builderOperator.apply(ComponentType.builder())).build());

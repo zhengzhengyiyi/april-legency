@@ -306,6 +306,8 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 					teleported.getHungerManager().setFoodLevel(20);
 					teleported.setHealth(teleported.getMaxHealth());
 					method_69099_onMineEnter(self);
+					// Trigger "entered a mine" advancement
+					net.zhengzhengyiyi.advancement.MineCriteria.ENTERED_MINE.trigger(teleported);
 				}
 			}
 		}
@@ -320,10 +322,17 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 		}
 	}
 
-	/** Places the 3x3 stone platform + MineCrafter + ShimmeringDoor at the spawn pos */
+	/** 
+	 * Places the 3x3 stone platform + MineCrafter + ShimmeringDoor at the spawn pos.
+	 * This is for MINE WORLDS only, not the overworld spawn.
+	 * The overworld hub is placed via hub structures in AprilsLegacy.onServerStart.
+	 */
 	@Unique
 	private void method_69099_placeSpawnPlatform(ServerWorld world, BlockPos center) {
-		
+		// This method is intentionally empty because:
+		// 1. Mine worlds use the start_platform structure (placed in method_69093)
+		// 2. The overworld hub is placed via hub structures in AprilsLegacy.onServerStart
+		// 3. This method was in the original Craftmine but is not needed in this implementation
 	}
 
 	@Inject(method="tick", at=@At("TAIL"))
@@ -466,6 +475,12 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 					teleported.getHungerManager().setFoodLevel(20);
 					teleported.setHealth(teleported.getMaxHealth());
 					teleported.networkHandler.syncWithPlayerPosition();
+					// Trigger win/loss advancement
+					if (isMineWon()) {
+						net.zhengzhengyiyi.advancement.MineCriteria.MINE_WON.trigger(teleported);
+					} else {
+						net.zhengzhengyiyi.advancement.MineCriteria.MINE_LOST.trigger(teleported);
+					}
 				}
 			}
 		}

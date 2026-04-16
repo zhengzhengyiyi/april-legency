@@ -1,0 +1,19 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "completed_mine": {
+      "trigger": "aprils-legacy:mine_won"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.end_world.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:end_crystal" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.end_world.title" }
+  },
+  "requirements": [["completed_mine"]],
+  "sends_telemetry_event": false
+}

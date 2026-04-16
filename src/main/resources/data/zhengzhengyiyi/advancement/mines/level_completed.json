@@ -1,0 +1,20 @@
+{
+  "parent": "zhengzhengyiyi:mines/enter_a_mine",
+  "criteria": {
+    "complete_level": {
+      "trigger": "aprils-legacy:mine_won"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.mines.level_completed.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:nether_star" },
+    "show_toast": true,
+    "title": { "translate": "advancements.mines.level_completed.title" }
+  },
+  "rewards": { "experience": 10 },
+  "requirements": [["complete_level"]],
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:mines/enter_a_mine",
+  "criteria": {
+    "shimmering_key": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "minecraft:shimmering_key" }]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.mines.shimmering_key.description" },
+    "frame": "goal",
+    "hidden": false,
+    "icon": { "id": "minecraft:shimmering_key" },
+    "show_toast": true,
+    "title": { "translate": "advancements.mines.shimmering_key.title" }
+  },
+  "requirements": [["shimmering_key"]],
+  "sends_telemetry_event": false
+}

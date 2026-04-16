@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "killed_skeleton": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": { "type": "minecraft:skeleton" }
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.kill_skeleton.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:bone" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.kill_skeleton.title" }
+  },
+  "requirements": [["killed_skeleton"]],
+  "sends_telemetry_event": false
+}

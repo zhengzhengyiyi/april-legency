@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:mines/enter_a_mine",
+  "criteria": {
+    "mine_ingredient": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "minecraft:mine_ingredient" }]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.mines.get_mine_ingredient.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:mine_ingredient" },
+    "show_toast": true,
+    "title": { "translate": "advancements.mines.get_mine_ingredient.title" }
+  },
+  "requirements": [["mine_ingredient"]],
+  "sends_telemetry_event": false
+}

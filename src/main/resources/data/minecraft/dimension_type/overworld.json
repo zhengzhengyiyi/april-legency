@@ -6,7 +6,7 @@
     "constant_ambient_light": true,
     "fog_scaler": "unscaled",
     "force_bright_lightmap": true,
-    "has_ground": false,
+    "has_ground": true,
     "has_sunrise_and_sunset": false,
     "is_always_foggy": false,
     "sky_type": {

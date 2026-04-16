@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:feats/end_world",
+  "criteria": {
+    "dragon_breath": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "items": "minecraft:dragon_breath" }]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.dragon_breath.description" },
+    "frame": "goal",
+    "hidden": false,
+    "icon": { "id": "minecraft:dragon_breath" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.dragon_breath.title" }
+  },
+  "requirements": [["dragon_breath"]],
+  "sends_telemetry_event": false
+}

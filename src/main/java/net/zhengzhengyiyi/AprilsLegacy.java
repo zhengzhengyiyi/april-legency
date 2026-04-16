@@ -21,13 +21,16 @@ import net.minecraft.world.gen.feature.ConfiguredFeature;
 import net.minecraft.world.gen.feature.DefaultFeatureConfig;
 import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.stateprovider.BlockStateProviderType;
+import net.zhengzhengyiyi.advancement.MineCriteria;
 import net.zhengzhengyiyi.advancement.VoteCriteria;
 import net.zhengzhengyiyi.biome.ModBiomeKeys;
 import net.zhengzhengyiyi.block.ModBlocks;
 import net.zhengzhengyiyi.command.DebugDimensionCommand;
 import net.zhengzhengyiyi.command.DebugdimCommand;
 import net.zhengzhengyiyi.command.LevelCommand;
+import net.zhengzhengyiyi.command.RoomCommand;
 import net.zhengzhengyiyi.command.TransformCommand;
+import net.zhengzhengyiyi.command.UnlockWorldEffectCommand;
 import net.zhengzhengyiyi.command.VoteCommands;
 import net.zhengzhengyiyi.command.WarpCommand;
 import net.zhengzhengyiyi.component.ModDataComponentTypes;
@@ -159,6 +162,7 @@ public class AprilsLegacy implements ModInitializer {
 		VoteRules.init();
 		VoteRegistries.init();
 		VoteCriteria.init();
+		MineCriteria.init();
 		ModEntities.init();
 		ModItems.init();
 		ModMemoryModuleTypes.init();
@@ -238,6 +242,8 @@ public class AprilsLegacy implements ModInitializer {
 		    TransformCommand.register(dispatcher, registryAccess);
 		    DebugdimCommand.register(dispatcher);
 		    LevelCommand.register(dispatcher, registryAccess);
+		    RoomCommand.register(dispatcher);
+		    UnlockWorldEffectCommand.register(dispatcher, registryAccess);
 		});
 		
 		LOGGER.info(MOD_ID + " init, please enjoy april fools");
@@ -246,12 +252,12 @@ public class AprilsLegacy implements ModInitializer {
 			fantasy = Fantasy.get(server);
 			AprilsLegacy.server = server;
 
-			// Mirrors craftmine GameInstance.initHub — set overworld spawn to hub spawn position.
-			// Craftmine uses BlockPos(13, 2, 8) / angle 90.0F; this mod uses BlockPos(8, 8, 4).
+			// Set overworld spawn position (mirrors Craftmine GameInstance.initHub)
+			// Craftmine uses BlockPos(13, 2, 8) / angle 90.0F
 			((net.minecraft.world.MutableWorldProperties) server.getSaveProperties().getMainWorldProperties())
 				.setSpawnPoint(net.minecraft.world.WorldProperties.SpawnPoint.create(
 					net.minecraft.world.World.OVERWORLD,
-					new net.minecraft.util.math.BlockPos(8, 8, 4),
+					new net.minecraft.util.math.BlockPos(13, 2, 8),
 					90.0F, 0.0F
 				));
 
@@ -272,7 +278,7 @@ public class AprilsLegacy implements ModInitializer {
 							.setGenerator(server.getOverworld().getChunkManager().getChunkGenerator())
 							.setDimensionType(server.getRegistryManager()
 								.getEntryOrThrow(net.zhengzhengyiyi.ModDimensionTypes.GENERATED))
-							.setSeed(id.hashCode());
+							.setSeed((long) id.getPath().hashCode());
 					xyz.nucleoid.fantasy.RuntimeWorldHandle handle =
 						fantasy.getOrOpenPersistentWorld(id, placeholder);
 					if (handle.asWorld() != null) {

@@ -1,0 +1,19 @@
+{
+  "parent": "zhengzhengyiyi:mines/enter_a_mine",
+  "criteria": {
+    "level_failed": {
+      "trigger": "aprils-legacy:mine_lost"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.mines.player_failed_level.description" },
+    "frame": "task",
+    "hidden": true,
+    "icon": { "id": "minecraft:barrier" },
+    "show_toast": true,
+    "title": { "translate": "advancements.mines.player_failed_level.title" }
+  },
+  "requirements": [["level_failed"]],
+  "sends_telemetry_event": false
+}

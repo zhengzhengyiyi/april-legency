@@ -101,20 +101,35 @@ public class DimensionSettingsBuilder {
 
    public ChunkGenerator createGenerator(String subPath) {
       // Mirrors craftmine class_11114.method_70204:
-      // Always use MultiNoiseBiomeSource — filter to allowed biomes if specified.
-      // FixedBiomeSource breaks terrain generation for noise-based chunk generators.
+      // Filter biome source to allowed biomes if specified, otherwise use all overworld biomes.
+      var biomeRegistry = this.registryManager.getOrThrow(RegistryKeys.BIOME);
       var paramListRegistry = this.registryManager
          .getOrThrow(RegistryKeys.MULTI_NOISE_BIOME_SOURCE_PARAMETER_LIST)
          .getOrThrow(MultiNoiseBiomeSourceParameterLists.OVERWORLD);
-      final BiomeSource biomeSource = MultiNoiseBiomeSource.create(paramListRegistry);
+
+      final BiomeSource biomeSource;
+      if (this.allowedBiomes.isEmpty()) {
+         // No biome filter — use the full overworld biome source
+         biomeSource = MultiNoiseBiomeSource.create(paramListRegistry);
+      } else {
+         // Use a FixedBiomeSource with the first allowed biome so the mine has a distinct look.
+         // For multi-biome effects (e.g. forests = oak+birch+flower), pick based on the subPath
+         // hash so the choice is stable across reloads but varies per mine.
+         List<net.minecraft.registry.entry.RegistryEntry<Biome>> entries = this.allowedBiomes.stream()
+            .map(biomeRegistry::getOrThrow)
+            .collect(java.util.stream.Collectors.toList());
+         int index = Math.abs(subPath.hashCode()) % entries.size();
+         biomeSource = new net.minecraft.world.biome.source.FixedBiomeSource(entries.get(index));
+      }
 
       RegistryWrapper.Impl<ChunkGeneratorSettings> settingsRegistry = this.registryManager.getOrThrow(RegistryKeys.CHUNK_GENERATOR_SETTINGS);
 
       ChunkSettingsAccessor.Builder builder = ((ChunkSettingsAccessor)(Object)settingsRegistry.getOrThrow(this.baseSettingsKey).value()).getBuilder();
 
       this.settingsModifiers.forEach(consumer -> consumer.accept(builder));
-      // Apply a unique salt per dimension so each mine has different terrain
-      builder.method_69805(subPath.hashCode());
+      // Note: terrain variation between mines comes from the world seed set via
+      // RuntimeWorldConfig.setSeed() in class_10967, which Fantasy passes to NoiseConfig.
+      // There is no salt() method on ChunkGeneratorSettings in this Minecraft version.
 
       RegistryEntry<ChunkGeneratorSettings> registryEntry = RegistryEntry.of(builder.build());
 

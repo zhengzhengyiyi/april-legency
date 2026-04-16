@@ -1,0 +1,27 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "killed_ghast": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": { "type": "minecraft:ghast" },
+        "killing_blow": {
+          "tags": [{ "id": "minecraft:is_projectile", "expected": true }],
+          "direct_entity": { "type": "minecraft:fireball" }
+        }
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.return_to_sender.description" },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": { "id": "minecraft:fire_charge" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.return_to_sender.title" }
+  },
+  "rewards": { "experience": 50 },
+  "requirements": [["killed_ghast"]],
+  "sends_telemetry_event": false
+}

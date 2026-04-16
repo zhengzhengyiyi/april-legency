@@ -54,10 +54,17 @@ public class class_10967 {
       // (used by method_69093 in ServerWorldMixin, not needed here directly)
 
       // --- Create world via Fantasy ---
+      // Seed = level path hash XOR'd with each effect name hash (Fibonacci-mixed).
+      // This ensures two mines with the same level number but different effects
+      // get different terrain, while remaining stable across restarts.
+      long seed = (long) id.getPath().hashCode();
+      for (MineEffect effect : effects) {
+         seed ^= (long) effect.name().hashCode() * 0x9e3779b97f4a7c15L;
+      }
       RuntimeWorldConfig config = new RuntimeWorldConfig()
          .setGenerator(generator)
          .setDimensionType(dimensionTypeEntry)
-         .setSeed(id.hashCode());
+         .setSeed(seed);
 
       try {
          RuntimeWorldHandle handle = AprilsLegacy.fantasy.getOrOpenPersistentWorld(id, config);

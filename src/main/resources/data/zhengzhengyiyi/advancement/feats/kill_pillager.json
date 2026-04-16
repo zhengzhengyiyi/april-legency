@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "killed_pillager": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": { "type": "minecraft:pillager" }
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.kill_pillager.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:crossbow" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.kill_pillager.title" }
+  },
+  "requirements": [["killed_pillager"]],
+  "sends_telemetry_event": false
+}

@@ -1,0 +1,22 @@
+{
+  "parent": "zhengzhengyiyi:feats/root",
+  "criteria": {
+    "has_crystal": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [{ "tag": "minecraft:amethyst_crystals" }]
+      }
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": { "translate": "advancements.feats.crystal.description" },
+    "frame": "task",
+    "hidden": false,
+    "icon": { "id": "minecraft:large_amethyst_bud" },
+    "show_toast": true,
+    "title": { "translate": "advancements.feats.crystal.title" }
+  },
+  "requirements": [["has_crystal"]],
+  "sends_telemetry_event": false
+}
