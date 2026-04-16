@@ -54,13 +54,26 @@ public class class_10967 {
       // (used by method_69093 in ServerWorldMixin, not needed here directly)
 
       // --- Create world via Fantasy ---
-      // Seed = level path hash XOR'd with each effect name hash (Fibonacci-mixed).
-      // This ensures two mines with the same level number but different effects
-      // get different terrain, while remaining stable across restarts.
+      // Seed calculation mirrors Craftmine:
+      // 1. Base seed = level path hash
+      // 2. XOR with each effect name hash (Fibonacci-mixed)
+      // 3. Salt is applied in NoiseConfig via ChunkGeneratorSettings
+      //    (see ChunkGeneratorSettingsMixin for salt storage)
       long seed = (long) id.getPath().hashCode();
       for (MineEffect effect : effects) {
          seed ^= (long) effect.name().hashCode() * 0x9e3779b97f4a7c15L;
       }
+      
+      // Generate unique salt for this mine based on level number and effects
+      // This ensures each mine has unique terrain even with same base settings
+      long salt = (long) i * 0x5DEECE66DL; // Unique per level
+      for (MineEffect effect : effects) {
+         salt ^= (long) effect.name().hashCode() * 0x9e3779b97f4a7c15L;
+      }
+      
+      // Apply salt to chunk generator settings
+      worldModifier.setSalt(salt);
+      
       RuntimeWorldConfig config = new RuntimeWorldConfig()
          .setGenerator(generator)
          .setDimensionType(dimensionTypeEntry)
@@ -73,7 +86,7 @@ public class class_10967 {
          if (world == null) {
             System.err.println("[ERROR] Fantasy returned null world for: " + id);
          } else {
-            System.out.println("[SUCCESS] Mine dimension created: " + id);
+            System.out.println("[SUCCESS] Mine dimension created: " + id + " (seed=" + seed + ", salt=" + salt + ")");
             // Persist effects and spawn locator for ServerWorldMixin — mirrors craftmine's
             // class_10969 which stores effects, mine, and spawn in the dimension JSON.
             MineWorldEffectsState effectsState = world.getPersistentStateManager()

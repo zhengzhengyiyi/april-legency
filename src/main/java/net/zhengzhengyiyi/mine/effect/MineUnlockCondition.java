@@ -215,7 +215,7 @@ public interface MineUnlockCondition {
       };
    }
 
-   static MineUnlockCondition method_69638(RegistryEntry<class_10976> registryEntry) {
+   static MineUnlockCondition method_69638(RegistryEntry<net.zhengzhengyiyi.unlock.PlayerUnlock> registryEntry) {
       return new MineUnlockCondition() {
          @Override
          public boolean method_69599(ServerWorld serverWorld, ServerPlayerEntity serverPlayerEntity, class_10976 arg) {

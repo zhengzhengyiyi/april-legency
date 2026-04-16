@@ -320,6 +320,11 @@ public abstract class ServerWorldMixin extends World implements ScreenWorldAcces
 		for (MineEffect effect : getEffectSet()) {
 			effect.onMineEnter().accept(world);
 		}
+		// Fire PlayerUnlock.onMineEnter for each player entering the mine
+		for (ServerPlayerEntity player : world.getPlayers()) {
+			net.zhengzhengyiyi.unlock.PlayerUnlockState state = net.zhengzhengyiyi.unlock.PlayerUnlockState.get(player);
+			state.applyMineEnter(player);
+		}
 	}
 
 	/** 

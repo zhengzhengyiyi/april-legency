@@ -88,9 +88,11 @@ public class class_11113 {
    // TODO: add an @Accessor mixin for DensityFunctions.createSurfaceNoiseRouter to enable this effect.
    public static final MineEffect field_59251 = MineEffect.builder("grid_world")
       .method_69939(arg -> arg.setGeneratorFactory((wrapperLookup, biomeSource, registryEntry) -> {
-         // Note: ChunkGeneratorSettings.salt() doesn't exist in this Minecraft version.
-         // Using a fixed seed (0L) as a workaround. The grid world will have consistent patterns.
-         Random random = ((ChunkGeneratorSettings) registryEntry.value()).getRandomProvider().create(0L);
+         // Use salt from ChunkGeneratorSettings for terrain variation
+         // This now properly uses the custom salt set in DimensionSettingsBuilder
+         Random random = ((ChunkGeneratorSettings) registryEntry.value()).getRandomProvider().create(
+            ((net.zhengzhengyiyi.accessor.ISaltSettings)(Object)registryEntry.value()).getCustomSalt()
+         );
          int i = 2 << random.nextInt(3);
          int j = random.nextBetween(1, Math.min(i - 1, 3));
          int k = random.nextBetween(0, 64);

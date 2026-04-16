@@ -50,6 +50,11 @@ public class ModDataComponentTypes {
 	public static final ComponentType<net.zhengzhengyiyi.component.RoomComponent> INSTANT_ROOM = register(
 		"instant_room", builder -> builder.codec(net.zhengzhengyiyi.component.RoomComponent.CODEC).packetCodec(net.zhengzhengyiyi.component.RoomComponent.PACKET_CODEC).cache()
 	);
+
+	/** Mirrors craftmine DataComponentTypes.EXCHANGE_VALUE — marks items as having no exchange value (free from unlocks). */
+	public static final ComponentType<ExchangeValueComponent> EXCHANGE_VALUE = register(
+		"exchange_value", builder -> builder.codec(ExchangeValueComponent.CODEC).packetCodec(ExchangeValueComponent.PACKET_CODEC)
+	);
 	
 	private static <T> ComponentType<T> register(String id, UnaryOperator<ComponentType.Builder<T>> builderOperator) {
 		return Registry.register(Registries.DATA_COMPONENT_TYPE, id, (builderOperator.apply(ComponentType.builder())).build());

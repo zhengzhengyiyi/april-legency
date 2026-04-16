@@ -36,6 +36,7 @@ public class DimensionSettingsBuilder {
    private Optional<GeneratorFactory> customGeneratorFactory = Optional.empty();
    private final List<Consumer<ChunkSettingsAccessor.Builder>> settingsModifiers = new ArrayList<>();
    private SpawnLocator spawnLocator = SpawnLocator.SURFACE;
+   private long salt = 0L;
 
    public DimensionSettingsBuilder(RegistryWrapper.WrapperLookup wrapperLookup) {
       this.registryManager = wrapperLookup;
@@ -85,6 +86,11 @@ public class DimensionSettingsBuilder {
       return this;
    }
 
+   public DimensionSettingsBuilder setSalt(long salt) {
+      this.salt = salt;
+      return this;
+   }
+
    public DimensionSettingsBuilder setSpawnLocator(SpawnLocator arg) {
       this.spawnLocator = arg;
       return this;
@@ -127,9 +133,11 @@ public class DimensionSettingsBuilder {
       ChunkSettingsAccessor.Builder builder = ((ChunkSettingsAccessor)(Object)settingsRegistry.getOrThrow(this.baseSettingsKey).value()).getBuilder();
 
       this.settingsModifiers.forEach(consumer -> consumer.accept(builder));
-      // Note: terrain variation between mines comes from the world seed set via
-      // RuntimeWorldConfig.setSeed() in class_10967, which Fantasy passes to NoiseConfig.
-      // There is no salt() method on ChunkGeneratorSettings in this Minecraft version.
+      
+      // Apply salt to chunk generator settings
+      // This mirrors Craftmine's NoiseConfig which XORs seed with salt: seed ^ settings.salt()
+      // The salt provides additional terrain variation beyond the world seed
+      builder.method_69805(this.salt);
 
       RegistryEntry<ChunkGeneratorSettings> registryEntry = RegistryEntry.of(builder.build());
 

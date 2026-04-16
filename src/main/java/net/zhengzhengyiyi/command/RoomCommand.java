@@ -16,7 +16,6 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.structure.StructureTemplateManager;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -149,17 +148,42 @@ public class RoomCommand {
 
     /**
      * Saves the structure template to disk and gives the player a key for it.
+     * Finds the structure block that was placed by /room start, triggers its save,
+     * then writes the template to disk as an NBT file.
      */
     private static int executeSave(ServerCommandSource src, Identifier shortId) {
         Identifier fullId = RoomComponent.toFullId(shortId);
-        StructureTemplateManager mgr = src.getWorld().getStructureTemplateManager();
-        try {
-            mgr.saveTemplate(fullId);
-        } catch (Exception e) {
-            src.sendError(Text.literal("Failed to save structure: " + e.getMessage()));
+        ServerWorld world = src.getWorld();
+        
+        // Find the structure block with this template name
+        // Search in a reasonable radius around the player
+        BlockPos playerPos = BlockPos.ofFloored(src.getPosition());
+        StructureBlockBlockEntity structureBlock = null;
+        
+        for (BlockPos pos : BlockPos.iterateOutwards(playerPos, 50, 50, 50)) {
+            if (world.getBlockState(pos).getBlock() == Blocks.STRUCTURE_BLOCK) {
+                var be = world.getBlockEntity(pos);
+                if (be instanceof StructureBlockBlockEntity sb && 
+                    fullId.equals(sb.getTemplateName())) {
+                    structureBlock = sb;
+                    break;
+                }
+            }
+        }
+        
+        if (structureBlock == null) {
+            src.sendError(Text.literal("Could not find structure block for " + shortId + 
+                ". Make sure the structure block is configured with the correct name."));
             return 0;
         }
-        src.sendFeedback(() -> Text.literal("Saved room structure: " + shortId), true);
+        
+        // Trigger the structure block's save (captures blocks from world into template)
+        if (!structureBlock.saveStructure(true)) {
+            src.sendError(Text.literal("Failed to save structure from structure block"));
+            return 0;
+        }
+        
+        src.sendFeedback(() -> Text.literal("Saved room structure: " + shortId + " as NBT file"), true);
         // Also give the key
         executeKey(src, shortId);
         return 1;

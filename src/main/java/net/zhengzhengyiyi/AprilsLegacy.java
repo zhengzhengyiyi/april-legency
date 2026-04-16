@@ -82,6 +82,9 @@ public class AprilsLegacy implements ModInitializer {
 	public static final RegistryKey<Registry<SpecialMine>> SPECIAL_MINE_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("special_mine"));
 	public static final Registry<SpecialMine> SPECIAL_MINE = FabricRegistryBuilder.createSimple(SPECIAL_MINE_KEY).buildAndRegister();
 	
+	public static final RegistryKey<Registry<net.zhengzhengyiyi.unlock.PlayerUnlock>> PLAYER_UNLOCK_KEY = RegistryKey.ofRegistry(Identifier.ofVanilla("player_unlock"));
+	public static final Registry<net.zhengzhengyiyi.unlock.PlayerUnlock> PLAYER_UNLOCK = FabricRegistryBuilder.createSimple(PLAYER_UNLOCK_KEY).buildAndRegister();
+	
 	private static class SoundEventRegister {
 		static RegistryEntry<SoundEvent> register(Identifier id, Identifier soundId, float distanceToTravel) {
 			return Registry.registerReference(Registries.SOUND_EVENT, id, SoundEvent.of(soundId, distanceToTravel));
@@ -140,9 +143,11 @@ public class AprilsLegacy implements ModInitializer {
         PayloadTypeRegistry.playS2C().register(VoteUpdateS2CPacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteUpdateS2CPacket::new));
         PayloadTypeRegistry.playS2C().register(ClientPacket0.PAYLOAD_ID, ClientPacket0.CODEC);
         PayloadTypeRegistry.playS2C().register(ClientPacket6.ID, ClientPacket6.CODEC);
+        PayloadTypeRegistry.playS2C().register(net.zhengzhengyiyi.network.ClientPacket4.PAYLOAD_ID, net.zhengzhengyiyi.network.ClientPacket4.CODEC);
 
         PayloadTypeRegistry.playC2S().register(VoteCastpacket.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), VoteCastpacket::new));
         PayloadTypeRegistry.playC2S().register(class_8484.PAYLOAD_ID, PacketCodec.of((v, b) -> v.write(b), class_8484::new));
+        PayloadTypeRegistry.playC2S().register(net.zhengzhengyiyi.network.ServerPacket0.PAYLOAD_ID, net.zhengzhengyiyi.network.ServerPacket0.CODEC);
         
         ServerPlayNetworking.registerGlobalReceiver(VoteCastpacket.PAYLOAD_ID, (payload, context) -> {
         	payload.apply(context.player().networkHandler);
@@ -150,6 +155,8 @@ public class AprilsLegacy implements ModInitializer {
         ServerPlayNetworking.registerGlobalReceiver(class_8484.PAYLOAD_ID, (payload, context) -> {
         	payload.apply(context.player().networkHandler);
         });
+        ServerPlayNetworking.registerGlobalReceiver(net.zhengzhengyiyi.network.ServerPacket0.PAYLOAD_ID,
+        	net.zhengzhengyiyi.network.ServerPacket0::handle);
 	}
 
 	@Override
@@ -176,6 +183,8 @@ public class AprilsLegacy implements ModInitializer {
 		class_11113.method_69994();
 		// Initialize SpecialMine registry — triggers all static field registrations
 		net.zhengzhengyiyi.mine.SpecialMineData.init();
+		// Initialize PlayerUnlock registry — triggers all static field registrations
+		net.zhengzhengyiyi.unlock.PlayerUnlockData.init();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
 		
