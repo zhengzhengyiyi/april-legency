@@ -35,5 +35,12 @@ public class ClientModNetworkManager {
         ClientPlayNetworking.registerGlobalReceiver(ClientPacket6.ID, (payload, context) -> {
             context.client().execute(() -> payload.apply((ModClientPlayPacketListener)context.client().getNetworkHandler()));
         });
+
+        // ClientPacket4: S2C unlock sync — update client unlock state after a purchase
+        ClientPlayNetworking.registerGlobalReceiver(net.zhengzhengyiyi.network.ClientPacket4.PAYLOAD_ID, (payload, context) -> {
+            context.client().execute(() -> {
+                net.zhengzhengyiyi.gui.ClientUnlockState.apply(payload.unlocks(), payload.currency());
+            });
+        });
     }
 }

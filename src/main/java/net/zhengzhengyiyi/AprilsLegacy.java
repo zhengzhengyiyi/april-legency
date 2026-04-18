@@ -185,6 +185,8 @@ public class AprilsLegacy implements ModInitializer {
 		net.zhengzhengyiyi.mine.SpecialMineData.init();
 		// Initialize PlayerUnlock registry — triggers all static field registrations
 		net.zhengzhengyiyi.unlock.PlayerUnlockData.init();
+		// Register player lifecycle events (join/leave persistence, item pickup → currency)
+		net.zhengzhengyiyi.event.PlayerEventHandler.init();
 		
 		Registry.register(Registries.BLOCK_STATE_PROVIDER_TYPE, Identifier.ofVanilla("rainbow_provider"), new BlockStateProviderType<>(RainbowBlockStateProvider.CODEC));
 		

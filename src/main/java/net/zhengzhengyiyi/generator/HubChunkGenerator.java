@@ -65,18 +65,6 @@ public class HubChunkGenerator extends ChunkGenerator {
     /** Mirrors class_11083.field_59025 */
     public static final Identifier CORRIDOR_HAT  = Identifier.ofVanilla("hub/corridor_hat");
 
-    /**
-     * Mirrors class_11083.field_59026 — replaces BEDROCK with SKY block.
-     * SKY block may not exist in the mod; fall back to AIR if needed.
-     */
-    public static final StructureProcessor BEDROCK_TO_SKY = new RuleStructureProcessor(
-        List.of(new StructureProcessorRule(
-            new BlockMatchRuleTest(Blocks.BEDROCK),
-            AlwaysTrueRuleTest.INSTANCE,
-            Blocks.AIR.getDefaultState()
-        ))
-    );
-
     public HubChunkGenerator(RegistryEntry.Reference<Biome> biome) {
         super(new FixedBiomeSource(biome));
     }
@@ -115,9 +103,17 @@ public class HubChunkGenerator extends ChunkGenerator {
         BlockBox blockBox, BlockPos.Mutable mutable,
         Identifier baseId, Identifier hatId
     ) {
+        // Build the processor lazily here so ModBlocks.SKY is guaranteed to be initialized
+        StructureProcessor bedrockToSky = new RuleStructureProcessor(
+            List.of(new StructureProcessorRule(
+                new BlockMatchRuleTest(Blocks.BEDROCK),
+                AlwaysTrueRuleTest.INSTANCE,
+                net.zhengzhengyiyi.block.ModBlocks.SKY.getDefaultState()
+            ))
+        );
         for (int i = 0; i < world.getTopYInclusive() / 16; i++) {
             Identifier id = (i == 0) ? baseId : hatId;
-            placeTemplate(world, mutable, blockBox, manager, id);
+            placeTemplate(world, mutable, blockBox, manager, id, bedrockToSky);
             mutable.move(Direction.UP, 16);
         }
     }
@@ -125,14 +121,14 @@ public class HubChunkGenerator extends ChunkGenerator {
     /** Mirrors class_11083.method_69801 */
     private static void placeTemplate(
         StructureWorldAccess world, BlockPos pos, BlockBox blockBox,
-        StructureTemplateManager manager, Identifier id
+        StructureTemplateManager manager, Identifier id, StructureProcessor processor
     ) {
         manager.getTemplate(id).ifPresent(template -> {
             ChunkRandom random = new ChunkRandom(new Xoroshiro128PlusPlusRandom(RandomSeed.getSeed()));
             random.setPopulationSeed(world.getSeed(), pos.getX(), pos.getZ());
             template.place(
                 world, pos, pos,
-                new StructurePlacementData().setBoundingBox(blockBox).addProcessor(BEDROCK_TO_SKY),
+                new StructurePlacementData().setBoundingBox(blockBox).addProcessor(processor),
                 random, 0
             );
         });

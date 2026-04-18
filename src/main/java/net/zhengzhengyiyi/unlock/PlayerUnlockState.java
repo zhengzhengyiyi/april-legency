@@ -29,12 +29,23 @@ public class PlayerUnlockState {
     private static final String NBT_CURRENCY = "currency";
 
     /** Server-side cache: UUID → state. Populated on player join, cleared on leave. */
-    private static final Map<UUID, PlayerUnlockState> CACHE = new HashMap<>();
+    public static final Map<UUID, PlayerUnlockState> CACHE = new HashMap<>();
 
     private final List<RegistryEntry<PlayerUnlock>> unlocks = new ArrayList<>();
     private int currency = 0;
 
     private PlayerUnlockState() {}
+
+    /**
+     * Factory: build a state from already-resolved data (used by mixin read path).
+     */
+    public static PlayerUnlockState fromData(UUID uuid, int currency,
+            List<RegistryEntry<PlayerUnlock>> unlocks) {
+        PlayerUnlockState state = new PlayerUnlockState();
+        state.currency = currency;
+        state.unlocks.addAll(unlocks);
+        return state;
+    }
 
     /**
      * Get the cached unlock state for a player.
@@ -101,7 +112,7 @@ public class PlayerUnlockState {
         this.currency = Math.max(0, this.currency - amount);
     }
 
-    private void readNbt(NbtCompound nbt) {
+    public void readNbt(NbtCompound nbt) {
         this.currency = nbt.getInt(NBT_CURRENCY, 0);
         this.unlocks.clear();
 
@@ -121,7 +132,7 @@ public class PlayerUnlockState {
         }
     }
 
-    private void writeNbt(NbtCompound nbt) {
+    public void writeNbt(NbtCompound nbt) {
         nbt.putInt(NBT_CURRENCY, this.currency);
 
         NbtList list = new NbtList();

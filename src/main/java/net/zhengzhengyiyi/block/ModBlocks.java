@@ -25,6 +25,29 @@ public class ModBlocks {
     public static final RegistryKey<Block> CURSOR_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("cursor"));
     public static final RegistryKey<Block> ANT_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("ant"));
 
+    /**
+     * Mirrors Craftmine Blocks.SKY — a transparent, luminous, indestructible block used as
+     * the sky-box portal in hub structures. BEDROCK in hub NBT files is replaced with this
+     * block by the HubChunkGenerator's BEDROCK_TO_SKY processor.
+     *
+     * Registered as minecraft:sky so saved worlds that contain this block can load correctly.
+     * Uses a plain Block (not TransparentBlock which is client-only) with no-collision.
+     */
+    public static final RegistryKey<Block> SKY_KEY = RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("sky"));
+    public static final Block SKY = register(
+        SKY_KEY,
+        new Block(
+            AbstractBlock.Settings.create()
+                .mapColor(MapColor.BLUE)
+                .luminance(state -> 15)
+                .strength(-1.0F, 3600000.0F)
+                .dropsNothing()
+                .noCollision()
+                .pistonBehavior(net.minecraft.block.piston.PistonBehavior.BLOCK)
+                .registryKey(SKY_KEY)
+        )
+    );
+
     public static final Block DIMENSION_CONTROL = register(
         RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("dimension_control")),
         new DimensionControlBlock(AbstractBlock.Settings.create().mapColor(MapColor.BLUE).instrument(NoteBlockInstrument.BANJO).strength(2.5F).sounds(BlockSoundGroup.WOOD).registryKey(RegistryKey.of(RegistryKeys.BLOCK, Identifier.ofVanilla("dimension_control"))))

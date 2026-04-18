@@ -232,6 +232,26 @@ public class MineCrafterBlockEntity extends LockableContainerBlockEntity impleme
          
          serverWorld.playSound(null, blockPos, success ? SoundEvents.UI_LOOM_TAKE_RESULT : SoundEvents.ENTITY_VILLAGER_NO, SoundCategory.BLOCKS, 1.0F, 1.0F);
          serverWorld.updateNeighbors(blockPos, this.getCachedState().getBlock());
+
+         // Award currency to all nearby players for completing the mine
+         java.util.List<net.minecraft.item.Item> usedEffectItems = new java.util.ArrayList<>();
+         for (net.minecraft.item.ItemStack s : this.inventory) {
+            net.zhengzhengyiyi.mine.class_11056 modifiers = s.get(net.zhengzhengyiyi.component.ModDataComponentTypes.WORLD_MODIFIERS);
+            if (modifiers != null) {
+               for (net.zhengzhengyiyi.mine.MineEffect e : modifiers.effects()) {
+                  usedEffectItems.add(s.getItem());
+               }
+            }
+         }
+         java.util.List<net.zhengzhengyiyi.mine.MineEffect> effects = new java.util.ArrayList<>();
+         for (net.minecraft.item.ItemStack s : this.inventory) {
+            net.zhengzhengyiyi.mine.class_11056 modifiers = s.get(net.zhengzhengyiyi.component.ModDataComponentTypes.WORLD_MODIFIERS);
+            if (modifiers != null) effects.addAll(modifiers.effects());
+         }
+         for (net.minecraft.server.network.ServerPlayerEntity player : serverWorld.getServer().getPlayerManager().getPlayerList()) {
+            net.zhengzhengyiyi.event.PlayerEventHandler.onMineComplete(player, success, effects);
+         }
+
          this.inventory.forEach(stack -> stack.setCount(0));
       }
    }

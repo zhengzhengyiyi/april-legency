@@ -26,7 +26,9 @@
 		"SlotMixin",
 		"BiomeWeatherMixin",
 		"ChunkGeneratorsMixin",
-		"AbstractFireBlockMixin"
+		"AbstractFireBlockMixin",
+		"ServerPlayerEntityMixin",
+		"PlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
